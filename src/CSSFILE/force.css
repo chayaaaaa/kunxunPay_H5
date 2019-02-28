@@ -1,0 +1,8 @@
+
+/* ========   这是针对一些权重比较高的样式单独写的样式   =======*/
+.mint-field-core{
+    direction: rtl !important;
+   }
+   span{
+    font-size: 0.35rem;
+  }
