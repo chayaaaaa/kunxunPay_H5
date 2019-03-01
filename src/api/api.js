@@ -48,7 +48,6 @@ export const checkToken = params => {
             });
         }
     });
-    return checkToken;
 };
 
 

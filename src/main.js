@@ -12,7 +12,11 @@ import 'vant/lib/index.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'mint-ui/lib/style.css'
 import 'lib-flexible'
+
 import '@/CSSFILE/common.css'
+// 引用公共JS
+import commonJS from '@/JS/commonJS.js'
+Vue.prototype.$commonJS = commonJS;
 import qs from 'qs'
 import md5 from 'js-md5'
 Vue.prototype.$md5 = md5;

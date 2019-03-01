@@ -44,13 +44,33 @@ const routes = [
     meta: {
       required: true,
     }
+  }, { // 修改商户信息页面[基本信息]
+    path: '/modifyTheMerchants',
+    name: 'modifyTheMerchants',
+    component: resolve => require(['@/views/Manger/Agent/modifyTheMerchants.vue'], resolve),
+    meta: {
+      required: true,
+    }
+  }, { // 修改商户信息页面[结算信息]
+    path: '/modifySettleacCount',
+    name: 'modifySettleacCount',
+    component: resolve => require(['@/views/Manger/Agent/modifySettleacCount.vue'], resolve),
+    meta: {
+      required: true,
+    }
   }, { // 录入代理信息成功页面
     path: '/successedPage',
     component: resolve => require(['@/views/Manger/Agent/successedPage.vue'], resolve),
     meta: {
       required: true,
     }
-  }, { // 代理利润页面
+  }, { // 修改代理信息成功页面
+    path: '/successedPages',
+    component: resolve => require(['@/views/Manger/Agent/successedPages.vue'], resolve),
+    meta: {
+      required: true,
+    }
+  },{ // 代理利润页面
     path: '/agentProfit',
     component: resolve => require(['@/views/Manger/Agent/agentProfit.vue'], resolve),
     meta: {
@@ -78,19 +98,21 @@ const routes = [
     }
   }, { // 押金返现页面
     path: '/retrunDeposit',
+    name: 'retrunDeposit',
     component: resolve => require(['@/views/Manger/Agent/retrunDeposit.vue'], resolve),
     meta: {
       required: true,
     }
   }, { // 业务配置页面
     path: '/BusinessConfiguration',
-    name:'BusinessConfiguration',
+    name: 'BusinessConfiguration',
     component: resolve => require(['@/views/Manger/Agent/BusinessConfiguration.vue'], resolve),
     meta: {
       required: true,
     }
   }, { // MOPS活动页面
     path: '/MPOSactivity',
+    name:'MPOSactivity',
     component: resolve => require(['@/views/Manger/Agent/MPOSactivity.vue'], resolve),
     meta: {
       required: true,
@@ -247,14 +269,14 @@ const routes = [
     meta: {
       required: true,
     }
-  },{ // 提现申请提交页面
+  }, { // 提现申请提交页面
     path: '/withDrawSuccessPage',
     name: 'withDrawSuccessPage',
     component: resolve => require(['@/views/Mine/Wallet/withDraw/withDrawSuccessPage.vue'], resolve),
     meta: {
       required: true,
     }
-  },,{ // 提现进度页面
+  }, , { // 提现进度页面
     path: '/WithdrawalSchedule',
     name: 'WithdrawalSchedule',
     component: resolve => require(['@/views/Mine/Wallet/withDraw/WithdrawalSchedule.vue'], resolve),

@@ -3,10 +3,11 @@
     <!-- ==========  押 金 返 现 页 面  ========== -->
     <div class="header">
       <img class="header_left" @click="prev()" src="@/assets/image/Manger/Agents/icn_back@2x.png">
-      业务配置
+      押金返现
     </div>
     <p>
-      <img src="@/assets/image/Manger/Agents/ic-pos.png">CX00001-创鑫机构
+      <img src="@/assets/image/Manger/Agents/ic-pos.png">
+      {{merchantId}}-{{merchantName}}
     </p>
     <div class="retrunDeposit_body">
       <ul>
@@ -21,25 +22,105 @@
         <li>
           金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" v-model="money">
         </li>
       </ul>
     </div>
-    <button>保存</button>
+    <button @click="sumbit()">保存</button>
   </div>
 </template>
 <script>
+import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { MessageBox, Toast } from "mint-ui";
+const axios = require("axios");
 export default {
   name: "retrunDeposit",
   data() {
     return {
       checked: false,
+      // 上一步带过来的数据
+      qdcrmUserId: "",
+      merchantName: "",
+      merchantId: "",
+      money: "",
+      switchIcon: ""
     };
+  },
+  created() {
+    this.getParams();
+  },
+
+  watch: {
+    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
+    $route: "getParams"
   },
   methods: {
     prev() {
-      this.$router.go(-1);
+      this.$router.push("/QueryAgent");
+    },
+    getParams() {
+      // 取到路由带过来的参数
+      this.qdcrmUserId = this.$route.params.item;
+      this.merchantName = this.$route.params.name;
+      this.merchantId = this.$route.params.merchantId;
+    },
+    sumbit() {
+      if (this.checked == false) {
+        this.switchIcon = 1;
+      } else {
+        this.switchIcon = 0;
+      }
+      console.log(this.switchIcon);
+      if (!this.money) {
+        Toast("请输入金额");
+      }
+      console.log(this.checked);
+      var params = new URLSearchParams();
+      params.append(
+        "access_token",
+        JSON.parse(window.localStorage.getItem("token")).access_token
+      );
+      params.append("merchantId", this.merchantId);
+      params.append("depositMoney", this.money);
+      params.append("status", this.switchIcon);
+      params.append("number", Math.random());
+      axios
+        .post(
+          `${BASE_URL}/msmng/api/configdepositandmpos/depositConfig`,
+          params,
+          {
+            header: {
+              "Access-Control-Allow-Origin": "*"
+            }
+          }
+        )
+        .then(response => {
+          console.log(response.data);
+          Toast(response.data.message);
+          this.$router.push("/QueryAgent");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
+  },
+  mounted() {
+    let obj = {
+      merchantId: this.merchantId,
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token
+    };
+    axios
+      .get(`${BASE_URL}/msmng/api/configdepositandmpos/showDepositConfig`, {
+        params: obj
+      })
+      .then(response => {
+        console.log(response.data);
+        this.money = response.data.data.depositMoney;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 };
 </script>
@@ -53,7 +134,7 @@ export default {
   top: 0;
   bottom: 0;
   /* 头部 */
-    .header {
+  .header {
     height: 1.2rem;
     font-size: 0.4rem;
     font-weight: 100;
@@ -105,7 +186,8 @@ export default {
         }
         #input {
           float: right;
-          width: 2.2rem;
+          width: 1rem;
+          direction: ltr;
         }
       }
     }

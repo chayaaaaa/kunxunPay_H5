@@ -6,14 +6,15 @@
       MPOS活动
     </div>
     <p>
-      <img src="@/assets/image/Manger/Agents/ic-pos.png">CX00001-创鑫机构
+      <img src="@/assets/image/Manger/Agents/ic-pos.png">
+      {{merchantId}}-{{merchantName}}
     </p>
     <div class="MPOSactivity_body">
       <ul>
         <li>激活奖励
           <van-switch
             size="15px"
-            v-model="checked"
+            v-model="activationStatus"
             inactive-color="#D9D9D9"
             active-color="#1c8cff"
           />
@@ -21,14 +22,14 @@
         <li class="li">
           金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="activationMoney">
         </li>
       </ul>
       <ul class="ul">
         <li>周期任务奖励
           <van-switch
             size="15px"
-            v-model="check"
+            v-model="cycleStatus"
             inactive-color="#D9D9D9"
             active-color="#1c8cff"
           />
@@ -36,32 +37,32 @@
         <li>
           第一期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="firstMonth">
         </li>
         <li>
           第二期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="secondMonth">
         </li>
         <li>
           第三期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="threeMonth">
         </li>
         <li>
           第四期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="fourMonth">
         </li>
         <li>
           第五期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="fiveMonth">
         </li>
         <li>
           第六期周期奖励金额
           <span id>元</span>
-          <input id="input" type="number" placeholder="请输入金额">
+          <input id="input" type="number" placeholder="请输入金额" v-model="sixMonth">
         </li>
       </ul>
     </div>
@@ -69,22 +70,89 @@
   </div>
 </template>
 <script>
-import { MessageBox } from "mint-ui";
+import { Toast, MessageBox } from "mint-ui";
+import { getRefreshToken, BASE_URL } from "@/api/api.js";
+const axios = require("axios");
 export default {
   name: "MPOSactivity",
   data() {
     return {
-      checked: false,
-      check: false
+      merchantId: "",
+      merchantName: "",
+      activationMoney: "", //激活奖励金额
+      activationStatus: "", //激活奖励活动状态（是否开启0：开启，1：关闭）
+      cycleStatus: "", // 追加返现状态（是否开启0：开启，1：关闭）
+      firstMonth: "", //第一个月返现金额
+      secondMonth: "", //第二
+      threeMonth: "", //第三
+      fourMonth: "", //第四
+      fiveMonth: "", //第五
+      sixMonth: "" //第六
     };
   },
+  created() {
+    this.getParams();
+  },
+
+  watch: {
+    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
+    $route: "getParams"
+  },
+
   methods: {
     prev() {
-      this.$router.go(-1);
+      this.$router.push("/QueryAgent");
     },
     save() {
-      MessageBox("上级商户未配置业务！");
+      /*  MessageBox("上级商户未配置业务！"); */
+      if (this.activationStatus == false) {
+        this.activationStatus = 1;
+      } else {
+        this.activationStatus = 0;
+      }
+      if (this.cycleStatus == false) {
+        this.cycleStatus = 1;
+      } else {
+        this.cycleStatus = 0;
+      }
+      console.log(this.activationStatus);
+      console.log(this.cycleStatus);
+    },
+    getParams() {
+      // 取到路由带过来的参数
+      this.merchantName = this.$route.params.name;
+      this.merchantId = this.$route.params.merchantId;
     }
+  },
+  mounted() {
+    getRefreshToken();
+    axios
+      .get(
+        `${BASE_URL}/msmng/api/configdepositandmpos/showMposActivityConfig?merchantId=${
+          this.merchantId
+        }&access_token=${
+          JSON.parse(window.localStorage.getItem("token")).access_token
+        }`,
+        {
+          params: {}
+        }
+      )
+      .then(response => {
+        console.log(response.data);
+        let res = response.data.data;
+        this.activationMoney = res.activationMoney;
+        this.activationStatus = res.activationStatus;
+        this.cycleStatus = res.cycleStatus;
+        this.firstMonth = res.firstMonth;
+        this.secondMonth = res.secondMonth;
+        this.threeMonth = res.threeMonth;
+        this.fourMonth = res.fourMonth;
+        this.fiveMonth = res.fiveMonth;
+        this.sixMonth = res.sixMonth;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 };
 </script>
@@ -151,6 +219,8 @@ export default {
         #input {
           float: right;
           width: 2.2rem;
+          direction: rtl;
+          margin-right: 0.1rem;
         }
       }
       .li {

@@ -5,7 +5,7 @@
       <img class="header_left" @click="prev()" src="@/assets/image/Manger/Agents/icn_back@2x.png">
       业务配置
     </div>
-    <p>
+    <p class="BusinessConfiguration_title">
       <img src="@/assets/image/Manger/Agents/ic-pos.png">
       {{merchantId}}-{{merchantName}}
     </p>
@@ -77,7 +77,7 @@
       <!-- 空隙 -->
       <li class="kongxi"></li>
     </div>
-    <div class="btn">
+    <div class="btn_BusinessConfiguration">
       <button @click="commit()">提交</button>
     </div>
     <div class="configSuccessed" v-if="success==true">
@@ -104,7 +104,8 @@ export default {
       merchantId: "",
       // 业务配置
       configList: [],
-      success: false
+      success: false,
+      Msg: []
     };
   },
   created() {
@@ -144,11 +145,12 @@ export default {
         num.isAdd = 1;
       }
     },
+    // 提交配置信息
     commit() {
       // 遍历
       this.configList.forEach(function(item, i) {
         if (item.isAdd == 1) {
-          var configMsg = [
+          var Msg = [
             {
               bizCode: item.bizCode,
               bizName: item.bizName,
@@ -184,7 +186,7 @@ export default {
               ]
             }
           ];
-          console.log(configMsg);
+          window.localStorage.setItem("msg", JSON.stringify(Msg));
           //工作日固定值
           if (
             parseFloat(item.businessModel[0].fixed) <
@@ -228,6 +230,8 @@ export default {
                 item.bizName
             );
             return false;
+          } else {
+            return true;
           }
           var localqdcrmUserId = JSON.parse(
             window.localStorage.getItem("userInfo")
@@ -238,7 +242,7 @@ export default {
             return;
           }
         } else {
-          var configMsg = [
+          var Msg = [
             {
               bizCode: item.bizCode,
               bol: "F"
@@ -246,6 +250,8 @@ export default {
           ];
         }
       });
+      var msgData = JSON.parse(window.localStorage.getItem("msg"));
+      console.log(msgData);
       var params = new URLSearchParams();
       params.append(
         "access_token",
@@ -257,8 +263,7 @@ export default {
       );
       params.append("templateId", "");
       params.append("bizType", this.merchantName);
-      params.append("business", JSON.stringify(configMsg));
-      console.log(configMsg);
+      params.append("business", JSON.stringify(msgData));
       // 提交修改配置数据
       axios
         .post(`${BASE_URL}/msmng/api/agent/updateAgentBiz`, params, {
@@ -272,13 +277,14 @@ export default {
             console.log(response.data);
             window.localStorage.removeItem("qd");
           } else {
-            Toast(response.data.message);
+            console(response.data.message);
           }
         })
         .catch(function(error) {
           console.log(error);
         });
-      /*   this.success = true; */
+      window.localStorage.removeItem("msg");
+      this.success = true;
     }
   },
   mounted() {
@@ -345,10 +351,12 @@ export default {
     line-height: 1.2rem;
     margin-left: 0.5rem;
     font-size: 0.38rem;
+     margin-top: 1.2rem;
     img {
       vertical-align: middle;
       width: 0.5rem;
       margin-right: 0.2rem;
+
     }
   }
   .BusinessConfiguration_body {
@@ -444,10 +452,9 @@ export default {
       height: 3rem;
     }
   }
-  .btn {
+  .btn_BusinessConfiguration {
     width: 100%;
     height: 1.5rem;
-    background: #fff;
     position: fixed;
     bottom: 0rem;
     text-align: center;

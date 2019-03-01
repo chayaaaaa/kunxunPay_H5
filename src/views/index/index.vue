@@ -438,18 +438,23 @@ export default {
     width: 100%;
   }
 }
+.mint-popup-bottom{
+  width: 100%;
+  background: rgba(0, 0, 0, 0);
+}
 .cellPhone {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0);
+  width: 100%;
   p {
     background: #fff;
     text-align: center;
     height: 1.2rem;
-    width: 10rem;
+    width: 100%;
     line-height: 1.2rem;
     border-radius: 5px; /* no */
+     margin-bottom: 0.2rem;
   }
   .p {
-    margin-bottom: 0.2rem;
     a {
       font-size: 0.4rem;
     }

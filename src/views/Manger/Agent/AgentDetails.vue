@@ -199,11 +199,11 @@
       <!-- 选择业务 -->
       <div class="choose_Business">
         <ul>
-          <li @click="activateTheMerchants()">
+          <li @click="activateTheMerchants()" v-if="merchantStatus == 2">
             <img src="@/assets/image/Manger/Agents/ic-Mer.png">
             <p>激活商户</p>
           </li>
-          <li>
+          <li @click="resetPWD()" v-if="merchantStatus != 2">
             <img src="@/assets/image/Manger/Agents/ic-reset.png">
             <p>重置密码</p>
           </li>
@@ -215,13 +215,13 @@
             <img src="@/assets/image/Manger/Agents/ic-change.png">
             <p>修改商户</p>
           </li>
-          <li @click="detailMerchants()">
+          <li @click="detailMerchants()" v-if="merchantStatus == 2 ">
             <img src="@/assets/image/Manger/Agents/del.png">
             <p>删除商户</p>
           </li>
           <li @click="toretrunDeposit()">
             <img src="@/assets/image/Manger/Agents/ic-withdraw.png">
-            <p>押金返现</p>
+            <p>服务费设置</p>
           </li>
           <li @click="toMPOSactivity()">
             <img src="@/assets/image/Manger/Agents/ic-MPOS.png">
@@ -252,6 +252,7 @@ export default {
   data() {
     return {
       current: 0,
+      merchantStatus: "", // 用户激活业务状态
       activeName: "1", // 当前时间
       timeDate: new Date(),
       id: "",
@@ -326,9 +327,18 @@ export default {
     prev() {
       this.$router.go(-1);
     },
+    // 押金返现
     toretrunDeposit() {
-      this.$router.push("/retrunDeposit");
+      this.$router.push({
+        name: "retrunDeposit",
+        params: {
+          item: this.qdcrmUserId,
+          name: this.merchantName,
+          merchantId: this.merchantId
+        }
+      });
     },
+    // 到业务配置
     toBusinessConfiguration() {
       this.$router.push({
         name: "BusinessConfiguration",
@@ -339,12 +349,73 @@ export default {
         }
       });
     },
+    // 重置密码
+    resetPWD() {
+      var params = new URLSearchParams();
+      params.append("access_token", this.access_token);
+      params.append("merchantId", this.merchantId);
+      params.append("number", Math.random());
+      axios
+        .post(`${BASE_URL}/msmng/api/agent/resetAgentPwd`, params, {
+          header: {
+            "Access-Control-Allow-Origin": "*"
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          Toast(response.data.message);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    // 激活商户
     activateTheMerchants() {
-      Toast("激活商户成功,密码将以短信的形式发送给商户联系人手机上");
+      console.log(this.merchantStatus);
+      if (this.merchantStatus == 2) {
+        var params = new URLSearchParams();
+        params.append("access_token", this.access_token);
+        params.append("merchantId", this.merchantId);
+        params.append("number", Math.random());
+        axios
+          .post(`${BASE_URL}/msmng/api/agent/activateAgent`, params, {
+            header: {
+              "Access-Control-Allow-Origin": "*"
+            }
+          })
+          .then(response => {
+            console.log(response.data);
+            Toast(response.data.message);
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      } else {
+        Toast("账号已激活");
+      }
     },
-    ModifyTheMerchants() {
-      this.$router.push("/entry");
+    // 修改商户
+    ModifyTheMerchants(type, id) {
+      this.$router.push({
+        name: "modifyTheMerchants",
+        params: {
+          type: this.biztype, //商户类型
+          id: this.merchantId // 商户编号
+        }
+      });
     },
+    // MPOS活动
+    toMPOSactivity() {
+      this.$router.push({
+        name: "MPOSactivity",
+        params: {
+          item: this.qdcrmUserId,
+          name: this.merchantName,
+          merchantId: this.merchantId
+        }
+      });
+    },
+    // 删除商户
     detailMerchants() {
       var params = new URLSearchParams();
       params.append("access_token", this.access_token);
@@ -371,9 +442,7 @@ export default {
           Toast(err.data.message);
         });
     },
-    toMPOSactivity() {
-      this.$router.push("/MPOSactivity");
-    },
+
     getParams() {
       // 取到路由带过来的参数
       var routerParams = this.$route.params.id;
@@ -420,6 +489,7 @@ export default {
         this.mark = response.data.bank.mark;
         this.bankBranchCode = response.data.bank.bankBranchCode;
         this.card = response.data.bank.card;
+        this.merchantStatus = response.data.merchant.status; // 激活状态 0[正常] 1[注销] 2[待激活]
         window.localStorage.removeItem("currentID");
         window.localStorage.removeItem("qdcrmUserId");
       })
@@ -441,7 +511,7 @@ export default {
       })
       .then(response => {
         let re = JSON.parse(response.data.data);
-        console.log(re)
+        console.log(re);
         this.configList = re.list;
         console.log(this.configList);
       })

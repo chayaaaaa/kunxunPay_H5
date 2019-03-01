@@ -1,7 +1,7 @@
 <template>
-  <div class="settleaccount">
+  <div class="modifySettleacCount">
     <!-- =======================     结 算 信 息   ====================== -->
-    <mt-header title="代 理 商 录 入" fixed>
+    <mt-header title="修改代理商信息" fixed>
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <!-- 结算信息 -->
@@ -107,7 +107,7 @@ import qs from "qs";
 import { Toast, MessageBox } from "mint-ui";
 export default {
   inject: ["reload"],
-  name: "settleaccount",
+  name: "modifySettleacCount",
   data() {
     return {
       /*  =======================       结 算 信 息       =======================  */
@@ -252,14 +252,15 @@ export default {
       params.append("bank", bank);
       params.append("number", Math.random());
       axios
-        .post(`${BASE_URL}/msmng/api/agent/addAgent`, params, {
+        .post(`${BASE_URL}/msmng/api/agent/updateAgent`, params, {
           header: {
             "Access-Control-Allow-Origin": "*"
           }
         })
         .then(response => {
           console.log(response);
-          this.$router.push("/successedPage");
+
+          this.$router.push("/successedPages");
         })
         .catch(function(err) {
           Toast(err.data.message);
@@ -283,7 +284,7 @@ export default {
 </script>
 <style lang="less">
 @blue: #1c8cff;
-.settleaccount {
+.modifySettleacCount {
   width: 100%;
   font-size: 0.4rem;
   position: absolute;
