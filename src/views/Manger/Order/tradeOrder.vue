@@ -8,30 +8,15 @@
     <mt-popup v-model="showOrgan" popup-transition="popup-fade">
       <!-- title -->
       <div class="title">选 择 代 理 商</div>
-      <!--       <select
-        class="select"
-        v-model="optionValue"
-        :label-in-value="true"
-        @change="getIdValue($event)"
-      >
-        <option selected="selected" disabled="disabled" style="display: none" value>请选择代理商</option>
-        <option
-          v-for="(item,index) in queryAgents"
-          :key="index"
-          :value="item.id"
-          :label="item.text"
-        >{{item.text}}</option>
-      </select>-->
       <van-picker :columns="queryAgents" @change="onChange"/>
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
     </mt-popup>
     <!-- 选择栏 -->
     <div class="Choice">
-      <!--       <li class="Cli" @click="showOrgan = true">{{showText}}</li> -->
       <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
       <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
-      <div class="CicTime">
+      <div class="CicTime_tradeOrder">
         <el-date-picker
           v-model="rangeTime"
           type="daterange"
@@ -480,7 +465,7 @@ export default {
   }
 }
 /* 时间选择 */
-.CicTime {
+.CicTime_tradeOrder {
   float: right;
 }
 /* 列表 */
@@ -520,6 +505,19 @@ export default {
     background: #f5f5f5;
   }
 }
+// 时间选择器
+.el-range-editor.el-input__inner {
+  height: 0.7rem;
+  width: 6.5rem;
+  margin-right: 0.5rem;
+}
+.showDetail {
+  margin-top: 0.9rem;
+}
+// 时间选择器
+.el-date-editor .el-range-separator {
+  line-height: 0.5rem;
+}
 </style>
 <style lang="less">
 .van-picker__columns {
@@ -546,18 +544,6 @@ export default {
 .van-list__loading-text {
   height: 2.5rem;
   line-height: 1rem;
-}
-// 时间选择器
-.el-range-editor.el-input__inner {
-  height: 0.7rem;
-  width: 6.5rem;
-  margin-right: 0.5rem;
-}
-.el-date-editor .el-range-separator {
-  line-height: 0.5rem;
-}
-.showDetail{
-  margin-top: 0.9rem;
 }
 </style>
 

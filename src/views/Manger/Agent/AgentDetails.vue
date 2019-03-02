@@ -242,6 +242,7 @@ import {
   BASE_URL
 } from "@/api/api.js";
 import { Toast } from "mint-ui";
+import commonJS from "@/JS/commonJS.js";
 const axios = require("axios");
 var padDate = function(va) {
   va = va < 10 ? "0" + va : va;
@@ -412,6 +413,10 @@ export default {
           item: this.qdcrmUserId,
           name: this.merchantName,
           merchantId: this.merchantId
+        },
+        query: {
+          id: this.merchantId,
+          merchantName: this.merchantName
         }
       });
     },
@@ -448,55 +453,49 @@ export default {
       var routerParams = this.$route.params.id;
       var list = this.$route.params.item;
       // 将数据放在当前组件的数据内
-      this.id = routerParams;
-      this.itemList = list;
-      console.log(list);
-      this.biztype = this.itemList.bizType;
-      this.contactName = this.itemList.contactName;
-      this.mobile = this.itemList.mobile.replace(
-        /^(\d{3})(\d*)(\d{4})$/,
-        function(a, b, c, d) {
-          return b + c.replace(/\d/g, "*") + d;
-        }
-      );
-      this.merchantName = this.itemList.merchantName;
-      this.status = this.itemList.status;
-      this.merchantId = this.itemList.merchantId;
-      this.qdcrmUserId = this.itemList.qdcrmUserId;
-      window.localStorage.setItem("currentID", JSON.stringify(this.merchantId));
-      window.localStorage.setItem(
-        "qdcrmUserId",
-        JSON.stringify(this.qdcrmUserId)
-      );
     }
   },
   mounted() {
+    let queryData = {
+      merchantId: commonJS.getUrlKey("merchantId"),
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token,
+      number: Math.random()
+    };
     // 代理商户详情
-    queryAgentDetails()
+    axios
+      .get(`${BASE_URL}/msmng/api/agent/queryAgentDetails`, {
+        params: queryData
+      })
       .then(response => {
         getRefreshToken();
-        console.log(response);
-        window.localStorage.setItem(
-          "queryAgentDetails",
-          JSON.stringify(response.data)
+        console.log(response.data);
+        let queryAgentDetailList = response.data.data
+        this.smsSign = queryAgentDetailList.merchant.smsSign;
+        this.merType = queryAgentDetailList.merchant.merType;
+        this.accountHolder = queryAgentDetailList.bank.accountHolder;
+        this.provinceCode = queryAgentDetailList.bank.provinceCode;
+        this.cityCode = queryAgentDetailList.bank.cityCode;
+        this.bankCode = queryAgentDetailList.bank.bankCode;
+        this.mark = queryAgentDetailList.bank.mark;
+        this.bankBranchCode = queryAgentDetailList.bank.bankBranchCode;
+        this.card = queryAgentDetailList.bank.card;
+        this.merchantStatus = queryAgentDetailList.merchant.status; // 激活状态 0[正常] 1[注销] 2[待激活]
+        this.biztype = queryAgentDetailList.merchant.bizType;
+        this.contactName = queryAgentDetailList.contact.contactName;
+        this.mobile = queryAgentDetailList.contact.mobile.replace(
+          /^(\d{3})(\d*)(\d{4})$/,
+          function(a, b, c, d) {
+            return b + c.replace(/\d/g, "*") + d;
+          }
         );
-        this.smsSign = response.data.merchant.smsSign;
-        this.merType = response.data.merchant.merType;
-        this.accountHolder = response.data.bank.accountHolder;
-        this.provinceCode = response.data.bank.provinceCode;
-        this.cityCode = response.data.bank.cityCode;
-        this.bankCode = response.data.bank.bankCode;
-        this.mark = response.data.bank.mark;
-        this.bankBranchCode = response.data.bank.bankBranchCode;
-        this.card = response.data.bank.card;
-        this.merchantStatus = response.data.merchant.status; // 激活状态 0[正常] 1[注销] 2[待激活]
-        window.localStorage.removeItem("currentID");
-        window.localStorage.removeItem("qdcrmUserId");
+        this.merchantName = queryAgentDetailList.merchant.name;
+        this.status = queryAgentDetailList.merchant.status;
+        this.merchantId = queryAgentDetailList.merchant.merchantId;
+        this.qdcrmUserId = queryAgentDetailList.merchant.qdcrmUserId;
       })
-      .catch({
-        function(error) {
-          Toast(response.message);
-        }
+      .catch(function(error) {
+        console.log(error);
       });
     // 业务配置数据
     let data = {
@@ -780,7 +779,7 @@ export default {
     margin: 0 auto;
     left: 0;
     right: 0;
-    position: fixed;
+    position: absolute;
     bottom: 0.5rem;
     img {
       width: 100%;

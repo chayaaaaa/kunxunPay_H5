@@ -419,6 +419,7 @@ export default {
       }
       p {
         margin-top: 0rem;
+        font-size: 0.35rem;
       }
     }
     .FTU {

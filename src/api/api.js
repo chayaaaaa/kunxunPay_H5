@@ -170,10 +170,9 @@ export const queryAgent = params => {
 // 代理信息详情页面数据
 export const queryAgentDetails = params => {
     let access_token = JSON.parse(window.localStorage.getItem('token')).access_token;
-    let merchantId = JSON.parse(window.localStorage.getItem('currentID'));
     return axios({
         method: 'GET',
-        url: `${BASE_URL}/msmng/api/agent/queryAgentDetails?access_token=${access_token}&merchantId=${merchantId}&number=${Math.random()}`,
+        url: `${BASE_URL}/msmng/api/agent/queryAgentDetails?access_token=${access_token}&number=${Math.random()}`,
         data: params,
     }).then(res => res.data)
         .catch(function (reason) {

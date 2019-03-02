@@ -302,7 +302,6 @@ export default {
     p {
       font-size: 0.38rem;
       color: @blue;
-      margin-left: 0.5rem;
     }
   }
 }
@@ -335,8 +334,6 @@ export default {
 }
 .el-select__caret {
   margin-right: -0.8rem;
-  height: 0.7rem;
-  margin-top: 0.45rem;
 }
 .el-select-dropdown {
   min-width: 0.5rem !important;

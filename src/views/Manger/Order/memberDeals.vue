@@ -17,14 +17,28 @@
       <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
       <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
       <div class="CicTime">
-        <el-date-picker
-          v-model="rangeTime"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          @blur="getValue()"
-        ></el-date-picker>
+        <!-- 时间选择器 -->
+        <li class="endTime" @click="showStartTime()">开始日期</li>
+        <li class="endTime" @click="showStartTime()">结束日期</li>
+
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="picker"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sure"
+        ></mt-datetime-picker>
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="pic"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sureTwo"
+        ></mt-datetime-picker>
         <!-- 含未消费 -->
         <div class="consume">
           <van-checkbox v-model="checked" checked-color="#fff" @change="toggle()">含未消费</van-checkbox>
@@ -113,7 +127,7 @@
 <script>
 import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/Order.css";
-import { Toast } from "mint-ui";
+import { DatetimePicker, Toast, Popup, Picker } from "mint-ui";
 const axios = require("axios");
 import {
   getqueryMemberTrade,
@@ -127,6 +141,8 @@ export default {
     return {
       active: 1,
       cur: 1,
+      // time
+      pickerVisible: "",
       /* 选择弹框 */
       showOrgan: false,
       /* 头部含未消费的值 */
@@ -166,10 +182,76 @@ export default {
       optionValue: "",
       display: true,
       showThis: false,
+      showalltime: false,
+      minDate: new Date(1990, 1, 1),
+      maxDate: new Date(2030, 1, 1),
+      currentDate: new Date(),
       showText: JSON.parse(window.localStorage.getItem("userInfo")).name // 显示总代理
     };
   },
+
   methods: {
+    // 时间
+    // 格式化获取的时间
+    formatDate(date) {
+      const y = date.getFullYear();
+      let m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      return y + "-" + m + "-" + d;
+    },
+    //开始
+    showStartTime() {
+      console.log(this.formatDate(this.$refs.pic.value));
+      this.$refs.pic.open();
+    },
+    sureTwo(data) {
+      // 输出格式化后的时间
+      this.startTime = this.formatDate(this.$refs.pic.value);
+      this.$refs.picker.open();
+    },
+    //结束时间
+    sure(data) {
+      // 输出格式化后的时间
+      this.endTime = this.formatDate(this.$refs.picker.value);
+      console.log(this.startTime);
+      console.log(this.endTime);
+      let queryData = {
+        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+          .qdcrmUserId,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        gmtStart: this.startTime,
+        gmtEnd: this.endTime,
+        currentPage: 1,
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/order/queryMemberTrade`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data.data);
+          let _this = this;
+          let listDetails = response.data.data.list;
+          _this.querymemberDeals = listDetails;
+          _this.valueLength = response.data.data.paginator.length;
+          console.log(_this.querymemberDeals);
+          console.log(_this.valueLength);
+          if (_this.valueLength == 0) {
+            _this.showListPages = false;
+            _this.nothing = true;
+          } else {
+            _this.showListPages = false;
+            _this.showQueryPages = true;
+            _this.nothing = false;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
+    },
     prev() {
       this.$router.go(-1);
     },
@@ -231,48 +313,10 @@ export default {
     onChange(picker, value, index) {
       this.textvalue = value.text;
       this.value = value.id;
-      console.log(value)
+      console.log(value);
       console.log(this.textvalue);
       console.log(this.value);
       console.log(index);
-    },
-    getValue() {
-      this.startTime = this.rangeTime["0"];
-      this.endTime = this.rangeTime[1];
-      let queryData = {
-        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-          .qdcrmUserId,
-        access_token: JSON.parse(window.localStorage.getItem("token"))
-          .access_token,
-        gmtStart: this.startTime,
-        gmtEnd: this.endTime,
-        currentPage: 1,
-        number: Math.random()
-      };
-      axios
-        .get(`${BASE_URL}/msmng/api/order/queryMemberTrade`, {
-          params: queryData
-        })
-        .then(response => {
-          console.log(response.data.data);
-          let _this = this;
-          let listDetails = response.data.data.list;
-          _this.querymemberDeals = listDetails;
-          _this.valueLength = response.data.data.paginator.length;
-          console.log(_this.querymemberDeals);
-          console.log(_this.valueLength);
-          if (_this.valueLength == 0) {
-            _this.showListPages = false;
-            _this.nothing = true;
-          } else {
-            _this.showListPages = false;
-            _this.showQueryPages = true;
-            _this.nothing = false;
-          }
-        })
-        .catch(function(err) {
-          Toast(err.message);
-        });
     },
     toggle() {
       console.log(this.checked);
@@ -455,6 +499,25 @@ export default {
   position: absolute;
   top: 0;
   bottom: 0;
+  .picker {
+    background: #fff;
+  }
+  /* 含未消费 */
+  .consume {
+    width: 2rem;
+    .van-checkbox__icon {
+      height: 20px !important;
+      .van-checkbox__label {
+        line-height: 10px !important;
+      }
+    }
+    .van-icon {
+      margin-top: 0.2rem !important;
+    }
+    .van-icon::before {
+      display: none !important;
+    }
+  }
   /* 代理商选择 */
   .select {
     width: 50%;
@@ -478,7 +541,7 @@ export default {
     height: 3.36rem;
     .Cli {
       overflow: hidden;
-     /*  white-space: nowrap; */
+      /*  white-space: nowrap; */
     }
   }
   /* 列表 */
@@ -519,7 +582,7 @@ export default {
       line-height: 1.2rem;
       span {
         display: inline-block;
-        width: 32.5%;
+        width: 32%;
         font-size: 0.35rem;
       }
       span:nth-child(3) {
@@ -537,7 +600,10 @@ export default {
 }
 .el-range-editor.el-input__inner {
   margin-left: -0rem;
-  width: 4.5rem;
+  width: 4.2rem;
+}
+.el-range__icon {
+  margin-left: -33px;
 }
 </style>
 
@@ -577,10 +643,11 @@ export default {
 .el-date-editor .el-range-separator {
   line-height: 0.5rem;
 }
-.showDetail{
+.showDetail {
   margin-top: 0.2rem;
 }
-.el-date-editor .el-range-input{
-font-size:0.3rem;
+.el-date-editor .el-range-input {
+  font-size: 0.2rem;
+  margin-left: -0.1rem;
 }
 </style>

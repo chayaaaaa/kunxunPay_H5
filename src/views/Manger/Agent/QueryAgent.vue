@@ -10,7 +10,7 @@
         <div class="div">
           <van-loading type="spinner" size="40px"/>
         </div>
-        <ul class="listTop" v-show="cur === 0" :class="{'curr':cur === 0}">
+        <ul class="listTop_queryAgent" v-show="cur === 0" :class="{'curr':cur === 0}">
           <li>类型</li>
           <li>商户名</li>
           <li>联系人</li>
@@ -42,7 +42,7 @@
     </div>
     <!-- 搜索的数据 -->
     <li class="showThisLi" v-if="showQueryList==true">
-      <ul class="listTop">
+      <ul class="listTop_queryAgent">
         <li>类型</li>
         <li>商户名</li>
         <li>联系人</li>
@@ -72,9 +72,9 @@
       <p>未获取到数据，请重新设置查询条件</p>
     </div>
     <!-- ==========     弹 出  代 理 信 息 筛 选 模 态 框    ========== -->
-    <div class="alertPage" v-if="show==true" @click="show=false"></div>
+    <div class="alertPage" v-if="show==true" @click="show=false" @touchmove.prevent></div>
     <transition name="slide-fade">
-      <form class="innerPage" v-if="show==true">
+      <form class="innerPage" v-if="show==true" @touchmove.prevent>
         <ul>
           <li>
             <span>联系人</span>
@@ -222,6 +222,11 @@ export default {
         params: {
           id: index,
           item: item
+        },
+        query: {
+          merchantId: item.merchantId,
+          merchantName: item.merchantName,
+          qdcrmUserId: item.qdcrmUserId
         }
       });
     },
@@ -272,7 +277,7 @@ export default {
         self.totalPage = 0;
         self.pageNumber = 0;
         Toast({
-          message: "刷新成功",
+          message: "刷新成功"
         });
         this.isLoading = false;
         self.init(); //加载数据
@@ -505,17 +510,22 @@ export default {
       width: 90%;
       height: 3.5rem;
       border-bottom: 1px solid #d9d9d9;
+      .el-radio-group {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        height: 2.5rem;
+      }
       .el-radio-button {
-        span {
-          width: 2.3rem;
-          height: 0.8rem;
-          line-height: 0.2rem;
-          margin-left: 0.2rem;
-          margin-bottom: 0.3rem;
-        }
+        height: 0.8rem;
         .el-radio-button__inner {
           border: none;
           background: #eaeaea;
+          border-radius: 0px;
+          width: 2.3rem;
+          height: 0.8rem;
+          line-height: 0.2rem;
         }
         .el-radio-button__orig-radio:checked + .el-radio-button__inner {
           background: @blue;
@@ -586,7 +596,7 @@ export default {
   transform: translateX(10rem);
 }
 /* 列表头部 */
-.listTop {
+.listTop_queryAgent {
   width: 100%;
   height: 1.1rem;
   position: fixed;

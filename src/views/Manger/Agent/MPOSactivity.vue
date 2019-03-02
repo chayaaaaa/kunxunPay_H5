@@ -14,7 +14,7 @@
         <li>激活奖励
           <van-switch
             size="15px"
-            v-model="activationStatus"
+            v-model="showOff"
             inactive-color="#D9D9D9"
             active-color="#1c8cff"
           />
@@ -27,12 +27,7 @@
       </ul>
       <ul class="ul">
         <li>周期任务奖励
-          <van-switch
-            size="15px"
-            v-model="cycleStatus"
-            inactive-color="#D9D9D9"
-            active-color="#1c8cff"
-          />
+          <van-switch size="15px" v-model="showOn" inactive-color="#D9D9D9" active-color="#1c8cff"/>
         </li>
         <li>
           第一期周期奖励金额
@@ -72,6 +67,7 @@
 <script>
 import { Toast, MessageBox } from "mint-ui";
 import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import commonJS from "@/JS/commonJS.js";
 const axios = require("axios");
 export default {
   name: "MPOSactivity",
@@ -87,7 +83,9 @@ export default {
       threeMonth: "", //第三
       fourMonth: "", //第四
       fiveMonth: "", //第五
-      sixMonth: "" //第六
+      sixMonth: "", //第六
+      showOff: false,
+      showOn: false
     };
   },
   created() {
@@ -105,18 +103,80 @@ export default {
     },
     save() {
       /*  MessageBox("上级商户未配置业务！"); */
-      if (this.activationStatus == false) {
+      if (this.showOff == false) {
         this.activationStatus = 1;
       } else {
         this.activationStatus = 0;
       }
-      if (this.cycleStatus == false) {
+      if (this.showOn == false) {
         this.cycleStatus = 1;
       } else {
         this.cycleStatus = 0;
       }
       console.log(this.activationStatus);
       console.log(this.cycleStatus);
+      if (!this.firstMonth) {
+        Toast("请设置第一期周期奖励金额");
+        return;
+      }
+      if (!this.secondMonth) {
+        Toast("请设置第二期周期奖励金额");
+        return;
+      }
+      if (!this.threeMonth) {
+        Toast("请设置第三期周期奖励金额");
+        return;
+      }
+      if (!this.fourMonth) {
+        Toast("请设置第四期周期奖励金额");
+        return;
+      }
+      if (!this.fiveMonth) {
+        Toast("请设置第五期周期奖励金额");
+        return;
+      }
+      if (!this.sixMonth) {
+        Toast("请设置第六期周期奖励金额");
+        return;
+      }
+      var params = new URLSearchParams();
+      params.append(
+        "access_token",
+        JSON.parse(window.localStorage.getItem("token")).access_token
+      );
+      params.append("merchantId", this.merchantId);
+      params.append("activationMoney", this.activationMoney);
+      params.append("activationStatus", this.activationStatus);
+      params.append("cycleStatus", this.cycleStatus);
+      params.append("firstMonth", this.firstMonth);
+      params.append("secondMonth", this.secondMonth);
+      params.append("threeMonth", this.threeMonth);
+      params.append("fourMonth", this.fourMonth);
+      params.append("fiveMonth", this.fiveMonth);
+      params.append("sixMonth", this.sixMonth);
+      params.append("number", Math.random());
+      axios
+        .post(
+          `${BASE_URL}/msmng/api/configdepositandmpos/mposActivityConfig`,
+          params,
+          {
+            header: {
+              "Access-Control-Allow-Origin": "*"
+            }
+          }
+        )
+        .then(response => {
+          console.log(response.data);
+          if (response.data.code == 200) {
+            Toast(response.data.message);
+            this.$router.push("/QueryAgent");
+          } else {
+            Toast(response.data.message);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
     getParams() {
       // 取到路由带过来的参数
@@ -126,15 +186,18 @@ export default {
   },
   mounted() {
     getRefreshToken();
+    let queryData = {
+      merchantId: commonJS.getUrlKey("id"),
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token,
+      number: Math.random()
+    };
+    console.log(queryData);
     axios
       .get(
-        `${BASE_URL}/msmng/api/configdepositandmpos/showMposActivityConfig?merchantId=${
-          this.merchantId
-        }&access_token=${
-          JSON.parse(window.localStorage.getItem("token")).access_token
-        }`,
+        `${BASE_URL}/msmng/api/configdepositandmpos/showMposActivityConfig`,
         {
-          params: {}
+          params: queryData
         }
       )
       .then(response => {

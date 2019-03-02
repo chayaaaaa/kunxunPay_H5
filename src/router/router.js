@@ -70,7 +70,7 @@ const routes = [
     meta: {
       required: true,
     }
-  },{ // 代理利润页面
+  }, { // 代理利润页面
     path: '/agentProfit',
     component: resolve => require(['@/views/Manger/Agent/agentProfit.vue'], resolve),
     meta: {
@@ -90,7 +90,7 @@ const routes = [
       required: true,
     }
   }, { // 代理详细页面
-    path: '/AgentDetails',
+    path: '/AgentDetails/:merchantId',
     name: 'AgentDetails',
     component: resolve => require(['@/views/Manger/Agent/AgentDetails.vue'], resolve),
     meta: {
@@ -111,8 +111,8 @@ const routes = [
       required: true,
     }
   }, { // MOPS活动页面
-    path: '/MPOSactivity',
-    name:'MPOSactivity',
+    path: '/MPOSactivity/:id',
+    name: 'MPOSactivity',
     component: resolve => require(['@/views/Manger/Agent/MPOSactivity.vue'], resolve),
     meta: {
       required: true,
