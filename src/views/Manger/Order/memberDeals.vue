@@ -14,12 +14,15 @@
     </mt-popup>
     <!-- 选择栏 -->
     <div class="Choice">
-      <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
-      <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
-      <div class="CicTime">
+      <div class="CliTitle">
+        <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
+        <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
+      </div>
+      <div class="CicTime"  @touchmove.prevent>
         <!-- 时间选择器 -->
-        <li class="endTime" @click="showStartTime()">开始日期</li>
-        <li class="endTime" @click="showStartTime()">结束日期</li>
+        <input class="startTime choiceTime" onfocus="this.blur()" @click="showStartTime()" placeholder="开始日期" v-model="startTime">
+        <span class="memberDeals_span">-</span>
+        <input class="endTime choiceTime" onfocus="this.blur()" @click="showStartTime()" placeholder="结束日期" v-model="endTime">
 
         <mt-datetime-picker
           v-model="currentDate"
@@ -29,6 +32,8 @@
           month-format="{value} 月"
           date-format="{value} 日"
           @confirm="sure"
+          :startDate="startDate"
+          :endDate="endDate"
         ></mt-datetime-picker>
         <mt-datetime-picker
           v-model="currentDate"
@@ -38,13 +43,15 @@
           month-format="{value} 月"
           date-format="{value} 日"
           @confirm="sureTwo"
+          :startDate="startDate"
+          :endDate="endDate"
         ></mt-datetime-picker>
         <!-- 含未消费 -->
         <div class="consume">
           <van-checkbox v-model="checked" checked-color="#fff" @change="toggle()">含未消费</van-checkbox>
         </div>
       </div>
-      <div class="showDetail">
+      <div class="showDetail showDetail_memberDeals">
         <div class="left">
           <p>
             <img src="@/assets/image/Manger/Trade/fanxian.png">总交易额
@@ -173,7 +180,6 @@ export default {
       showListPages: true, // 原始数据
       showQueryPages: false, // 显示查询数据
       nothing: false, // 没有数据
-      rangeTime: "", // 开始&结束时间
       startTime: "", // 开始时间
       endTime: "", // 结束时间
       /* 选择代理商 */
@@ -183,10 +189,10 @@ export default {
       display: true,
       showThis: false,
       showalltime: false,
-      minDate: new Date(1990, 1, 1),
-      maxDate: new Date(2030, 1, 1),
+      startDate: new Date(2018, 1, 1),
+      endDate: new Date(2030, 1, 1),
       currentDate: new Date(),
-      showText: JSON.parse(window.localStorage.getItem("userInfo")).name // 显示总代理
+      showText: JSON.parse(window.localStorage.getItem("userInfo")).name, // 显示总代理
     };
   },
 
@@ -199,6 +205,7 @@ export default {
       m = m < 10 ? "0" + m : m;
       let d = date.getDate();
       d = d < 10 ? "0" + d : d;
+
       return y + "-" + m + "-" + d;
     },
     //开始
@@ -268,8 +275,6 @@ export default {
       this.$router.push("/cashBack");
     },
     Confirm() {
-      this.startTime = this.rangeTime["0"];
-      this.endTime = this.rangeTime[1];
       let queryData = {
         qdcrmUserId: this.value,
         access_token: JSON.parse(window.localStorage.getItem("token"))
@@ -310,6 +315,7 @@ export default {
     cancel() {
       this.showOrgan = false;
     },
+
     onChange(picker, value, index) {
       this.textvalue = value.text;
       this.value = value.id;
@@ -502,22 +508,7 @@ export default {
   .picker {
     background: #fff;
   }
-  /* 含未消费 */
-  .consume {
-    width: 2rem;
-    .van-checkbox__icon {
-      height: 20px !important;
-      .van-checkbox__label {
-        line-height: 10px !important;
-      }
-    }
-    .van-icon {
-      margin-top: 0.2rem !important;
-    }
-    .van-icon::before {
-      display: none !important;
-    }
-  }
+
   /* 代理商选择 */
   .select {
     width: 50%;
@@ -539,9 +530,64 @@ export default {
   .Choice {
     width: 100%;
     height: 3.36rem;
-    .Cli {
-      overflow: hidden;
-      /*  white-space: nowrap; */
+    .CliTitle {
+      width: 20%;
+      float: left;
+      .Cli {
+        overflow: hidden;
+        -webkit-overflow:hidden; 
+      }
+    }
+    .CicTime {
+      width: 100;
+      width: 80%;
+      float: left;
+      .mint-popup{
+        width: 100%;
+        border-radius: 0;
+        background: #fff;
+      }
+      .choiceTime {
+        text-align: center;
+        width: 26%;
+        background: #fff;
+        float: left;
+        height: 0.6rem;
+        line-height: 0.6rem;
+        font-size: 0.3rem;
+        border-radius: 5px; /* no */
+        color: #d9d9d9;
+      }
+      .startTime {
+        margin-left: 0.5rem;
+        margin-right: 0.2rem;
+      }
+      .endTime {
+        margin-left: 0.2rem;
+      }
+      .memberDeals_span {
+        width: 2%;
+        float: left;
+        height: 0.6rem;
+        line-height: 0.6rem;
+      }
+    }
+    /* 含未消费 */
+    .consume {
+      width: 25%;
+      float: right;
+      .van-checkbox__icon {
+        height: 20px !important;
+        .van-checkbox__label {
+          line-height: 10px !important;
+        }
+      }
+      .van-icon {
+        margin-top: 0.2rem !important;
+      }
+      .van-icon::before {
+        display: none !important;
+      }
     }
   }
   /* 列表 */
@@ -643,8 +689,8 @@ export default {
 .el-date-editor .el-range-separator {
   line-height: 0.5rem;
 }
-.showDetail {
-  margin-top: 0.2rem;
+.showDetail_memberDeals {
+  margin-top: 0.9rem !important;
 }
 .el-date-editor .el-range-input {
   font-size: 0.2rem;

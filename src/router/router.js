@@ -90,11 +90,12 @@ const routes = [
       required: true,
     }
   }, { // 代理详细页面
-    path: '/AgentDetails/:merchantId',
+    path: '/AgentDetails',
     name: 'AgentDetails',
     component: resolve => require(['@/views/Manger/Agent/AgentDetails.vue'], resolve),
     meta: {
       required: true,
+   /*    keepAlive: true // 需要被缓存 */
     }
   }, { // 押金返现页面
     path: '/retrunDeposit',
@@ -111,7 +112,7 @@ const routes = [
       required: true,
     }
   }, { // MOPS活动页面
-    path: '/MPOSactivity/:id',
+    path: '/MPOSactivity',
     name: 'MPOSactivity',
     component: resolve => require(['@/views/Manger/Agent/MPOSactivity.vue'], resolve),
     meta: {

@@ -16,7 +16,7 @@
         <span>基本信息（必填）</span>
       </p>
       <ul class="listEntry" tag="listEntry">
-        <li>商户类型
+        <li class="li">商户类型
           <el-select v-model="MerchantsType" dir="rtl" placeholder="省代理">
             <el-option
               v-for="item in MerchantsTypes"
@@ -26,7 +26,7 @@
             ></el-option>
           </el-select>
         </li>
-        <li>客户类型
+        <li class="li">客户类型
           <el-select v-model="CustomerType" slot="CustomerType" dir="rtl" placeholder="个人">
             <el-option
               v-for="item in CustomerTypes"
@@ -36,12 +36,26 @@
             ></el-option>
           </el-select>
         </li>
-        <!--         <li>所属上级
-          <el-select v-model="Superior" slot="Superior" dir="rtl" placeholder="创鑫机构">
-            <el-option label="创鑫机构" value="15"></el-option>
-          </el-select>
-        </li>-->
-        <li>
+        <li class="li">
+          选择商户
+          <input
+            class="inputStyle"
+            type="text"
+            v-model="qdcrmUserId"
+            placeholder="请选择商户"
+            style="direction: rtl;"
+            @click="showOrgan = true"
+          >
+        </li>
+        <!-- 弹出层 -->
+        <mt-popup v-model="showOrgan" popup-transition="popup-fade">
+          <!-- title -->
+          <div class="title">选 择 商 户</div>
+          <van-picker :columns="queryAgents" @change="onChange"/>
+          <div class="box cancel" @click="cancel()">取消</div>
+          <div class="box Confirm" @click="Confirm()">确认</div>
+        </mt-popup>
+        <li class="li">
           短信签名
           <input
             class="inputStyle"
@@ -51,7 +65,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           商户编号
           <input
             class="inputStyle"
@@ -63,7 +77,7 @@
             required="required"
           >
         </li>
-        <li>
+        <li class="li">
           商户名称
           <input
             class="inputStyle"
@@ -73,7 +87,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           联系人
           <input
             class="inputStyle"
@@ -83,7 +97,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           联系电话
           <input
             class="inputStyle"
@@ -93,19 +107,20 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           商户状态
           <span>待激活</span>
         </li>
       </ul>
     </div>
     <el-button type="primary" class="btn" @click.once="addAgentDetails01()">下一步</el-button>
-    <!--  <settleaccount v-show="showAddDetails == true"></settleaccount> -->
   </div>
 </template>
 <script>
+import "@/CSSFILE/tabbar.css";
+import "@/CSSFILE/Order.css";
+import "@/CSSFILE/force.css";
 import { Toast, MessageBox } from "mint-ui";
-/* import settleaccount from "@/views/Manger/Agent/settleaccount.vue"; */
 import { checkToken, getRefreshToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
 export default {
@@ -126,6 +141,9 @@ export default {
       addAgentDetails: [], // 获取代理详情
       showAddDetails: false, // 显示下一步
       qdcrmUserId: "", // 所属上级商户号
+      queryAgents: [], // 储存代理商数据
+      showOrgan: false,
+      value: "", //qdcrmUserId
       /* ========     代理录入基本信息下拉框    ======== */
       // 商户类型下拉框
       MerchantsTypes: [
@@ -184,6 +202,19 @@ export default {
     prev() {
       this.$router.go(-1);
     },
+    Confirm() {
+      this.showOrgan = false;
+    },
+    cancel() {
+      this.showOrgan = false;
+    },
+    onChange(picker, value, index) {
+      this.qdcrmUserId = value.text;
+      this.value = value.id;
+      console.log(this.value);
+      console.log(this.qdcrmUserId);
+      console.log(index);
+    },
     addAgentDetails01() {
       getRefreshToken();
       let _this = this;
@@ -199,8 +230,8 @@ export default {
         MessageBox("请选择客户类型");
         return;
       }
-      if (!_this.MerchantsType) {
-        MessageBox("请选择商户类型");
+      if (!_this.qdcrmUserId) {
+        MessageBox("请选择代理");
         return;
       }
       if (!_this.sms) {
@@ -235,6 +266,13 @@ export default {
         MessageBox("手机号码格式有误，请重填");
         return;
       }
+      let res = {
+        qdcrmUserId: this.value,
+        merchantId: this.value,
+        merchantName: this.name
+      };
+      console.log(res);
+      window.localStorage.setItem("agentDetails", JSON.stringify(res));
       // 发起验证请求
       axios
         .get(
@@ -258,8 +296,7 @@ export default {
               bizType: this.MerchantsType, // 商户类型
               merchantName: this.name, // 商户名称
               merchantStatus: this.status, // 商户状态
-              qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-                .qdcrmUserId, // 上级商户号
+              qdcrmUserId: this.value, // 上级商户号
               smsSign: this.sms, // 短信签名
               contactName: this.Linkman, // 联系人
               mobile: this.LinkPhone, // 联系手机
@@ -279,10 +316,54 @@ export default {
         });
     }
   },
-  mounted() {}
+  mounted() {
+    getRefreshToken();
+    let queryData = {
+      qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+        .qdcrmUserId,
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token
+    };
+    axios
+      .get(`${BASE_URL}/msmng/api/agent/getAgentTree`, {
+        params: queryData
+      })
+      .then(response => {
+        this.queryAgents = response.data.data;
+        console.log(this.queryAgents);
+      })
+      .catch(function(err) {
+        Toast(err.message);
+      });
+  }
 };
 </script>
 <style lang="less">
+.van-picker__columns {
+  margin-bottom: -1.5rem;
+  .van-picker-column {
+    margin-top: -1rem;
+  }
+  .van-hairline--top-bottom {
+    width: 30% !important;
+    margin-left: 35%;
+  }
+
+  .van-hairline--top-bottom::after {
+    border: 2px solid #1c8cff !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .van-picker__frame,
+  .van-picker__loading .van-loading {
+    top: 32%;
+  }
+}
+.van-list__finished-text,
+.van-list__loading-text {
+  height: 2.5rem;
+  line-height: 1rem;
+}
 @blue: #1c8cff;
 /* toast */
 .mint-msgbox {
@@ -365,7 +446,6 @@ export default {
     width: 90%;
     height: 1.2rem;
     margin-left: 5%;
-    border-bottom: 1px solid #ececec;
     line-height: 1.2rem;
     color: #222222;
     font-size: 0.38rem;
@@ -401,10 +481,12 @@ export default {
       margin-left: -1.1rem;
     }
   }
+  .li {
+    border-bottom: 1px solid #ececec; /* no */
+  }
   li {
     width: 90%;
     height: 1.2rem;
-    border-bottom: 1px solid #ececec;
     line-height: 1.2rem;
     color: #222222;
     font-size: 0.38rem;

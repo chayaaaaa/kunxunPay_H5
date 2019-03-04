@@ -40,7 +40,7 @@ export default {
           console.log(response);
           Toast(response.data.message);
           window.localStorage.removeItem("messageFirstPage");
-          this.$router.push('/QueryAgent')
+          this.$router.push("/QueryAgent");
         })
         .catch(function(err) {
           Toast(err.data.message);
@@ -61,11 +61,16 @@ export default {
   background-size: 100% 100%;
   top: 0;
   bottom: 0rem;
+
   p {
-    text-align: center;
-    margin-top: 88%;
     color: #fff;
     font-size: 0.5rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: Center;
+    margin-top: 0.2rem;
   }
   ul {
     width: 100%;

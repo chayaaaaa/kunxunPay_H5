@@ -1,236 +1,240 @@
 <template>
   <div class="AgentDetails">
-    <!-- ==========   代 理 详 细 页 面   ========== -->
-    <mt-header title="代理详情" fixed>
-      <mt-button icon="back" @click="prev()" slot="left"></mt-button>
-    </mt-header>
-    <!-- ==========         选 项 卡         ========== -->
-    <div class="AgentDetails_Tabbar">
-      <ul>
-        <li @click="current=0">
-          <img src="@/assets/image/Manger/Agents/ic-agentDetails01.png">
-          <p :class="{'curr' :current===0 }">基本信息</p>
-          <span v-show="current==0"></span>
-        </li>
-        <li @click="current=1">
-          <img src="@/assets/image/Manger/Agents/ic-agentDetails02.png">
-          <p :class="{'curr' :current===1 }">结算信息</p>
-          <span v-show="current==1"></span>
-        </li>
-        <li @click="current=2">
-          <img src="@/assets/image/Manger/Agents/ic-agentDetails03.png">
-          <p :class="{'curr' :current===2 }">业务配置</p>
-          <span v-show="current==2"></span>
-        </li>
-      </ul>
-    </div>
-    <!-- 选 项 卡 内 容 -->
-    <!-- 基本信息 -->
-    <div class="baseMessage" v-if="current==0">
-      <ul>
-        <li>
-          <span></span>
-          <i v-if="biztype=='O' || biztype=='o'">商户类型：机构</i>
-          <i v-if="biztype=='P'">商户类型：省代理</i>
-          <i v-if="biztype=='C'">商户类型：市代理</i>
-          <i v-if="biztype=='D'">商户类型：区县代理</i>
-          <i v-if="biztype=='A'">商户类型：代办点</i>
-          <i v-if="biztype=='I'">商户类型：行业代理</i>
-        </li>
-        <li>
-          <span></span>
-          客户类型：
-          <b v-if="merType==1">个人</b>
-          <b v-if="merType==2">企业</b>
-          <b v-if="merType==3">大客户</b>
-          <b v-if="merType==4">机构</b>
-        </li>
-        <li>
-          <span></span>
-          短信签名：{{smsSign}}
-        </li>
-        <li>
-          <span></span>
-          商户编号：{{merchantId}}
-        </li>
-        <li>
-          <span></span>
-          商户名称：{{merchantName}}
-        </li>
-        <li>
-          <span></span>
-          联系人：{{contactName}}
-        </li>
-        <li>
-          <span></span>
-          联系电话：{{mobile}}
-        </li>
-        <li>
-          <span></span>
-          商户状态：
-          <b v-if="status=='0'">正常</b>
-          <b v-if="status=='1'">注销</b>
-          <b v-if="status=='2'">待激活</b>
-        </li>
-      </ul>
-    </div>
-    <!-- 结算信息 -->
-    <div class="settleMessage" v-if="current==1 && accountHolder != ''">
-      <ul>
-        <li>
-          <span></span>
-          开户名：{{accountHolder}}
-        </li>
-        <li>
-          <span></span>
-          开户省：{{provinceCode}}
-        </li>
-        <li>
-          <span></span>
-          开户市：{{cityCode}}
-        </li>
-        <li>
-          <span></span>
-          开户银行：{{bankCode}}
-        </li>
-        <li>
-          <span></span>
-          <i v-if="mark==1">对公/对私：对公</i>
-          <i v-if="mark==2">对公/对私：对私</i>
-        </li>
-        <li>
-          <span></span>
-          开户支行：{{bankBranchCode}}
-        </li>
-        <li>
-          <span></span>
-          开户账号：{{card}}
-        </li>
-      </ul>
-    </div>
-    <div class="settleMessage other" v-if="current==1 && accountHolder == ''">
-      <img src="@/assets/image/Manger/Trade/nothing.png">
-      <p>未设置结算信息</p>
-    </div>
-    <!-- 业务配置 -->
-    <div class="BusinessConfiguration_body" v-if="current==2">
-      <ul class="ul" v-for="(item,index) in configList" :key="index">
-        <li>
-          {{item.bizName}}
-          <span v-if="item.isAdd==1">已开启</span>
-          <span v-else>已关闭</span>
-        </li>
-        <!-- 配置详情 -->
-        <div class="configDetail" v-if="item.isAdd==1">
-          <ul class="configList" v-for="val in item.businessModel" :key="val.a">
-            <li>
-              <img src="@/assets/image/Manger/Agents/ic-ICcard.png">
-              {{item.bizName}}
+  <!--   <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"> -->
+        <!-- ==========   代 理 详 细 页 面   ========== -->
+        <mt-header title="代理详情" fixed>
+          <mt-button icon="back" @click="prev()" slot="left"></mt-button>
+        </mt-header>
+        <!-- ==========         选 项 卡         ========== -->
+        <div class="AgentDetails_Tabbar">
+          <ul>
+            <li @click="current=0">
+              <img src="@/assets/image/Manger/Agents/ic-agentDetails01.png">
+              <p :class="{'curr' :current===0 }">基本信息</p>
+              <span v-show="current==0"></span>
             </li>
-            <li>
-              <span>工作日费率</span>
-              <p>
-                <span class="input">{{val.fixed}}</span>
-                <b>+</b>
-                <span class="input">{{val.percent}}</span>
-                <i>%</i>
-              </p>
+            <li @click="current=1">
+              <img src="@/assets/image/Manger/Agents/ic-agentDetails02.png">
+              <p :class="{'curr' :current===1 }">结算信息</p>
+              <span v-show="current==1"></span>
             </li>
-            <li>
-              <span>节假日费率</span>
-              <p>
-                <span class="input">{{val.holidayFixed}}</span>
-                <b>+</b>
-                <span class="input">{{val.holidayPercent}}</span>
-                <i>%</i>
-              </p>
-            </li>
-            <li>
-              <span>交易限额</span>
-              <p>
-                <span class="input">{{val.caps}}</span>
-                <b>－</b>
-                <span class="in input">{{val.limits}}</span>
-              </p>
-            </li>
-            <li>
-              <span>代理工作日(结算价)</span>
-              <p>
-                <span class="input">{{val.overallFixedRatio}}</span>
-                <b>+</b>
-                <span class="input">{{val.overallProfitRatio}}</span>
-                <i>%</i>
-              </p>
-            </li>
-            <li>
-              <span>代理节假日(结算价)</span>
-              <p>
-                <span class="input">{{val.overallHolidayFixed}}</span>
-                <b>+</b>
-                <span class="input">{{val.overallHolidayPercent}}</span>
-                <i>%</i>
-              </p>
+            <li @click="current=2">
+              <img src="@/assets/image/Manger/Agents/ic-agentDetails03.png">
+              <p :class="{'curr' :current===2 }">业务配置</p>
+              <span v-show="current==2"></span>
             </li>
           </ul>
         </div>
-      </ul>
-    </div>
-    <!-- 底部路由 -->
-    <div class="bottom" @click="current=4">
-      <img src="@/assets/image/Manger/Agents/more.png">
-    </div>
-    <!-- 弹出框 -->
-    <div class="BouncedPage" v-if="current===4">
-      <!-- 显示时间 -->
-      <div class="showTime">
-        <span class="month">{{ timeDate | day }}</span>
-        <span class="week">{{ timeDate | week }}</span>
-        <span class="day">{{ timeDate | year }}</span>
-      </div>
-      <!-- logo -->
-      <div class="logo">
-        <img src="@/assets/image/Manger/Agents/M7 .png">
-        <b>M7
-          <br>创造财富
-          <br>享受生活
-        </b>
-        <img class="img" src="@/assets/image/Manger/Agents/logo.png">
-      </div>
-      <!-- 选择业务 -->
-      <div class="choose_Business">
-        <ul>
-          <li @click="activateTheMerchants()" v-if="merchantStatus == 2">
-            <img src="@/assets/image/Manger/Agents/ic-Mer.png">
-            <p>激活商户</p>
-          </li>
-          <li @click="resetPWD()" v-if="merchantStatus != 2">
-            <img src="@/assets/image/Manger/Agents/ic-reset.png">
-            <p>重置密码</p>
-          </li>
-          <li @click="toBusinessConfiguration()">
-            <img src="@/assets/image/Manger/Agents/ic-set.png">
-            <p>业务配置</p>
-          </li>
-          <li @click="ModifyTheMerchants()">
-            <img src="@/assets/image/Manger/Agents/ic-change.png">
-            <p>修改商户</p>
-          </li>
-          <li @click="detailMerchants()" v-if="merchantStatus == 2 ">
-            <img src="@/assets/image/Manger/Agents/del.png">
-            <p>删除商户</p>
-          </li>
-          <li @click="toretrunDeposit()">
-            <img src="@/assets/image/Manger/Agents/ic-withdraw.png">
-            <p>服务费设置</p>
-          </li>
-          <li @click="toMPOSactivity()">
-            <img src="@/assets/image/Manger/Agents/ic-MPOS.png">
-            <p>MPOS活动</p>
-          </li>
-        </ul>
-      </div>
-      <div class="close" @click="current=0">×</div>
-    </div>
+        <!-- 选 项 卡 内 容 -->
+        <!-- 基本信息 -->
+        <div class="baseMessage" v-if="current==0">
+          <ul>
+            <li>
+              <span></span>
+              <i v-if="biztype=='O' || biztype=='o'">商户类型：机构</i>
+              <i v-if="biztype=='P'">商户类型：省代理</i>
+              <i v-if="biztype=='C'">商户类型：市代理</i>
+              <i v-if="biztype=='D'">商户类型：区县代理</i>
+              <i v-if="biztype=='A'">商户类型：代办点</i>
+              <i v-if="biztype=='I'">商户类型：行业代理</i>
+            </li>
+            <li>
+              <span></span>
+              客户类型：
+              <b v-if="merType==1">个人</b>
+              <b v-if="merType==2">企业</b>
+              <b v-if="merType==3">大客户</b>
+              <b v-if="merType==4">机构</b>
+            </li>
+            <li>
+              <span></span>
+              短信签名：{{smsSign}}
+            </li>
+            <li>
+              <span></span>
+              商户编号：{{merchantId}}
+            </li>
+            <li>
+              <span></span>
+              商户名称：{{merchantName}}
+            </li>
+            <li>
+              <span></span>
+              联系人：{{contactName}}
+            </li>
+            <li>
+              <span></span>
+              联系电话：{{mobile}}
+            </li>
+            <li>
+              <span></span>
+              商户状态：
+              <b v-if="status=='0'">正常</b>
+              <b v-if="status=='1'">注销</b>
+              <b v-if="status=='2'">待激活</b>
+            </li>
+          </ul>
+        </div>
+        <!-- 结算信息 -->
+        <div class="settleMessage" v-if="current==1 && accountHolder != ''">
+          <ul>
+            <li>
+              <span></span>
+              开户名：{{accountHolder}}
+            </li>
+            <li>
+              <span></span>
+              开户省：{{provinceCode}}
+            </li>
+            <li>
+              <span></span>
+              开户市：{{cityCode}}
+            </li>
+            <li>
+              <span></span>
+              开户银行：{{bankCode}}
+            </li>
+            <li>
+              <span></span>
+              <i v-if="mark==1">对公/对私：对公</i>
+              <i v-if="mark==2">对公/对私：对私</i>
+            </li>
+            <li>
+              <span></span>
+              开户支行：{{bankBranchCode}}
+            </li>
+            <li>
+              <span></span>
+              开户账号：{{card}}
+            </li>
+          </ul>
+        </div>
+        <div class="settleMessage other" v-if="current==1 && accountHolder == ''">
+          <img src="@/assets/image/Manger/Trade/nothing.png">
+          <p>未设置结算信息</p>
+        </div>
+        <!-- 业务配置 -->
+        <div class="BusinessConfiguration_body" v-if="current==2">
+          <ul class="ul" v-for="(item,index) in configList" :key="index">
+            <li>
+              {{item.bizName}}
+              <span v-if="item.isAdd==1">已开启</span>
+              <span v-else>已关闭</span>
+            </li>
+            <!-- 配置详情 -->
+            <div class="configDetail" v-if="item.isAdd==1">
+              <ul class="configList" v-for="val in item.businessModel" :key="val.a">
+                <li>
+                  <img src="@/assets/image/Manger/Agents/ic-ICcard.png">
+                  {{item.bizName}}
+                </li>
+                <li>
+                  <span>工作日费率</span>
+                  <p>
+                    <span class="input">{{val.fixed}}</span>
+                    <b>+</b>
+                    <span class="input">{{val.percent}}</span>
+                    <i>%</i>
+                  </p>
+                </li>
+                <li>
+                  <span>节假日费率</span>
+                  <p>
+                    <span class="input">{{val.holidayFixed}}</span>
+                    <b>+</b>
+                    <span class="input">{{val.holidayPercent}}</span>
+                    <i>%</i>
+                  </p>
+                </li>
+                <li>
+                  <span>交易限额</span>
+                  <p>
+                    <span class="input">{{val.caps}}</span>
+                    <b>－</b>
+                    <span class="in input">{{val.limits}}</span>
+                  </p>
+                </li>
+                <li>
+                  <span>代理工作日(结算价)</span>
+                  <p>
+                    <span class="input">{{val.overallFixedRatio}}</span>
+                    <b>+</b>
+                    <span class="input">{{val.overallProfitRatio}}</span>
+                    <i>%</i>
+                  </p>
+                </li>
+                <li>
+                  <span>代理节假日(结算价)</span>
+                  <p>
+                    <span class="input">{{val.overallHolidayFixed}}</span>
+                    <b>+</b>
+                    <span class="input">{{val.overallHolidayPercent}}</span>
+                    <i>%</i>
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </ul>
+        </div>
+        <!-- 底部路由 -->
+        <div class="bottom" @click="current=4">
+          <img src="@/assets/image/Manger/Agents/more.png">
+        </div>
+        <!-- 弹出框 -->
+        <div class="BouncedPage" v-if="current===4">
+          <!-- 显示时间 -->
+          <div class="showTime">
+            <span class="month">{{ timeDate | day }}</span>
+            <span class="week">{{ timeDate | week }}</span>
+            <span class="day">{{ timeDate | year }}</span>
+          </div>
+          <!-- logo -->
+          <div class="logo">
+            <img src="@/assets/image/Manger/Agents/M7 .png">
+            <b>M7
+              <br>创造财富
+              <br>享受生活
+            </b>
+            <img class="img" src="@/assets/image/Manger/Agents/logo.png">
+          </div>
+          <!-- 选择业务 -->
+          <div class="choose_Business">
+            <ul>
+              <li @click="activateTheMerchants()" v-if="merchantStatus == 2">
+                <img src="@/assets/image/Manger/Agents/ic-Mer.png">
+                <p>激活商户</p>
+              </li>
+              <li @click="resetPWD()" v-if="merchantStatus != 2">
+                <img src="@/assets/image/Manger/Agents/ic-reset.png">
+                <p>重置密码</p>
+              </li>
+              <li @click="toBusinessConfiguration()">
+                <img src="@/assets/image/Manger/Agents/ic-set.png">
+                <p>业务配置</p>
+              </li>
+              <li @click="ModifyTheMerchants()">
+                <img src="@/assets/image/Manger/Agents/ic-change.png">
+                <p>修改商户</p>
+              </li>
+              <li @click="detailMerchants()" v-if="merchantStatus == 2 ">
+                <img src="@/assets/image/Manger/Agents/del.png">
+                <p>删除商户</p>
+              </li>
+              <li @click="toretrunDeposit()">
+                <img src="@/assets/image/Manger/Agents/ic-withdraw.png">
+                <p>服务费设置</p>
+              </li>
+              <li @click="toMPOSactivity()">
+                <img src="@/assets/image/Manger/Agents/ic-MPOS.png">
+                <p>MPOS活动</p>
+              </li>
+            </ul>
+          </div>
+          <div class="close" @click="current=0">×</div>
+        </div>
+<!--       </router-view>
+    </keep-alive> -->
   </div>
 </template>
 <script>
@@ -315,15 +319,6 @@ export default {
       return week;
     }
   },
-  created() {
-    this.getParams();
-  },
-
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
-  },
-
   methods: {
     prev() {
       this.$router.go(-1);
@@ -447,17 +442,11 @@ export default {
           Toast(err.data.message);
         });
     },
-
-    getParams() {
-      // 取到路由带过来的参数
-      var routerParams = this.$route.params.id;
-      var list = this.$route.params.item;
-      // 将数据放在当前组件的数据内
-    }
   },
   mounted() {
     let queryData = {
-      merchantId: commonJS.getUrlKey("merchantId"),
+      merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .merchantId,
       access_token: JSON.parse(window.localStorage.getItem("token"))
         .access_token,
       number: Math.random()
@@ -470,8 +459,10 @@ export default {
       .then(response => {
         getRefreshToken();
         console.log(response.data);
-        let queryAgentDetailList = response.data.data
+        let queryAgentDetailList = response.data.data;
+        console.log(queryAgentDetailList)
         this.smsSign = queryAgentDetailList.merchant.smsSign;
+        console.log(this.smsSign)
         this.merType = queryAgentDetailList.merchant.merType;
         this.accountHolder = queryAgentDetailList.bank.accountHolder;
         this.provinceCode = queryAgentDetailList.bank.provinceCode;
@@ -493,13 +484,15 @@ export default {
         this.status = queryAgentDetailList.merchant.status;
         this.merchantId = queryAgentDetailList.merchant.merchantId;
         this.qdcrmUserId = queryAgentDetailList.merchant.qdcrmUserId;
+        window.localStorage.setItem('AgentDetailList',JSON.stringify(queryAgentDetailList))
       })
       .catch(function(error) {
         console.log(error);
       });
     // 业务配置数据
     let data = {
-      qdcrmUserId: this.qdcrmUserId,
+      qdcrmUserId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .qdcrmUserId,
       access_token: JSON.parse(window.localStorage.getItem("token"))
         .access_token,
       number: Math.random()

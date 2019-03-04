@@ -35,10 +35,14 @@ export default {
   top: 0;
   bottom: 0rem;
   p {
-    text-align: center;
-    margin-top: 88%;
     color: #fff;
     font-size: 0.5rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: Center;
+    margin-top: 0.2rem;
   }
   ul {
     width: 100%;

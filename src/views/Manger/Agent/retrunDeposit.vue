@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     prev() {
-      this.$router.push("/QueryAgent");
+      this.$router.go(-1);
     },
     getParams() {
       // 取到路由带过来的参数
@@ -105,8 +105,16 @@ export default {
     }
   },
   mounted() {
+    getRefreshToken();
+    this.merchantId = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantId;
+    this.merchantName = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantName;
     let obj = {
-      merchantId: this.merchantId,
+      merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .merchantId,
       access_token: JSON.parse(window.localStorage.getItem("token"))
         .access_token
     };

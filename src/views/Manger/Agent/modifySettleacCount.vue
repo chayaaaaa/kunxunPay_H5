@@ -26,7 +26,7 @@
         开户账号
         <input
           class="inputStyle"
-          type="text"
+          type="tel"
           v-model="accountId"
           placeholder="请输入开户账号"
           style="direction: rtl;"
@@ -62,17 +62,15 @@
           ></el-option>
         </el-select>
       </li>
-      <li>
-        开户支行
-        <select v-model="branch" id="BRANCH" @change="getProvinceValue(this)">
-          <option value disabled selected class="option">请选择</option>
-          <option
+      <li>开户支行
+        <el-select v-model="branch" id="BRANCH" dir="rtl" @change="getProvinceValue(this)">
+          <el-option
             v-for="item in branchs.bankBranchs"
             :key="item.bankBranchCode"
             :value="item.bankBranchCode"
             :label="item.bankBranchName"
-          ></option>
-        </select>
+          ></el-option>
+        </el-select>
       </li>
       <li>对公/对私
         <el-select
@@ -87,7 +85,6 @@
       </li>
     </ul>
     <el-button type="primary" class="btn" @click="showSuccessed()">提交</el-button>
-    <!--   <successedPage v-show="showSuccessedPage == true"></successedPage> -->
     <!-- 代 理 录 入 成 功 页 面 -->
   </div>
 </template>
@@ -127,19 +124,13 @@ export default {
       citys: [], // 开户市
       banks: [], // 开户地区
 
-      MerchantsType: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .areaType, //商户类型
-      CustomerType: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .merType, //客户类型
-      sms: JSON.parse(window.localStorage.getItem("messageFirstPage")).smsSign, // 短信签名
-      merchantCode: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .merchantId, // 商户编号
-      name: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .merchantName, // 商户名称
-      Linkman: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .contactName, // 联系人
-      LinkPhone: JSON.parse(window.localStorage.getItem("messageFirstPage"))
-        .mobile, // 联系电话
+      MerchantsType: "", //商户类型
+      CustomerType: "", //客户类型
+      sms: "", // 短信签名
+      merchantCode: "", // 商户编号
+      name: "", // 商户名称
+      Linkman: "", // 联系人
+      LinkPhone: "", // 联系电话
       status: "2", // 商户状态
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
         .qdcrmUserId // 所属上级商户号
@@ -147,7 +138,7 @@ export default {
   },
   methods: {
     prev() {
-      this.$router.go(-1);
+      this.$router.push("/QueryAgent");
     },
     getProvinceValue() {
       let provinceCode = {
@@ -268,7 +259,37 @@ export default {
     }
   },
   mounted() {
-    /*   this.reload(); */
+    getRefreshToken();
+    let res = JSON.parse(window.localStorage.getItem("agentDetails"));
+    let queryAgentDetailList = JSON.parse(
+      window.localStorage.getItem("AgentDetailList")
+    );
+    console.log(res);
+    this.MerchantsType = res.bizType;
+    console.log(this.MerchantsType);
+    if (this.MerchantsType == "o" || this.MerchantsType == "O") {
+      this.MerchantsType = "机构";
+    }
+    if (this.MerchantsType == "P") {
+      this.MerchantsType = "省代理";
+    }
+    if (this.MerchantsType == "C") {
+      this.MerchantsType = "市代理";
+    }
+    if (this.MerchantsType == "D") {
+      this.MerchantsType = "区县代理";
+    }
+    if (this.MerchantsType == "A") {
+      this.MerchantsType = "代办点";
+    }
+    if (this.MerchantsType == "I") {
+      this.MerchantsType = "行业代理";
+    }
+    this.sms = queryAgentDetailList.merchant.smsSign;
+    this.LinkPhone = queryAgentDetailList.contact.mobile;
+    this.merchantCode = res.merchantId;
+    this.name = res.merchantName;
+    this.Linkman = res.contactName;
     getProvince()
       .then(response => {
         console.log(response);
@@ -336,32 +357,30 @@ export default {
 }
 .el-select__caret {
   margin-right: -0.8rem;
-  height: 0.7rem;
-  margin-top: 0.45rem;
 }
 .el-select-dropdown {
-  min-width: 0.5rem !important;
-  left: 6.5rem !important;
+  max-width: 9rem !important;
+  min-width: 9rem !important;
+  left: 0.5rem !important;
 }
 #BRANCH {
   float: right;
   margin-top: 0.35rem;
   border: none;
-  width: 5.5rem;
+  width: 6.5rem;
   outline: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   direction: rtl;
+  overflow: hidden;
+  text-overflow: ellipsis; /*文字超出部分以省略号显示*/
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
   font-size: 0.35rem;
-  /* color: #d9d9d9; */
-  color: #222 !important;
-  margin-right: 1rem;
 }
 
 .listE {
-  width: 100%;
+  width: 950%;
   height: auto;
   background: #fff;
   padding-left: 5%;
@@ -371,8 +390,6 @@ export default {
     position: absolute;
     right: 1.5rem;
     color: #222222;
-    /*   border: none; */
-
     .el-option {
       border: none;
     }

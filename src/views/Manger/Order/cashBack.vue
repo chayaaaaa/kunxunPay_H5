@@ -8,39 +8,56 @@
     <mt-popup v-model="showOrgan" popup-transition="popup-fade">
       <!-- title -->
       <div class="title">选 择 代 理 商</div>
-      <!--       <select
-        class="select"
-        v-model="optionValue"
-        :label-in-value="true"
-        @change="getIdValue($event)"
-      >
-        <option selected="selected" disabled="disabled" style="display: none" value>请选择代理商</option>
-        <option
-          v-for="(item,index) in queryAgents"
-          :key="index"
-          :value="item.id"
-          :label="item.text"
-        >{{item.text}}</option>
-      </select>-->
       <van-picker :columns="queryAgents" @change="onChange"/>
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
     </mt-popup>
     <!-- 选择栏 -->
     <div class="Choice">
-      <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
-      <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
-      <div class="CicTime">
-        <el-date-picker
-          v-model="rangeTime"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          @blur="getValue()"
-        ></el-date-picker>
+      <div class="Cli_cashBack">
+        <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
+        <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
       </div>
-      <div class="showDetail">
+      <div class="CicTime_cashBack" @touchmove.prevent>
+        <input
+          class="startTime_cashBack choiceTime_cashBack"
+          onfocus="this.blur()"
+          @click="showStartTime_cashBack()"
+          placeholder="开始日期"
+          v-model="startTime_cashBack"
+        >
+        <span class="cashBack_span">-</span>
+        <input
+          class="endTime_cashBack choiceTime_cashBack"
+          onfocus="this.blur()"
+          @click="showStartTime_cashBack()"
+          placeholder="结束日期"
+          v-model="endTime_cashBack"
+        >
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="picker"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sure_cashBack"
+          :startDate="startDate"
+          :endDate="endDate"
+        ></mt-datetime-picker>
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="pic"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sureTwo_cashBack"
+          :startDate="startDate"
+          :endDate="endDate"
+        ></mt-datetime-picker>
+      </div>
+      <div class="showDetail showDetail_cashBack">
         <div class="left">
           <p>
             <img src="@/assets/image/Manger/Trade/fanxian.png">总返现额
@@ -143,7 +160,7 @@ export default {
       display: true,
       showThis: false,
       showText: JSON.parse(window.localStorage.getItem("userInfo")).name, // 显示总代理
-      textvalue:'',
+      textvalue: "",
       /* 选择器 */
       columns: ["杭州", "宁波", "温州", "嘉兴", "湖州"],
       value: "",
@@ -164,13 +181,15 @@ export default {
       nothing: false, // 没有数据
       optionValue: "", //选择代理商的value
       value: "",
-      rangeTime: "", //时间选择器的值
       queryAgent: "",
       queryAgents: [], // 储存代理商数据
       loading: false,
+      startDate: new Date(2018, 1, 1),
+      endDate: new Date(2030, 1, 1),
+      currentDate: new Date(),
       finished: false,
-      startTime: "",
-      endTime: "",
+      startTime_cashBack: "",
+      endTime_cashBack: "",
       /* tabbar */
       icon: {
         normal: require("@/assets/image/Manger/Trade/icon01.png"),
@@ -185,6 +204,70 @@ export default {
     };
   },
   methods: {
+    // 时间
+    // 格式化获取的时间
+    formatDate(date) {
+      const y = date.getFullYear();
+      let m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+
+      return y + "-" + m + "-" + d;
+    },
+    //开始
+    showStartTime_cashBack() {
+      console.log(this.formatDate(this.$refs.pic.value));
+      this.$refs.pic.open();
+    },
+    sureTwo_cashBack(data) {
+      // 输出格式化后的时间
+      this.startTime_cashBack = this.formatDate(this.$refs.pic.value);
+      this.$refs.picker.open();
+    },
+    sure_cashBack() {
+      // 输出格式化后的时间
+      this.endTime_cashBack = this.formatDate(this.$refs.picker.value);
+      console.log(this.startTime_cashBack);
+      console.log(this.endTime_cashBack);
+      let queryData = {
+        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+          .qdcrmUserId,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        gmtStart: this.startTime_cashBack,
+        gmtEnd: this.endTime_cashBack,
+        currentPage: this.pageNumber + 1,
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/order/queryActiCashback`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data.data);
+          if (response.data.code == 200) {
+            let _this = this;
+            let listDetails = response.data.data.list;
+            _this.querymemberDeals = listDetails;
+            _this.valueLength = response.data.data.paginator.length;
+            console.log(_this.querymemberDeals);
+            console.log(_this.valueLength);
+            _this.totalNum = response.data.data.totalNum;
+            _this.totalMoney = response.data.data.totalMoney;
+            _this.showListPages = false;
+            _this.showQueryPages = true;
+          } else if (response.data.code == 400) {
+            let _this = this;
+            _this.showListPages = false;
+            _this.showQueryList = false;
+            _this.nothing = true;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
+    },
     prev() {
       this.$router.go(-1);
     },
@@ -244,10 +327,6 @@ export default {
     cancel() {
       this.showOrgan = false;
     },
-/*     getIdValue(event) {
-      this.value = event.target.value;
-      console.log(this.value);
-    }, */
     onChange(picker, value, index) {
       this.textvalue = value.text;
       this.value = value.id;
@@ -256,49 +335,7 @@ export default {
       console.log(this.value);
       console.log(index);
     },
-    getValue() {
-      this.startTime = this.rangeTime["0"];
-      this.endTime = this.rangeTime[1];
-      console.log(this.startTime);
-      console.log(this.endTime);
-      let queryData = {
-        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-          .qdcrmUserId,
-        access_token: JSON.parse(window.localStorage.getItem("token"))
-          .access_token,
-        gmtStart: this.startTime,
-        gmtEnd: this.endTime,
-        currentPage: this.pageNumber + 1,
-        number: Math.random()
-      };
-      axios
-        .get(`${BASE_URL}/msmng/api/order/queryActiCashback`, {
-          params: queryData
-        })
-        .then(response => {
-          console.log(response.data.data);
-          if (response.data.code == 200) {
-            let _this = this;
-            let listDetails = response.data.data.list;
-            _this.querymemberDeals = listDetails;
-            _this.valueLength = response.data.data.paginator.length;
-            console.log(_this.querymemberDeals);
-            console.log(_this.valueLength);
-            _this.totalNum = response.data.data.totalNum;
-            _this.totalMoney = response.data.data.totalMoney;
-            _this.showListPages = false;
-            _this.showQueryPages = true;
-          } else if (response.data.code == 400) {
-            let _this = this;
-            _this.showListPages = false;
-            _this.showQueryList = false;
-            _this.nothing = true;
-          }
-        })
-        .catch(function(err) {
-          Toast(err.message);
-        });
-    },
+
     // 下拉刷新上拉加载
     init() {
       // 当前页数
@@ -430,9 +467,46 @@ export default {
 .Choice {
   width: 100%;
   height: 3.36rem;
+  .Cli_cashBack {
+    width: 25%;
+    float: left;
+  }
   .Cli {
     overflow: hidden;
-    /*  white-space: nowrap; */
+    float: left;
+  }
+  /* 时间选择 */
+  .CicTime_cashBack {
+    float: right;
+    width: 73%;
+    .mint-popup {
+      width: 100%;
+      border-radius: 0;
+      background: #fff;
+    }
+    .startTime_cashBack {
+      margin-left: 0.5rem;
+      margin-right: 0.2rem;
+    }
+    .endTime_cashBack {
+      margin-left: 0.2rem;
+    }
+    .cashBack_span {
+      width: 2%;
+      float: left;
+      height: 0.6rem;
+      line-height: 0.6rem;
+    }
+    .choiceTime_cashBack {
+      width: 38%;
+      float: left;
+      font-size: 0.3rem;
+      border-radius: 5px; /* no */
+      color: #d9d9d9;
+      height: 0.6rem;
+      line-height: 0.6rem;
+      text-align: center;
+    }
   }
 }
 /* 列表 */
@@ -505,10 +579,10 @@ export default {
 }
 .el-date-editor .el-range-separator {
   line-height: 0.5rem;
-  font-size:0.35rem;
+  font-size: 0.35rem;
 }
-.showDetail{
-  margin-top: 0.2rem;
+.showDetail_cashBack {
+  margin-top: 0.9rem;
 }
 </style>
 

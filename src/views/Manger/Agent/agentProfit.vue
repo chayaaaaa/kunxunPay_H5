@@ -33,23 +33,25 @@
     </div>
     <!-- 搜索的数据 -->
     <li class="showThisLi" v-if="showQueryList==true">
-      <ul class="listTTop">
-        <li>商户号</li>
-        <li>商户名称</li>
-        <li class="li">利润</li>
-      </ul>
-      <ul class="listTTal">
-        <li
-          v-for="(item,key,index) in queryAgentDetail.dataResult"
-          :key="item.c"
-          @click="toDetail(index,item)"
-        >
-          <span>{{ item.merchantId }}</span>
-          <span>{{ item.merchantName }}</span>
-          <span class="span">{{ item.allProfit }}</span>
-        </li>
-        <p>没有更多数据了~</p>
-      </ul>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <ul class="listTTop listTTop_style">
+          <li>商户号</li>
+          <li>商户名称</li>
+          <li class="li">利润</li>
+        </ul>
+        <ul class="listTTal">
+          <li
+            v-for="(item,key,index) in queryAgentDetail.dataResult"
+            :key="item.c"
+            @click="toDetail(index,item)"
+          >
+            <span>{{ item.merchantId }}</span>
+            <span>{{ item.merchantName }}</span>
+            <span class="span">{{ item.allProfit }}</span>
+          </li>
+          <p>没有更多数据了~</p>
+        </ul>
+      </van-pull-refresh>
     </li>
     <!-- 没有数据时显示 -->
     <div class="nothing" v-if="nothing==true">
@@ -67,6 +69,7 @@
             value-format="yyyy-MM-dd"
             type="date"
             placeholder="选择日期"
+            :editable="false"
           ></el-date-picker>
         </div>
         <div class="block">
@@ -78,6 +81,7 @@
             type="date"
             placeholder="选择日期"
             :picker-options="pickerOptions1"
+            :editable="false"
           ></el-date-picker>
         </div>
         <input type="reset" class="reset leftRight">
@@ -258,6 +262,7 @@ export default {
        * * @params(startTime, endTime, qdcrmUserId, token)
        * *
        * */
+      this.show = false;
       console.log(this.stratTime);
       console.log(this.endTime);
       let queryData = {
@@ -364,6 +369,10 @@ input {
     width: 40%;
   }
 }
+/* 列表头部 */
+.listTTop_style {
+  margin-top: 1.2rem;
+}
 /* nothing */
 .nothing {
   width: 100%;
@@ -429,6 +438,10 @@ input {
     background: #d9d9d9;
     margin-left: 5%;
     margin-right: 9%;
+    border-radius: 5px; /* no */
+  }
+  input[type="reset"] {
+    -webkit-appearance: none;
   }
   .ensure {
     margin-right: 5%;
@@ -439,6 +452,7 @@ input {
     border-radius: 0.1rem;
     width: 75%;
     height: 0.7rem;
+    line-height: 0.7rem;
     background: url("~@/assets/image/icon_next.png") no-repeat right;
     background-position-x: 3.8rem;
     background-size: 0.3rem;
@@ -459,6 +473,7 @@ input {
     display: inline-block;
     margin-right: 0.5rem;
     margin-left: 1rem;
+    font-size: 0.4rem;
   }
   .el-input__icon:after {
     content: "";

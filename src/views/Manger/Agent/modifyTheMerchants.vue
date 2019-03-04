@@ -16,11 +16,11 @@
         <span>基本信息（必填）</span>
       </p>
       <ul class="listEntry" tag="listEntry">
-        <li>
+        <li class="li">
           商户类型
           <span>{{MerchantsType}}</span>
         </li>
-        <li>客户类型
+        <li class="li">客户类型
           <el-select v-model="CustomerType" slot="CustomerType" dir="rtl" placeholder="个人">
             <el-option
               v-for="item in CustomerTypes"
@@ -30,7 +30,26 @@
             ></el-option>
           </el-select>
         </li>
-        <li>
+        <li class="li">
+          选择商户
+          <input
+            class="inputStyle"
+            type="text"
+            v-model="qdcrmUserId"
+            placeholder="请选择商户"
+            style="direction: rtl;"
+            @click="showOrgan = true"
+          >
+        </li>
+        <!-- 弹出层 -->
+        <mt-popup v-model="showOrgan" popup-transition="popup-fade">
+          <!-- title -->
+          <div class="title">选 择 商 户</div>
+          <van-picker :columns="queryAgents" @change="onChange"/>
+          <div class="box cancel" @click="cancel()">取消</div>
+          <div class="box Confirm" @click="Confirm()">确认</div>
+        </mt-popup>
+        <li class="li">
           短信签名
           <input
             class="inputStyle"
@@ -40,11 +59,18 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           商户编号
-          <span class="typeSelect_modifyTheMerchants">{{merchantCode}}</span>
+          <input
+            class="inputStyle number"
+            type="text"
+            v-model="merchantCode"
+            placeholder="请输入短信签名"
+            style="direction: rtl;"
+            disabled
+          >
         </li>
-        <li>
+        <li class="li">
           商户名称
           <input
             class="inputStyle"
@@ -54,7 +80,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           联系人
           <input
             class="inputStyle"
@@ -64,7 +90,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           联系电话
           <input
             class="inputStyle"
@@ -74,7 +100,7 @@
             style="direction: rtl;"
           >
         </li>
-        <li>
+        <li class="li">
           商户状态
           <span>待激活</span>
         </li>
@@ -84,6 +110,9 @@
   </div>
 </template>
 <script>
+import "@/CSSFILE/tabbar.css";
+import "@/CSSFILE/Order.css";
+import "@/CSSFILE/force.css";
 import { Toast, MessageBox } from "mint-ui";
 import { checkToken, getRefreshToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
@@ -105,6 +134,8 @@ export default {
       addAgentDetails: [], // 获取代理详情
       showAddDetails: false, // 显示下一步
       qdcrmUserId: "", // 所属上级商户号
+      queryAgents: [], // 储存代理商数据
+      showOrgan: false,
       /* ========     代理录入基本信息下拉框    ======== */
       // 客户类型下拉框
       CustomerTypes: [
@@ -127,40 +158,23 @@ export default {
       ]
     };
   },
-  created() {
-    this.getParams();
-  },
 
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
-  },
   methods: {
-    getParams() {
-      // 取到路由带过来的参数
-      this.merchantCode = this.$route.params.id;
-      this.MerchantsType = this.$route.params.type;
-      if (this.MerchantsType == "o" || this.MerchantsType == "O") {
-        this.MerchantsType = "机构";
-      }
-      if (this.MerchantsType == "P") {
-        this.MerchantsType = "省代理";
-      }
-      if (this.MerchantsType == "C") {
-        this.MerchantsType = "市代理";
-      }
-      if (this.MerchantsType == "D") {
-        this.MerchantsType = "区县代理";
-      }
-      if (this.MerchantsType == "A") {
-        this.MerchantsType = "代办点";
-      }
-      if (this.MerchantsType == "I") {
-        this.MerchantsType = "行业代理";
-      }
-    },
     prev() {
       this.$router.push("/QueryAgent");
+    },
+    Confirm() {
+      this.showOrgan = false;
+    },
+    cancel() {
+      this.showOrgan = false;
+    },
+    onChange(picker, value, index) {
+      this.qdcrmUserId = value.text;
+      this.value = value.id;
+      console.log(this.value);
+      console.log(this.qdcrmUserId);
+      console.log(index);
     },
     addAgent() {
       getRefreshToken();
@@ -250,16 +264,90 @@ export default {
         });
     }
   },
-  mounted() {}
+  mounted() {
+    getRefreshToken();
+    let res = JSON.parse(window.localStorage.getItem("agentDetails"));
+    let queryAgentDetailList = JSON.parse(
+      window.localStorage.getItem("AgentDetailList")
+    );
+    console.log(res);
+    this.MerchantsType = res.bizType;
+    console.log(this.MerchantsType);
+    if (this.MerchantsType == "o" || this.MerchantsType == "O") {
+      this.MerchantsType = "机构";
+    }
+    if (this.MerchantsType == "P") {
+      this.MerchantsType = "省代理";
+    }
+    if (this.MerchantsType == "C") {
+      this.MerchantsType = "市代理";
+    }
+    if (this.MerchantsType == "D") {
+      this.MerchantsType = "区县代理";
+    }
+    if (this.MerchantsType == "A") {
+      this.MerchantsType = "代办点";
+    }
+    if (this.MerchantsType == "I") {
+      this.MerchantsType = "行业代理";
+    }
+    this.sms = queryAgentDetailList.merchant.smsSign;
+    this.LinkPhone = queryAgentDetailList.contact.mobile;
+    this.merchantCode = res.merchantId;
+    this.name = res.merchantName;
+    this.Linkman = res.contactName;
+    let queryData = {
+      qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+        .qdcrmUserId,
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token
+    };
+    axios
+      .get(`${BASE_URL}/msmng/api/agent/getAgentTree`, {
+        params: queryData
+      })
+      .then(response => {
+        this.queryAgents = response.data.data;
+        console.log(this.queryAgents);
+      })
+      .catch(function(err) {
+        Toast(err.message);
+      });
+  }
 };
 </script>
 
 <style lang="less">
 @blue: #1c8cff;
+.van-picker__columns {
+  margin-bottom: -1.5rem;
+  .van-picker-column {
+    margin-top: -1rem;
+  }
+  .van-hairline--top-bottom {
+    width: 30% !important;
+    margin-left: 35%;
+  }
+
+  .van-hairline--top-bottom::after {
+    border: 2px solid #1c8cff !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .van-picker__frame,
+  .van-picker__loading .van-loading {
+    top: 32%;
+  }
+}
+.van-list__finished-text,
+.van-list__loading-text {
+  height: 2.5rem;
+  line-height: 1rem;
+}
 /* toast */
 .typeSelect_modifyTheMerchants {
-    display: inline-block ;
-    margin-left: 60% !important;
+  display: inline-block;
+  margin-left: 60% !important;
   color: rgb(189, 189, 189);
 }
 input:disabled {
@@ -349,7 +437,6 @@ input:disabled {
     width: 90%;
     height: 1.2rem;
     margin-left: 5%;
-    border-bottom: 1px solid #ececec;
     line-height: 1.2rem;
     color: #222222;
     font-size: 0.38rem;
@@ -385,10 +472,12 @@ input:disabled {
       margin-left: -1.1rem;
     }
   }
+  .li {
+    border-bottom: 1px solid #ececec;
+  }
   li {
     width: 90%;
     height: 1.2rem;
-    border-bottom: 1px solid #ececec;
     line-height: 1.2rem;
     color: #222222;
     font-size: 0.38rem;
@@ -404,6 +493,9 @@ input:disabled {
       right: 1rem;
       font-size: 0.35rem;
       line-height: 1rem;
+    }
+    .number {
+      color: rgb(189, 189, 189);
     }
     span {
       display: inline-block;

@@ -8,7 +8,7 @@
     <mt-popup v-model="showOrgan" popup-transition="popup-fade">
       <!-- title -->
       <div class="title">选 择 代 理 商</div>
-       <van-picker :columns="queryAgents" @change="onChangeone"/>
+      <van-picker :columns="queryAgents" @change="onChangeone"/>
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
     </mt-popup>
@@ -26,7 +26,7 @@
       <div class="CicTime">
         <!-- 搜索框 -->
         <div class="search">
-          <input type="search" placeholder="请输入联系人电话查询" v-model="queryNO">
+          <input type="search" placeholder="输入联系人电话查询" v-model="queryNO">
           <img src="@/assets/image/Manger/Trade/search.png" @click="queryTerminalDetail()">
         </div>
         <!-- 搜索页面 -->
@@ -188,7 +188,7 @@ export default {
       defaultvalue: true, // 默认打开
       display: true,
       showThis: false,
-      showIndexText: ""// 选择代理商
+      showIndexText: "" // 选择代理商
     };
   },
   methods: {
@@ -212,7 +212,7 @@ export default {
       this.textvalue = value;
       console.log(this.typeValue);
     },
-        onChangeone(picker, value, index) {
+    onChangeone(picker, value, index) {
       this.showIndexText = value.text;
       this.value = value.id;
       console.log(this.showIndexText);
@@ -563,9 +563,9 @@ export default {
     background: rgba(0, 0, 0, 0);
     color: #fff;
   }
-  .Cli{
+  .Cli {
     overflow: hidden;
-  /*   white-space: nowrap; */
+    /*   white-space: nowrap; */
   }
   /* 代理商选择 */
   .select {
@@ -611,15 +611,33 @@ export default {
     background: rgba(0, 0, 0, 0);
     height: 0.6rem;
     line-height: 0.6rem;
-    width: 3.8rem;
+    width: 4rem;
     padding-left: 0.2rem;
-    margin-left: 3rem;
+    margin-left: 2.8rem;
     padding-right: 0.2rem;
+        :-moz-placeholder {
+      color: #fff;
+      opacity: 1;
+    }
+                     ::-moz-placeholder {
+      color: #fff;
+      opacity: 1;
+    }
+                     input:-ms-input-placeholder {
+      color: #fff;
+      opacity: 1;
+    }
+                     input::-webkit-input-placeholder {
+      color: #fff;
+      opacity: 1;
+    }
     input {
-      width: 3.4rem;
+      width: 3.45rem;
+      color: #fff;
+      font-size: 0.28rem;
     }
     img {
-      width: 0.4rem;
+      width: 0.35rem;
       display: block;
       margin-top: 0.1rem;
       float: right;
@@ -654,7 +672,7 @@ export default {
       line-height: 1.2rem;
       span {
         display: inline-block;
-        width: 32.6%;
+        width: 31.6%;
         height: 1.2rem;
         font-size: 0.35rem;
       }

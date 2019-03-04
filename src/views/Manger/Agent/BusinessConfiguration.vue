@@ -108,34 +108,15 @@ export default {
       Msg: []
     };
   },
-  created() {
-    this.getParams();
-  },
-
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
-  },
   methods: {
     prev() {
-      this.$router.push("/QueryAgent");
+      this.$router.go(-1);
     },
     backIndex() {
       this.$router.push("/index");
     },
     backManger() {
       this.$router.push("/manger");
-    },
-    getParams() {
-      // 取到路由带过来的参数
-      this.qdcrmUserId = this.$route.params.item;
-      this.merchantName = this.$route.params.name;
-      this.merchantId = this.$route.params.merchantId;
-      let qd = this.$route.params.item;
-      console.log(this.qdcrmUserId);
-      console.log(this.merchantName);
-      console.log(this.merchantId);
-      window.localStorage.setItem("qd", JSON.stringify(qd));
     },
     showDetail(e, num) {
       var el = e.target;
@@ -289,8 +270,15 @@ export default {
   },
   mounted() {
     getRefreshToken();
+    this.merchantId = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantId;
+    this.merchantName = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantName;
     let data = {
-      qdcrmUserId: this.qdcrmUserId,
+      qdcrmUserId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .qdcrmUserId,
       access_token: JSON.parse(window.localStorage.getItem("token"))
         .access_token,
       number: Math.random()
@@ -351,12 +339,11 @@ export default {
     line-height: 1.2rem;
     margin-left: 0.5rem;
     font-size: 0.38rem;
-     margin-top: 1.2rem;
+    margin-top: 1.2rem;
     img {
       vertical-align: middle;
       width: 0.5rem;
       margin-right: 0.2rem;
-
     }
   }
   .BusinessConfiguration_body {
@@ -426,6 +413,7 @@ export default {
             input {
               width: 1.7rem;
               height: 0.65rem;
+              line-height: 0.65rem;
               border: 1px solid #07a0e4; /* no */
               border-radius: 5px; /* no */
               text-align: center;

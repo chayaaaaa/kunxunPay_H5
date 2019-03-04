@@ -194,7 +194,7 @@ export default {
   },
   methods: {
     prev() {
-      this.$router.go(-1);
+      this.$router.push("/index");
     },
     // 代理商管理
     jumpToAgents() {

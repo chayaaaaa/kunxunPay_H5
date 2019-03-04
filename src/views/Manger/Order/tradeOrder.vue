@@ -14,17 +14,48 @@
     </mt-popup>
     <!-- 选择栏 -->
     <div class="Choice">
-      <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
-      <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
-      <div class="CicTime_tradeOrder">
-        <el-date-picker
-          v-model="rangeTime"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd"
-          @blur="getValue()"
-        ></el-date-picker>
+      <div class="Cli_tradeOrder">
+        <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
+        <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
+      </div>
+      <div class="CicTime_tradeOrder" @touchmove.prevent>
+        <input
+          class="startTime_tradeOrder choiceTime_tradeOrder"
+          onfocus="this.blur()"
+          @click="showStartTime_tradeOrder()"
+          placeholder="开始日期"
+          v-model="startTime_tradeOrder"
+        >
+        <span class="tradeOrder_span">-</span>
+        <input
+          class="endTime_tradeOrder choiceTime_tradeOrder"
+          onfocus="this.blur()"
+          @click="showStartTime_tradeOrder()"
+          placeholder="结束日期"
+          v-model="endTime_tradeOrder"
+        >
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="picker"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sure_tradeOrder"
+          :startDate="startDate"
+          :endDate="endDate"
+        ></mt-datetime-picker>
+        <mt-datetime-picker
+          v-model="currentDate"
+          ref="pic"
+          type="date"
+          year-format="{value} 年"
+          month-format="{value} 月"
+          date-format="{value} 日"
+          @confirm="sureTwo_tradeOrder"
+          :startDate="startDate"
+          :endDate="endDate"
+        ></mt-datetime-picker>
       </div>
       <div class="showDetail">
         <div class="left">
@@ -155,11 +186,14 @@ export default {
       showListPages: true, // 原始数据
       showQueryList: false, // 查询数据
       nothing: false, // 没有数据
-      startTime: "", // 开始时间
-      endTime: "", // 结束时间
+      startTime_tradeOrder: "", // 开始时间
+      endTime_tradeOrder: "", // 结束时间
       querymemberDeals: [],
       optionValue: "", //选择代理商的value
       queryAgents: [], // 储存代理商数据
+      startDate: new Date(2018, 1, 1),
+      endDate: new Date(2030, 1, 1),
+      currentDate: new Date(),
       showText: JSON.parse(window.localStorage.getItem("userInfo")).name, // 总代理
       loading: false,
       finished: false,
@@ -177,33 +211,33 @@ export default {
     };
   },
   methods: {
-    prev() {
-      this.$router.go(-1);
+    // 时间
+    // 格式化获取的时间
+    formatDate(date) {
+      const y = date.getFullYear();
+      let m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+
+      return y + "-" + m + "-" + d;
     },
-    jumpToTradeOrder() {
-      this.$router.push("/tradeOrder");
+    showStartTime_tradeOrder() {
+      console.log(this.formatDate(this.$refs.pic.value));
+      this.$refs.pic.open();
     },
-    jumpToMemberDeal() {
-      this.$router.push("/memberDeal");
-    },
-    jumpToMemberInfo() {
-      this.$router.push("/memberInfo");
-    },
-    jumpToCashBack() {
-      this.$router.push("/cashBack");
-    },
-    getValue() {
-      this.startTime = this.rangeTime["0"];
-      this.endTime = this.rangeTime[1];
-      console.log(this.startTime);
-      console.log(this.endTime);
+    sure_tradeOrder(data) {
+      // 输出格式化后的时间
+      this.endTime_tradeOrder = this.formatDate(this.$refs.picker.value);
+      console.log(this.startTime_tradeOrder);
+      console.log(this.endTime_tradeOrder);
       let queryData = {
         qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
           .qdcrmUserId,
         access_token: JSON.parse(window.localStorage.getItem("token"))
           .access_token,
-        gmtStart: this.startTime,
-        gmtEnd: this.endTime,
+        gmtStart: this.startTime_tradeOrder,
+        gmtEnd: this.endTime_tradeOrder,
         currentPage: this.pageNumber + 1,
         number: Math.random()
       };
@@ -241,13 +275,35 @@ export default {
           Toast(err.message);
         });
     },
+    sureTwo_tradeOrder(data) {
+      // 输出格式化后的时间
+      this.startTime_tradeOrder = this.formatDate(this.$refs.pic.value);
+      this.$refs.picker.open();
+    },
+
+    prev() {
+      this.$router.go(-1);
+    },
+    jumpToTradeOrder() {
+      this.$router.push("/tradeOrder");
+    },
+    jumpToMemberDeal() {
+      this.$router.push("/memberDeal");
+    },
+    jumpToMemberInfo() {
+      this.$router.push("/memberInfo");
+    },
+    jumpToCashBack() {
+      this.$router.push("/cashBack");
+    },
+
     Confirm() {
       let queryData = {
         qdcrmUserId: this.value,
         access_token: JSON.parse(window.localStorage.getItem("token"))
           .access_token,
-        gmtStart: this.startTime,
-        gmtEnd: this.endTime,
+        gmtStart: this.startTime_tradeOrder,
+        gmtEnd: this.endTime_tradeOrder,
         currentPage: this.pageNumber + 1,
         number: Math.random()
       };
@@ -401,9 +457,6 @@ export default {
       .then(response => {
         this.queryAgents = response.data.data;
         console.log(this.queryAgents);
-        /*         this.text = this.queryAgents.text;
-        this.id = this.queryAgents.id;
-        console.log(this.text); */
       })
       .catch(function(err) {
         Toast(err.message);
@@ -444,9 +497,46 @@ export default {
 .Choice {
   width: 100%;
   height: 3.36rem;
+  .Cli_tradeOrder {
+    width: 25%;
+    float: left;
+  }
   .Cli {
     overflow: hidden;
-    /*  white-space: nowrap; */
+    float: left;
+  }
+  /* 时间选择 */
+  .CicTime_tradeOrder {
+    float: right;
+    width: 73%;
+    .mint-popup{
+      width: 100%;
+      border-radius: 0;
+      background: #fff;
+    }
+    .startTime_tradeOrder {
+      margin-left: 0.5rem;
+      margin-right: 0.2rem;
+    }
+    .endTime_tradeOrder {
+      margin-left: 0.2rem;
+    }
+    .tradeOrder_span {
+      width: 2%;
+      float: left;
+      height: 0.6rem;
+      line-height: 0.6rem;
+    }
+    .choiceTime_tradeOrder {
+      width: 38%;
+      float: left;
+      font-size: 0.3rem;
+      border-radius: 5px; /* no */
+      color: #d9d9d9;
+      height: 0.6rem;
+      line-height: 0.6rem;
+      text-align: center;
+    }
   }
 }
 /* 没有数据 */
@@ -464,10 +554,7 @@ export default {
     margin-top: 0.5rem;
   }
 }
-/* 时间选择 */
-.CicTime_tradeOrder {
-  float: right;
-}
+
 /* 列表 */
 
 .listTal {

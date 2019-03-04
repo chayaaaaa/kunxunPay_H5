@@ -67,7 +67,6 @@
 <script>
 import { Toast, MessageBox } from "mint-ui";
 import { getRefreshToken, BASE_URL } from "@/api/api.js";
-import commonJS from "@/JS/commonJS.js";
 const axios = require("axios");
 export default {
   name: "MPOSactivity",
@@ -88,18 +87,9 @@ export default {
       showOn: false
     };
   },
-  created() {
-    this.getParams();
-  },
-
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
-  },
-
   methods: {
     prev() {
-      this.$router.push("/QueryAgent");
+      this.$router.go(-1);
     },
     save() {
       /*  MessageBox("上级商户未配置业务！"); */
@@ -177,17 +167,19 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-    },
-    getParams() {
-      // 取到路由带过来的参数
-      this.merchantName = this.$route.params.name;
-      this.merchantId = this.$route.params.merchantId;
     }
   },
   mounted() {
     getRefreshToken();
+    this.merchantId = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantId;
+    this.merchantName = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantName;
     let queryData = {
-      merchantId: commonJS.getUrlKey("id"),
+      merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .merchantId,
       access_token: JSON.parse(window.localStorage.getItem("token"))
         .access_token,
       number: Math.random()

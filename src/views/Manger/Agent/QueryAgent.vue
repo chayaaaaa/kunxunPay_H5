@@ -217,17 +217,9 @@ export default {
       this.$router.go(-1);
     },
     toAgentDetails(index, item) {
+      window.localStorage.setItem('agentDetails',JSON.stringify(item))
       this.$router.push({
         name: "AgentDetails",
-        params: {
-          id: index,
-          item: item
-        },
-        query: {
-          merchantId: item.merchantId,
-          merchantName: item.merchantName,
-          qdcrmUserId: item.qdcrmUserId
-        }
       });
     },
     jumpToAgents() {
@@ -467,7 +459,7 @@ export default {
 /* 筛选框 */
 .alertPage {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
