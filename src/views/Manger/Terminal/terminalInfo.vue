@@ -528,7 +528,7 @@ export default {
       }, 500);
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))

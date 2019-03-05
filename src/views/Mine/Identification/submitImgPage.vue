@@ -162,7 +162,7 @@ export default {
         this.$router.push("/submitSuccessPage");
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
   },
   /* 注册组件 */

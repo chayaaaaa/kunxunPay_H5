@@ -5,7 +5,6 @@ import { Toast } from "mint-ui";
 export const BASE_URL = process.env.API_ROOT;
 // 基础路径 正式服
 // export const BASE_URL = 'http://119.18.207.45:19000/profit/';
-
 //判断是否需要重新获取token
 //  刷新Token
 export const getRefreshToken = params => {

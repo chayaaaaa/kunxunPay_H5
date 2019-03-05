@@ -1,6 +1,6 @@
 <template>
   <div class="manger">
-    <mt-header title="平台管理" fixed>
+    <mt-header title="平台管理" absolute>
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <!-- ======= 用户信息  ======= -->
@@ -108,7 +108,6 @@
     </div>
     <!-- 小圆点 -->
     <!-- 季度业绩 -->
-    <!--     <div class="quarterlyResults" v-for="item in quarterlyResults" :key="item.a"> -->
     <div class="quarterlyResults">
       <span>季度业绩</span>
       <!-- 交易 -->
@@ -230,7 +229,7 @@ export default {
       this.$router.push("/cashBack");
     }
   },
-  mounted() {
+  created() {
     getData()
       .then(response => {
         getRefreshToken();
@@ -271,6 +270,10 @@ export default {
 </script>
 <style lang="less">
 @blue: #1c8cff;
+.manger{
+  width: 100%;
+  height: 100%;
+}
 /* toast */
 .mint-msgbox {
   height: 4.5rem;
@@ -308,7 +311,6 @@ export default {
 .userInfo {
   width: 100%;
   height: 3rem;
-  margin-top: 1.1rem;
   .profilePhoto {
     width: 30%;
     height: 3rem;
@@ -482,6 +484,9 @@ export default {
     height: 2.5rem;
     box-shadow: 0px 3px 10px rgba(199, 227, 255, 0.75);
     position: absolute;
+    li {
+      width: 33%;
+    }
   }
   /* =========   活跃用户  ========= */
   .activeUser {
@@ -494,6 +499,9 @@ export default {
     .headline {
       background: #ffb112;
     }
+    li {
+      width: 33%;
+    }
   }
   /* =========   终端  ========= */
   .terminal {
@@ -503,8 +511,12 @@ export default {
     box-shadow: 0px 3px 10px rgba(199, 227, 255, 0.75);
     position: absolute;
     margin-top: 7rem;
+    margin-bottom: 2rem;
     .headline {
       background: #1c8cff;
+    }
+    li {
+      width: 33%;
     }
   }
 }

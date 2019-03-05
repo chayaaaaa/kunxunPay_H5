@@ -30,6 +30,49 @@ Vue.use(vant)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
+// 添加响应拦截器
+axios.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (error.response) {
+      console.log(error)
+      console.log(error.response)
+      switch (error.response.status) {
+        // 通过状态码判断token是否失效或者token是否错误，若是，直接返回登录页面
+        case 401:
+          localStorage.clear(), //清空localStorage
+            router.push({
+              path: '/login',
+            })
+          break;
+      }
+    }
+    return Promise.reject(error)
+  })
+
+//全局守卫，记录登录状态
+router.beforeEach((to, from, next) => {
+  //需求登录判断
+  if (to.meta.required) {
+    //未登录
+    var isLogin = window.localStorage.getItem('token');
+    if (isLogin) {
+      next();//跳转到目标页面
+    } else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      });//跳转到登录页面
+      Toast('请登录账号');
+
+    }
+  } else {
+    next();
+  }
+})
+export default axios
 new Vue({
   el: '#app',
   axios,

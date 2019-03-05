@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import "@/CSSFILE/common.css";
+import commonJS from '@/JS/commonJS.js'
 import { BASE_URL } from "@/api/api.js";
 import { Toast, MessageBox } from "mint-ui";
 const axios = require("axios");
@@ -97,8 +97,8 @@ export default {
         });
     }
   },
-  mounted() {
-    this.$commonJS.inputBlur();
+  created() {
+    commonJS.inputBlur();
   }
 };
 </script>
@@ -106,10 +106,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
 .login {
-  position: absolute;
   width: 100%;
-  top: 0;
-  bottom: 0;
+  height: 100%;
   background: url("~@/assets/image/login/bj.png") no-repeat;
   background-size: 100% 100%;
   .logo {

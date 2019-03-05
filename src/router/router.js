@@ -1,18 +1,19 @@
 const routes = [
   {
-    path: '/',
-    component: resolve => require(['@/components/login.vue'], resolve),
+    path: '*',  // 匹配没有注册的路由
+    redirect: '/index'  //重定向
+  },
+  { // 
+    path: '/',// 默认进入路由
+    redirect: '/login',// (重定向)
   }, { // 登录页面
     path: '/login',
     component: resolve => require(['@/components/login.vue'], resolve),
-    meta: {
-      required: false,  // 添加该字段，表示进入这个路由是需要登录的
-    },
   }, { // 主页
     path: '/index',
     component: resolve => require(['@/views/index/index.vue'], resolve),
     meta: {
-      required: true,
+      required: true,// 添加该字段，表示进入这个路由是需要登录的
     }
   }, { // 平台管理页面
     path: '/manger',
@@ -32,12 +33,6 @@ const routes = [
     meta: {
       required: true,
     }
-  }, { // 代理结算信息
-    path: '/settleaccount',
-    component: resolve => require(['@/views/Manger/Agent/settleaccount.vue'], resolve),
-    meta: {
-      required: true,
-    }
   }, { // 代理录入
     path: '/entry',
     component: resolve => require(['@/views/Manger/Agent/entry.vue'], resolve),
@@ -48,13 +43,6 @@ const routes = [
     path: '/modifyTheMerchants',
     name: 'modifyTheMerchants',
     component: resolve => require(['@/views/Manger/Agent/modifyTheMerchants.vue'], resolve),
-    meta: {
-      required: true,
-    }
-  }, { // 修改商户信息页面[结算信息]
-    path: '/modifySettleacCount',
-    name: 'modifySettleacCount',
-    component: resolve => require(['@/views/Manger/Agent/modifySettleacCount.vue'], resolve),
     meta: {
       required: true,
     }
@@ -95,7 +83,7 @@ const routes = [
     component: resolve => require(['@/views/Manger/Agent/AgentDetails.vue'], resolve),
     meta: {
       required: true,
-   /*    keepAlive: true // 需要被缓存 */
+      /*    keepAlive: true // 需要被缓存 */
     }
   }, { // 押金返现页面
     path: '/retrunDeposit',
@@ -286,5 +274,26 @@ const routes = [
     }
   },
 ]
+/* const router = new VueRouter({
+  routes
+});
 
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(r => r.meta.requireAuth)) {
+    if (store.state.token) {
+      next();
+    }
+    else {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+  }
+  else {
+    next();
+  }
+})
+
+export default router; */
 export default routes

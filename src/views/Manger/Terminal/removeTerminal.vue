@@ -182,7 +182,7 @@ export default {
       console.log(index);
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))

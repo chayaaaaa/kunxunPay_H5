@@ -7,12 +7,12 @@
     </mt-header>
     <!-- 初始化数据 -->
     <div class="listPages" v-if="showListPages==true">
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
         <ul class="listTTop">
           <li>商户号</li>
           <li>商户名称</li>
           <li class="li">利润</li>
         </ul>
+         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
         <ul class="listTTal">
           <van-list
             v-model="loading"
@@ -33,12 +33,12 @@
     </div>
     <!-- 搜索的数据 -->
     <li class="showThisLi" v-if="showQueryList==true">
+      <ul class="listTTop listTTop_style">
+        <li>商户号</li>
+        <li>商户名称</li>
+        <li class="li">利润</li>
+      </ul>
       <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <ul class="listTTop listTTop_style">
-          <li>商户号</li>
-          <li>商户名称</li>
-          <li class="li">利润</li>
-        </ul>
         <ul class="listTTal">
           <li
             v-for="(item,key,index) in queryAgentDetail.dataResult"
@@ -311,13 +311,23 @@ export default {
       });
     }
   },
-  mounted() {},
   /* 注册组件 */
   components: {}
 };
 </script>
 <style lang="less">
 @blue: #1c8cff;
+/* 加载动画 */
+.van-list__loading-icon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0.9rem auto;
+}
+.van-list__loading {
+  width: 100%;
+  height: 2rem;
+}
 /* 头部 */
 /* ==============       header        ============= */
 .mint-header {
@@ -370,7 +380,7 @@ input {
   }
 }
 /* 列表头部 */
-.listTTop_style {
+.showThisLi {
   margin-top: 1.2rem;
 }
 /* nothing */

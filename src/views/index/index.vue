@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <mt-header fixed title="首  页"></mt-header>
+    <mt-header absolute title="首  页"></mt-header>
     <div class="header_bg"></div>
     <div class="nav_bg"></div>
     <!-- 主页广告图 -->
@@ -166,9 +166,6 @@ export default {
       showMessage: []
     };
   },
-  created() {
-    this.selected = this.$route.name;
-  },
 
   methods: {
     goToIndex() {
@@ -193,7 +190,8 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
+    this.selected = this.$route.name;
     // banner
     getIndexBanner()
       .then(response => {
@@ -430,7 +428,7 @@ export default {
 .divBopx {
   width: 0.6rem;
   height: 0.6rem;
-  position: fixed;
+  position: absolute;
   top: 0.3rem;
   right: 0.5rem;
   z-index: 9999;
@@ -438,7 +436,7 @@ export default {
     width: 100%;
   }
 }
-.mint-popup-bottom{
+.mint-popup-bottom {
   width: 100%;
   background: rgba(0, 0, 0, 0);
 }
@@ -452,7 +450,7 @@ export default {
     width: 100%;
     line-height: 1.2rem;
     border-radius: 5px; /* no */
-     margin-bottom: 0.2rem;
+    margin-bottom: 0.2rem;
   }
   .p {
     a {
@@ -565,7 +563,7 @@ export default {
   white-space: nowrap;
   box-sizing: border-box;
   animation: marquee 50s linear infinite;
-  color: #606060;
+  color: #ff0000;
 }
 @keyframes marquee {
   0% {

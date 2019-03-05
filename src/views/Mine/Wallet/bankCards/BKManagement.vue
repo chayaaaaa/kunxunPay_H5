@@ -208,7 +208,7 @@ export default {
       }, 500);
     }
   },
-  mounted() {
+  created() {
   }
 };
 </script>

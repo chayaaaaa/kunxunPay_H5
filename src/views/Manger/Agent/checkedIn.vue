@@ -119,7 +119,7 @@ export default {
       this.merchantName = this.itemList.merchantName;
     }
   },
-  mounted() {}
+  created() {}
 };
 </script>
 <style lang="less" scoped>

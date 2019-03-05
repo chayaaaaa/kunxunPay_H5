@@ -31,20 +31,21 @@
           </el-select>
         </li>
         <li class="li">
-          选择商户
+          所属上级
           <input
             class="inputStyle"
             type="text"
             v-model="qdcrmUserId"
-            placeholder="请选择商户"
+            placeholder="请选择所属上级"
             style="direction: rtl;"
             @click="showOrgan = true"
+             onfocus="this.blur()"
           >
         </li>
         <!-- 弹出层 -->
         <mt-popup v-model="showOrgan" popup-transition="popup-fade">
           <!-- title -->
-          <div class="title">选 择 商 户</div>
+          <div class="title">选 择 所 属 上 级</div>
           <van-picker :columns="queryAgents" @change="onChange"/>
           <div class="box cancel" @click="cancel()">取消</div>
           <div class="box Confirm" @click="Confirm()">确认</div>
@@ -57,6 +58,7 @@
             v-model="sms"
             placeholder="请输入短信签名"
             style="direction: rtl;"
+            disabled
           >
         </li>
         <li class="li">
@@ -106,7 +108,7 @@
         </li>
       </ul>
     </div>
-    <el-button type="primary" class="btn" @click="addAgent()">下一步</el-button>
+    <el-button type="primary" class="btn" @click="addAgent()">提交</el-button>
   </div>
 </template>
 <script>
@@ -125,7 +127,7 @@ export default {
       /* Superior: "", //所属上级 */
       MerchantsType: "", //商户类型
       CustomerType: "", //客户类型
-      sms: "", // 短信签名
+      sms: "【创鑫钱包】", // 短信签名
       merchantCode: "", // 商户编号
       name: "", // 商户名称
       Linkman: "", // 联系人
@@ -188,8 +190,8 @@ export default {
         MessageBox("请选择客户类型");
         return;
       }
-      if (!_this.MerchantsType) {
-        MessageBox("请选择商户类型");
+      if (!_this.qdcrmUserId) {
+        MessageBox("请选择所属上级");
         return;
       }
       if (!_this.sms) {
@@ -236,25 +238,75 @@ export default {
           console.log(response.data);
           if (response.data.code == 200) {
             this.showAddDetails = true;
-            let messageFirstPage = {
+            let merchant = JSON.stringify({
               merchantId: this.merchantCode, // 商户编号
               merType: this.CustomerType, // 客户类型
               areaType: this.MerchantsType, // 商户类型
-              bizType: this.MerchantsType, // 商户类型
               merchantName: this.name, // 商户名称
               merchantStatus: this.status, // 商户状态
-              qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-                .qdcrmUserId, // 上级商户号
               smsSign: this.sms, // 短信签名
+              qdcrmUserId: this.value,
+              merchantAddress: "",
+              fax: "",
+              merchantZipCode: "",
+              merchantMemo: "",
+              industry0: "",
+              industry1: "",
+              customerId: ""
+            });
+            let contact = JSON.stringify({
               contactName: this.Linkman, // 联系人
               mobile: this.LinkPhone, // 联系手机
-              memo: "简化录入" // 备注（简化录入）
-            };
-            window.localStorage.setItem(
-              "messageFirstPage",
-              JSON.stringify(messageFirstPage)
+              memo: "简化录入", // 备注（简化录入）
+              email: "",
+              phone: "",
+              department: "",
+              position: "",
+              qq: "",
+              address: ""
+            });
+            let bank = JSON.stringify({
+              provinceCode: "", //省码
+              cityCode: "", // 城市
+              bankCode: "", // 银行码
+              mark: "", // 对公对私
+              accountHolder: "", // 开户名
+              card: "", // 开户账号
+              paySystemLine: "",
+              areaCode: "",
+              cardType: 1,
+              bankBranchCode: "" // 开户支行
+            });
+            var params = new URLSearchParams();
+            params.append(
+              "access_token",
+              JSON.parse(window.localStorage.getItem("token")).access_token
             );
-            this.$router.push("/modifySettleacCount");
+            params.append("merchant", merchant);
+            params.append("contact", contact);
+            params.append("bank", bank);
+            params.append("number", Math.random());
+
+            let res = {
+              qdcrmUserId: this.value,
+              merchantId: this.value,
+              merchantName: this.name
+            };
+            console.log(res);
+            window.localStorage.setItem("agentDetails", JSON.stringify(res));
+            axios
+              .post(`${BASE_URL}/msmng/api/agent/addAgent`, params, {
+                header: {
+                  "Access-Control-Allow-Origin": "*"
+                }
+              })
+              .then(response => {
+                console.log(response);
+                this.$router.push("/successedPage");
+              })
+              .catch(function(err) {
+                Toast(err.data.message);
+              });
           } else if (response.data.data == 0) {
             Toast(response.data.message);
           }
@@ -264,7 +316,7 @@ export default {
         });
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     let res = JSON.parse(window.localStorage.getItem("agentDetails"));
     let queryAgentDetailList = JSON.parse(
@@ -291,7 +343,7 @@ export default {
     if (this.MerchantsType == "I") {
       this.MerchantsType = "行业代理";
     }
-    this.sms = queryAgentDetailList.merchant.smsSign;
+/*     this.sms = queryAgentDetailList.merchant.smsSign; */
     this.LinkPhone = queryAgentDetailList.contact.mobile;
     this.merchantCode = res.merchantId;
     this.name = res.merchantName;

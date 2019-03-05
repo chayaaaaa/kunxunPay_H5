@@ -144,7 +144,7 @@ export default {
     Unpinless() {
       queryPasswordExist()
         .then(response => {
-          console.log(response.data);
+          console.log(response.data.data);
           if (response.data.data == 1) {
             this.show = true;
           } else {
@@ -318,6 +318,7 @@ input[type="number"] {
   top: 1.2rem;
   width: 100%;
   height: 100%;
+  z-index: 800;
 }
 
 .password_input {
@@ -326,6 +327,7 @@ input[type="number"] {
   top: 2rem;
   width: 100%;
   height: 2rem;
+  z-index: 900;
 }
 .van-password-input {
   top: 1rem;

@@ -85,7 +85,7 @@ export default {
       window.localStorage.removeItem("three"); //清除文件
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     returnAuthStatus()
       .then(response => {

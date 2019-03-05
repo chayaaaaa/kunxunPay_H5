@@ -27,7 +27,7 @@ export default {
       );
       params.append(
         "merchantId",
-        JSON.parse(window.localStorage.getItem("messageFirstPage")).merchantId
+        JSON.parse(window.localStorage.getItem("agentDetails")).merchantId
       );
       params.append("number", Math.random());
       axios
@@ -39,7 +39,6 @@ export default {
         .then(response => {
           console.log(response);
           Toast(response.data.message);
-          window.localStorage.removeItem("messageFirstPage");
           this.$router.push("/QueryAgent");
         })
         .catch(function(err) {

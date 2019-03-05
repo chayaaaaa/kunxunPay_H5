@@ -80,7 +80,7 @@
     <div class="btn_BusinessConfiguration">
       <button @click="commit()">提交</button>
     </div>
-    <div class="configSuccessed" v-if="success==true">
+    <div class="configSuccessed" v-if="success==true" @touchmove.prevent>
       <p>业务配置成功，即时生效</p>
       <ul>
         <li @click="backIndex()">返回首页</li>
@@ -268,7 +268,7 @@ export default {
       this.success = true;
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")
@@ -463,16 +463,20 @@ export default {
 .configSuccessed {
   position: fixed;
   width: 100%;
-  top: 0;
+  top: 0rem;
   bottom: 0;
   background: url("~@/assets/image/Manger/Agents/terminal_bg.png") no-repeat;
   background-size: 100% 100%;
-  z-index: 300;
+  z-index: 800;
   p {
     width: 50%;
     font-size: 0.45rem;
     color: #fff;
-    margin: 8.5rem auto;
+    position: absolute;
+    top: 47.3%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
   }
   ul {
     width: 100%;

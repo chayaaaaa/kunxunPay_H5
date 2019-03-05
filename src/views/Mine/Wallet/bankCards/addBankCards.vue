@@ -37,10 +37,10 @@
               :value="item.bankCode"
               :key="item.bankCode"
               :label="item.bankName"
-            >{{item.text}}</option>
+            >{{item.bankName}}</option>
           </select>
         </mt-field>
-        <mt-field label="银行卡号" placeholder="请输入银行卡号" v-model="bankNumber"></mt-field>
+        <mt-field label="银行卡号" type="tel" placeholder="请输入银行卡号" v-model="bankNumber"></mt-field>
         <mt-field label="手机" placeholder="请输入手机预留号" type="tel" v-model="phone">
           <img src="@/assets/image/Mine/Wallet/prompt .png" @click="CAPION()">
         </mt-field>
@@ -62,7 +62,7 @@
       <div class="list_Reminder">请绑定法人所属企业账户</div>
       <ul class="inputField">
         <mt-field label="企业账户" placeholder="请输入企业账户" v-model="corporate"></mt-field>
-        <mt-field label="企业账号" placeholder="请输入企业账号" v-model="Identification"></mt-field>
+        <mt-field label="企业账号" placeholder="请输入企业账号" v-model="Identification"  type="tel"></mt-field>
         <mt-field label="银行名称" readonly>
           <select v-model="bankName" @change="getIdValue($event)" class="select" id="optionText">
             <option selected value disabled>请选择银行</option>
@@ -71,7 +71,7 @@
               :value="item.bankCode"
               :key="item.bankCode"
               :label="item.bankName"
-            >{{item.text}}</option>
+            >{{item.bankName}}</option>
           </select>
         </mt-field>
         <mt-field label="开户行" placeholder="请输入开户行" v-model="openbankName"></mt-field>
@@ -242,40 +242,46 @@ export default {
       this.showComText = myselect.options[index].value;
       console.log(this.showComText);
     },
+
     // 发送验证码
     getAuthCode() {
-      this.sendAuthCode = false;
-      this.auth_time = 60;
-      var auth_timetimer = setInterval(() => {
-        this.auth_time--;
-        if (this.auth_time <= 0) {
-          this.sendAuthCode = true;
-          clearInterval(auth_timetimer);
-        }
-      }, 1000);
-      var params = new URLSearchParams();
-      params.append("access_token", this.access_token);
-      params.append("qdcrmUserId", this.qdcrmUserId);
-      params.append("phone", this.phone);
-      params.append("type", 2); //  添加企业银行卡
-      params.append("number", Math.random());
-      console.log(params);
-      // 请求验证码
-      axios
-        .post(`${BASE_URL}/msmng/api/vertifycode/sendVertifyCode`, params, {
-          header: {
-            "Access-Control-Allow-Origin": "*"
+      if (this.phone == "") {
+        Toast("请输入手机号");
+        return;
+      } else {
+        this.sendAuthCode = false;
+        this.auth_time = 60;
+        var auth_timetimer = setInterval(() => {
+          this.auth_time--;
+          if (this.auth_time <= 0) {
+            this.sendAuthCode = true;
+            clearInterval(auth_timetimer);
           }
-        })
-        .then(response => {
-          console.log(response);
-          if (response.data.code == 400) {
-            Toast(response.data.message);
-          }
-        })
-        .catch(function(err) {
-          Toast(err.data.message);
-        });
+        }, 1000);
+        var params = new URLSearchParams();
+        params.append("access_token", this.access_token);
+        params.append("qdcrmUserId", this.qdcrmUserId);
+        params.append("phone", this.phone);
+        params.append("type", 2); //  添加企业银行卡
+        params.append("number", Math.random());
+        console.log(params);
+        // 请求验证码
+        axios
+          .post(`${BASE_URL}/msmng/api/vertifycode/sendVertifyCode`, params, {
+            header: {
+              "Access-Control-Allow-Origin": "*"
+            }
+          })
+          .then(response => {
+            console.log(response);
+            if (response.data.code == 400) {
+              Toast(response.data.message);
+            }
+          })
+          .catch(function(err) {
+            Toast(err.data.message);
+          });
+      }
     },
     // 提交个人账户信息
     onSubmit() {
@@ -395,7 +401,7 @@ export default {
   components: {
     VueClip
   },
-  mounted() {
+  created() {
     getRefreshToken;
     queryTwoElementsResult()
       .then(response => {
@@ -505,6 +511,11 @@ export default {
     background-size: 0.5rem;
     direction: rtl;
     padding-right: 0.7rem;
+    color: #000;
+    option {
+      color: red !important;
+      
+    }
   }
   .mint-cell {
     width: 90%;

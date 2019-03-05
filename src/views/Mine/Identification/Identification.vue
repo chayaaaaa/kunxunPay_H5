@@ -149,7 +149,7 @@ export default {
       this.$router.push("/back");
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
   },
   /* 注册组件 */

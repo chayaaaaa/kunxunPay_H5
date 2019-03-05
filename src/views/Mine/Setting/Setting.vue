@@ -162,7 +162,7 @@ export default {
       this.$router.push("/forgetPWD");
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     queryPasswordExist()
       .then(response => {

@@ -440,7 +440,7 @@ export default {
   width: 4.5rem;
 }
 .search {
-  border: 0.014rem solid #fff;
+  border: 1px solid #fff;/* no */
   border-radius: 0.1rem;
   background: rgba(0, 0, 0, 0);
   height: 0.6rem;

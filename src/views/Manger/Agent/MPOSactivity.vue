@@ -169,7 +169,7 @@ export default {
         });
     }
   },
-  mounted() {
+  created() {
     getRefreshToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")

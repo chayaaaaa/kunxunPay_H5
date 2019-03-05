@@ -4,12 +4,17 @@
 <head>
   <meta charset="utf-8">
   <meta name='apple-touch-fullscreen' content='yes'> <!-- 设置在苹果手机上以应用模式启动时，是否全屏 -->
-  <meta name="apple-mobile-web-app-capable" content="yes" /> <!-- ios 系统  -->
+  <meta name="apple-mobile-web-app-capable" content="yes" /> <!-- ios 系统允许全屏浏览  -->
   <meta name="format-detection" content="telephone=yes" />
   <meta content="fullscreen=yes,preventMove=no" name="ML-Config"> <!-- ios 系统  -->
+  <!--iphone的私有标签，iphone顶端状态条的样式。-->
+  <meta content="black" name="apple-mobile-web-app-status-bar-style">
   <meta name="apple-mobile-web-app-status-bar-style" content="black" /> <!-- ios 系统去除自动拨号 -->
   <meta name="format-detection" content="telephone=no,email=no,address=no" />
-  <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no" />
+  <!--强制让文档的宽度与设备宽度保持1:1，最大宽度1.0，禁止屏幕缩放。-->
+  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+  <meta name="viewport" content="target-densitydpi=get-target-densitydpi, width=device-width, user-scalable=no" />
+  <!-- 安卓系统 -->
   <!--UC强制全屏-->
   <meta name="x5-fullscreen" content="true">
   <!--QQ强制竖屏-->

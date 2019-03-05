@@ -6,16 +6,13 @@
       <mt-button slot="right" @click="show = true">筛选</mt-button>
     </mt-header>
     <div class="listPage" v-if="showListPages==true">
+      <ul class="listTop_queryAgent" v-show="cur === 0" :class="{'curr':cur === 0}">
+        <li>类型</li>
+        <li>商户名</li>
+        <li>联系人</li>
+        <li>联系电话</li>
+      </ul>
       <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <div class="div">
-          <van-loading type="spinner" size="40px"/>
-        </div>
-        <ul class="listTop_queryAgent" v-show="cur === 0" :class="{'curr':cur === 0}">
-          <li>类型</li>
-          <li>商户名</li>
-          <li>联系人</li>
-          <li>联系电话</li>
-        </ul>
         <ul class="listTital" v-show="cur === 0" :class="{'curr':cur === 0}">
           <van-list
             v-model="loading"
@@ -217,9 +214,9 @@ export default {
       this.$router.go(-1);
     },
     toAgentDetails(index, item) {
-      window.localStorage.setItem('agentDetails',JSON.stringify(item))
+      window.localStorage.setItem("agentDetails", JSON.stringify(item));
       this.$router.push({
-        name: "AgentDetails",
+        name: "AgentDetails"
       });
     },
     jumpToAgents() {
@@ -386,7 +383,18 @@ export default {
 </script>
 <style lang="less">
 @blue: #1c8cff;
-/* 头部 */
+
+/* 加载动画 */
+.van-list__loading-icon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0.9rem auto;
+}
+.van-list__loading {
+  width: 100%;
+  height: 2rem;
+}
 /* 头部 */
 .mint-header {
   height: 1.2rem;
@@ -425,11 +433,6 @@ export default {
     p {
       font-size: 0.38rem;
     }
-  }
-  .div {
-    width: 100%;
-    height: 0.5rem;
-    padding-left: 45%;
   }
 }
 /* toast */
@@ -591,16 +594,18 @@ export default {
 .listTop_queryAgent {
   width: 100%;
   height: 1.1rem;
-  position: fixed;
+  position: absolute;
   top: 1.2rem;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   display: flex;
-  flex-direction: row;
+  justify-content:center;
   text-align: center;
   line-height: 1.1rem;
   background: #fff;
   color: #1c8cff;
-  padding-left: 4.5%;
-  padding-right: 4.5%;
+  z-index: 200;
   li {
     width: 22.5%;
     border-bottom: 1px solid #1c8cff; /* no */
@@ -608,7 +613,7 @@ export default {
 }
 /* 列表 */
 .listTital {
-  margin-top: 1.8rem;
+  margin-top: 2.3rem;
   padding-left: 4%;
   padding-right: 4%;
   background: #fff;

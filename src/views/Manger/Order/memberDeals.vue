@@ -18,11 +18,23 @@
         <li class="Cli" @click="showOrgan = true" v-if="display==true">{{showText}}</li>
         <li class="Cli" @click="showOrgan = true" v-if="showThis==true">{{textvalue}}</li>
       </div>
-      <div class="CicTime"  @touchmove.prevent>
+      <div class="CicTime" @touchmove.prevent>
         <!-- 时间选择器 -->
-        <input class="startTime choiceTime" onfocus="this.blur()" @click="showStartTime()" placeholder="开始日期" v-model="startTime">
+        <input
+          class="startTime choiceTime"
+          onfocus="this.blur()"
+          @click="showStartTime()"
+          placeholder="开始日期"
+          v-model="startTime"
+        >
         <span class="memberDeals_span">-</span>
-        <input class="endTime choiceTime" onfocus="this.blur()" @click="showStartTime()" placeholder="结束日期" v-model="endTime">
+        <input
+          class="endTime choiceTime"
+          onfocus="this.blur()"
+          @click="showStartTime()"
+          placeholder="结束日期"
+          v-model="endTime"
+        >
 
         <mt-datetime-picker
           v-model="currentDate"
@@ -192,7 +204,7 @@ export default {
       startDate: new Date(2018, 1, 1),
       endDate: new Date(2030, 1, 1),
       currentDate: new Date(),
-      showText: JSON.parse(window.localStorage.getItem("userInfo")).name, // 显示总代理
+      showText: JSON.parse(window.localStorage.getItem("userInfo")).name // 显示总代理
     };
   },
 
@@ -475,7 +487,7 @@ export default {
       }, 500);
     }
   },
-  mounted() {
+  created() {
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
         .qdcrmUserId,
@@ -535,14 +547,14 @@ export default {
       float: left;
       .Cli {
         overflow: hidden;
-        -webkit-overflow:hidden; 
+        -webkit-overflow: hidden;
       }
     }
     .CicTime {
       width: 100;
       width: 80%;
       float: left;
-      .mint-popup{
+      .mint-popup {
         width: 100%;
         border-radius: 0;
         background: #fff;
@@ -574,14 +586,9 @@ export default {
     }
     /* 含未消费 */
     .consume {
-      width: 25%;
+      /*  width: 25%; */
       float: right;
-      .van-checkbox__icon {
-        height: 20px !important;
-        .van-checkbox__label {
-          line-height: 10px !important;
-        }
-      }
+
       .van-icon {
         margin-top: 0.2rem !important;
       }
@@ -654,6 +661,14 @@ export default {
 </style>
 
 <style lang="less">
+.van-checkbox__icon {
+  height: 20px !important;
+  width: 10px !important;
+  margin-left: 0.1rem !important;
+  .van-checkbox__label {
+    line-height: 10px !important;
+  }
+}
 .van-list__finished-text,
 .van-list__loading-text {
   height: 2.5rem !important;

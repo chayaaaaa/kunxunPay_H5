@@ -48,6 +48,30 @@ export default {
   },
   created() {
     this.getParams();
+    getRefreshToken();
+    this.merchantId = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantId;
+    this.merchantName = JSON.parse(
+      window.localStorage.getItem("agentDetails")
+    ).merchantName;
+    let obj = {
+      merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
+        .merchantId,
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token
+    };
+    axios
+      .get(`${BASE_URL}/msmng/api/configdepositandmpos/showDepositConfig`, {
+        params: obj
+      })
+      .then(response => {
+        console.log(response.data);
+        this.money = response.data.data.depositMoney;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   },
 
   watch: {
@@ -103,32 +127,6 @@ export default {
           console.log(error);
         });
     }
-  },
-  mounted() {
-    getRefreshToken();
-    this.merchantId = JSON.parse(
-      window.localStorage.getItem("agentDetails")
-    ).merchantId;
-    this.merchantName = JSON.parse(
-      window.localStorage.getItem("agentDetails")
-    ).merchantName;
-    let obj = {
-      merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
-        .merchantId,
-      access_token: JSON.parse(window.localStorage.getItem("token"))
-        .access_token
-    };
-    axios
-      .get(`${BASE_URL}/msmng/api/configdepositandmpos/showDepositConfig`, {
-        params: obj
-      })
-      .then(response => {
-        console.log(response.data);
-        this.money = response.data.data.depositMoney;
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 };
 </script>
