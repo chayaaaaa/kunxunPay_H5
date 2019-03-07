@@ -9,15 +9,23 @@ const routes = [
   }, { // 登录页面
     path: '/login',
     component: resolve => require(['@/components/login.vue'], resolve),
+  }, { // 安卓交互页面
+    path: '/JSBridgeAndroid',
+    component: resolve => require(['@/components/JSBridgeAndroid.vue'], resolve),
+  }, { // IOS交互页面
+    path: '/JSBridgeIOS',
+    component: resolve => require(['@/components/JSBridgeIOS.vue'], resolve),
   }, { // 主页
     path: '/index',
     component: resolve => require(['@/views/index/index.vue'], resolve),
+    /*  redirect: '/login',// (重定向) */
     meta: {
       required: true,// 添加该字段，表示进入这个路由是需要登录的
     }
   }, { // 平台管理页面
     path: '/manger',
     component: resolve => require(['@/views/Manger/manger.vue'], resolve),
+    /*  redirect: '/login',// (重定向) */
     meta: {
       required: true,
     }

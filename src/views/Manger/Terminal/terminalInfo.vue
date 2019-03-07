@@ -60,7 +60,7 @@
       </div>
     </div>
     <!-- 列表头部 -->
-    <ul class="listTop">
+    <ul class="listTop_terminalInfo">
       <li>终端类型</li>
       <li>序列号</li>
       <li>状态</li>
@@ -600,9 +600,23 @@ export default {
     }
   }
   /* 列表 */
-  .listTop {
+  .listTop_terminalInfo {
+    width: 91%;
+    height: 1.1rem;
+    position: absolute;
+    top: 5.1rem;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    line-height: 1.1rem;
+    background: #fff;
+    color: #1c8cff;
+    font-size: 0.4rem;
+    padding-left: 4.5%;
+    padding-right: 4.5%;
     li {
       width: 100%;
+      border-bottom: 0.5px solid #1c8cff; /* no */
     }
   }
   .search {
@@ -727,6 +741,7 @@ export default {
 <style lang="less">
 .van-picker__columns {
   margin-bottom: -1.5rem;
+    height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }

@@ -397,10 +397,14 @@ export default {
 }
 /* 头部 */
 .mint-header {
+  width: 100%;
   height: 1.2rem;
   font-size: 0.5rem;
   font-weight: 100;
   background: @blue;
+  z-index: 800;
+  position: fixed;
+  top: 0;
 }
 .mint-button {
   font-size: 0.35rem !important;
@@ -420,6 +424,9 @@ export default {
   .listPage {
     width: 100%;
     height: auto;
+    position: absolute;
+    top: 0rem;
+    bottom: 1.5rem;
   }
   .nothing {
     width: 100%;
@@ -600,12 +607,11 @@ export default {
   right: 0;
   margin: 0 auto;
   display: flex;
-  justify-content:center;
+  justify-content: center;
   text-align: center;
   line-height: 1.1rem;
   background: #fff;
   color: #1c8cff;
-  z-index: 200;
   li {
     width: 22.5%;
     border-bottom: 1px solid #1c8cff; /* no */
@@ -628,6 +634,7 @@ export default {
       display: inline-block;
       width: 24%;
       height: 1.1rem;
+      overflow: hidden;
     }
   }
 }
@@ -642,7 +649,7 @@ export default {
   position: fixed;
   bottom: 0;
   .mint-tabbar {
-    height: 1.3rem;
+    height: 1.5rem;
     .mint-tab-item-label {
       font-size: 0.35rem;
     }
@@ -653,7 +660,7 @@ export default {
   }
   li {
     width: 33.3%;
-    height: 1.3rem;
+    height: 1.5rem;
     float: left;
     text-align: center;
   }

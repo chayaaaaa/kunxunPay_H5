@@ -85,7 +85,7 @@
       </div>
     </div>
     <!-- 列表头部 -->
-    <ul class="listTop">
+    <ul class="listTop_memberDeals">
       <li>会员姓名</li>
       <li>交易笔数</li>
       <li>交易额</li>
@@ -611,9 +611,23 @@ export default {
       margin-top: 1rem;
     }
   }
-  .listTop {
+  .listTop_memberDeals {
+    width: 91%;
+    height: 1.1rem;
+    position: absolute;
+    top: 5.1rem;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    line-height: 1.1rem;
+    background: #fff;
+    color: #1c8cff;
+    font-size: 0.4rem;
+    padding-left: 4.5%;
+    padding-right: 4.5%;
     li {
       width: 100%;
+      border-bottom: 0.5px solid #1c8cff; /* no */
     }
   }
   .listTal {
@@ -677,6 +691,7 @@ export default {
 }
 .van-picker__columns {
   margin-bottom: -1.5rem;
+    height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }

@@ -1,34 +1,36 @@
 <template>
   <div class="login">
-    <img class="logo" src="@/assets/image/login/logo.png">
-    <img class="ic-logo" src="@/assets/image/login/ic-logo.png">
-    <img class="bg" src="@/assets/image/login/bg.png">
-    <p class="login_p">综合业务管理平台</p>
-    <form class="logoInput">
-      <input
-        type="text"
-        class="user"
-        placeholder="请输入分润管理账户账号"
-        id="name"
-        v-model="name"
-        @focus="inputFocus()"
-      >
-      <input
-        type="password"
-        class="pwd"
-        placeholder="输入分润管理账户密码"
-        id="pwd"
-        v-model="pwd"
-        @focus="inputFocus()"
-      >
-      <button class="btn" @click.prevent="login()">登录</button>
-    </form>
-    <p>支付许可证编号：Z2004951000010</p>
+    <div class="ioginBG">
+      <img class="logo" src="@/assets/image/login/logo.png">
+      <img class="ic-logo" src="@/assets/image/login/ic-logo.png">
+      <img class="bg" src="@/assets/image/login/bg.png">
+      <p class="login_p">综合业务管理平台</p>
+      <form class="logoInput">
+        <input
+          type="text"
+          class="user"
+          placeholder="请输入分润管理账户账号"
+          id="name"
+          v-model="name"
+          @focus="inputFocus()"
+        >
+        <input
+          type="password"
+          class="pwd"
+          placeholder="输入分润管理账户密码"
+          id="pwd"
+          v-model="pwd"
+          @focus="inputFocus()"
+        >
+        <button class="btn" @click.prevent="login()">登录</button>
+      </form>
+      <p>支付许可证编号：Z2004951000010</p>
+    </div>
   </div>
 </template>
 
 <script>
-import commonJS from '@/JS/commonJS.js'
+import commonJS from "@/JS/commonJS.js";
 import { BASE_URL } from "@/api/api.js";
 import { Toast, MessageBox } from "mint-ui";
 const axios = require("axios");
@@ -106,17 +108,24 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
 .login {
+  position: absolute;
   width: 100%;
-  height: 100%;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
   background: url("~@/assets/image/login/bj.png") no-repeat;
   background-size: 100% 100%;
+/*   .ioginBG {
+    width: 100%;
+    height: 100%;
+  } */
   .logo {
     width: 60%;
     height: 1rem;
     position: absolute;
     left: 20%;
     right: 20%;
-    top: 12rem;
+    top: 14rem;
   }
   .ic-logo {
     height: 2.3rem;
@@ -149,7 +158,7 @@ export default {
     height: 4.6rem;
     background: #fff;
     position: absolute;
-    top: 6.2rem;
+    top: 7.2rem;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -180,8 +189,10 @@ export default {
       height: 1rem;
       position: absolute;
       top: 4rem;
-      left: 32.5%;
-      right: 32.5%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      margin: 0 auto;
       border-radius: 20px; /* no */
       border: none;
       background: #1eb7ff;
@@ -194,7 +205,7 @@ export default {
   p {
     width: 100%;
     position: absolute;
-    top: 13.5rem;
+    top: 15.5rem;
     text-align: center;
     color: #fff;
     font-weight: 300;

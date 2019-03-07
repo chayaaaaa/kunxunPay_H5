@@ -12,8 +12,7 @@ import 'vant/lib/index.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'mint-ui/lib/style.css'
 import 'lib-flexible'
-
-import '@/CSSFILE/common.css'
+import JsBridge from '@/JS/JSBridge.js'
 // 引用公共JS
 import commonJS from '@/JS/commonJS.js'
 Vue.prototype.$commonJS = commonJS;
@@ -22,6 +21,7 @@ import md5 from 'js-md5'
 Vue.prototype.$md5 = md5;
 Vue.prototype.$axios = axios;// 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
 Vue.prototype.$qs = qs;
+Vue.use(JsBridge)
 Vue.use(Mint);
 Vue.use(Vuex);
 Vue.use(ElementUI);

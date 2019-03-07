@@ -3,35 +3,133 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name='apple-touch-fullscreen' content='yes'> <!-- 设置在苹果手机上以应用模式启动时，是否全屏 -->
-  <meta name="apple-mobile-web-app-capable" content="yes" /> <!-- ios 系统允许全屏浏览  -->
-  <meta name="format-detection" content="telephone=yes" />
-  <meta content="fullscreen=yes,preventMove=no" name="ML-Config"> <!-- ios 系统  -->
-  <!--iphone的私有标签，iphone顶端状态条的样式。-->
-  <meta content="black" name="apple-mobile-web-app-status-bar-style">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" /> <!-- ios 系统去除自动拨号 -->
-  <meta name="format-detection" content="telephone=no,email=no,address=no" />
-  <!--强制让文档的宽度与设备宽度保持1:1，最大宽度1.0，禁止屏幕缩放。-->
-  <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
-  <meta name="viewport" content="target-densitydpi=get-target-densitydpi, width=device-width, user-scalable=no" />
-  <!-- 安卓系统 -->
-  <!--UC强制全屏-->
-  <meta name="x5-fullscreen" content="true">
-  <!--QQ强制竖屏-->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <!-- 是否识别 手机号码、
- 电子邮件 地址 等-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <meta content="black" name="apple-mobile-web-app-status-bar-style">
-  <!-- 在web app应用下状态条
-（屏幕顶部条）的颜色；默认值为default（白色），可以定为black（黑色）和black-translucent（灰色半透明）-->
-  <meta name="msapplication-tap-highlight" content="no" /> <!-- 取消点击灰色背景 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>综合业务管理平台</title>
-  <link rel="stylesheet" href="@/CSSFILE/common.css">
   <style>
+    /*公共样式*/
+    html,
+    body,
+    body div,
+    span,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    abbr,
+    address,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    samp,
+    small,
+    strong,
+    sub,
+    sup,
+    var,
+    b,
+    i,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    figure,
+    footer,
+    header,
+    menu,
+    nav,
+    section,
+    time,
+    mark,
+    audio,
+    video,
+    details,
+    summary {
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-      /*同上取消点击背景*/
+      font-family: \5FAE\8F6F\96C5\9ED1, 'Arial';
+      font-size: 14px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      text-decoration:none;
+    }
+
+    a img {
+      border: none;
+    }
+
+    .f_l {
+      float: left;
+    }
+
+    .f_r {
+      float: right;
+    }
+
+    i {
+      font-style: normal;
+    }
+
+    em {
+      font-style: normal;
+    }
+
+    ul li {
+      list-style-type: none;
+    }
+
+    .c {
+      clear: both;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    input,
+    select,
+    textarea {
+      font-family: \5FAE\8F6F\96C5\9ED1, 'Arial';
+      margin: 0;
+      padding: 0;
+      outline: none;
     }
   </style>
 </head>
@@ -40,15 +138,6 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
   <script>
-    window.onload = function () {
-      if (document.documentElement.scrollHeight <= document.documentElement.clientHeight) {
-        bodyTag = document.getElementsByTagName('body')[0];
-        bodyTag.style.height = document.documentElement.clientWidth / screen.width * screen.height + 'px';
-      }
-      setTimeout(function () {
-        window.scrollTo(0, 1)
-      }, 0);
-    };
   </script>
 </body>
 

@@ -61,7 +61,13 @@
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
     </mt-popup>
-    <van-popup v-model="showBankCards" position="bottom" id="popup" :overlay="true">
+    <van-popup
+      v-model="showBankCards"
+      position="bottom"
+      id="popup"
+      :overlay="true"
+      @touchmove.prevent
+    >
       <div class="showBankList">
         <ul>
           <li class="li1">
@@ -530,14 +536,25 @@ export default {
   bottom: 0;
   background: #f5f5f5;
   .mint-popup {
-    width: 80%;
+    width: 90%;
+    border-radius: 0.2rem;
+    background: #fff;
   }
+.van-number-keyboard{
+  height: 5rem;
+}
+.van-number-keyboard__sidebar{
+  height: 5rem;
+}
+.van-key--big{
+height: 1rem !important;
+}
   .van-popup--bottom {
-    top: 4rem;
+    top: 2.5rem;
     bottom: 0rem;
     width: 100%;
     .van-password-input {
-      margin-top: -2.5rem;
+      margin-top: -3.5rem;
     }
     li {
       width: 90%;
@@ -656,14 +673,15 @@ export default {
   // 到账银行卡
   #popup {
     bottom: 0;
-    top: 10.7rem;
+    top: 7rem;
     width: 100%;
   }
   .showBankList {
-    height: auto;
+    height: 4rem;
     width: 100%;
     background: #fff;
     overflow: hidden;
+    z-index: 800;
     ul {
       width: 100%;
       height: 5.8rem;
@@ -679,8 +697,10 @@ export default {
         border-bottom: 1px solid #d9d9d9;
         padding-top: 0.2rem;
         background: #fff;
-        /*       position: absolute;
-        top: 0; */
+        z-index: 900;
+        position: fixed;
+        top: 0;
+
         p {
           line-height: 0.6rem;
           text-align: left;
@@ -699,6 +719,7 @@ export default {
         top: 1.4rem;
         bottom: 1.4rem;
         overflow: auto;
+        background: #f5f5f5;
         .li2 {
           width: 90%;
           height: 1.4rem;
@@ -730,13 +751,13 @@ export default {
         }
       }
       .li3 {
-        width: 70%;
+        width: 100%;
         font-size: 0.38rem;
         font-weight: 800;
         color: #222222;
         text-align: left;
         height: 1.4rem;
-        margin-left: 2.3rem;
+        margin-left: 0.5rem;
         border: none;
         line-height: 1.4rem;
         position: fixed;
@@ -794,10 +815,23 @@ export default {
   border: 1px solid #d9d9d9; /* no */
 }
 .van-picker__columns .van-picker-column {
-  margin-top: -1rem;
+ margin-top: 0.2rem;
 }
 .van-picker__columns {
-  height: 140px !important; /* no */
+  margin-bottom: -1.5rem;
+  height: 6.5rem !important;
+}
+
+.van-number-keyboard__sidebar{
+  height: 5rem !important;
+}
+.van-key{
+  height: 1.2rem;
+  line-height: 1.2rem !important;
+}
+.van-key--big{
+  height:2.5rem !important;
+  line-height: 2.5rem !important;
 }
 </style>
 

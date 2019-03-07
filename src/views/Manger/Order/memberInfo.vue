@@ -45,8 +45,9 @@
       <mt-field type="tel" v-model="queryAgent" class="queryAgent"></mt-field>
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
-    </mt-popup>列表头部
-    <ul class="listTop">
+    </mt-popup>
+    <!-- 列表头部 -->
+    <ul class="listTop_memberInfo">
       <li>会员姓名</li>
       <li>注册时间</li>
       <li>会员状态</li>
@@ -357,8 +358,7 @@ export default {
         new RegExp(this.value, "i").test(value)
       );
     }
-  },
-
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -368,6 +368,9 @@ export default {
   position: absolute;
   top: 0;
   bottom: 0;
+  a {
+    text-decoration: none;
+  }
   input {
     background: rgba(0, 0, 0, 0);
     color: #fff;
@@ -390,6 +393,25 @@ export default {
   }
   .Confirm {
     border-radius: 5px; /* no */
+  }
+  .listTop_memberInfo {
+    width: 91%;
+    height: 1.1rem;
+    position: absolute;
+    top: 5.1rem;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    line-height: 1.1rem;
+    background: #fff;
+    color: #1c8cff;
+    font-size: 0.4rem;
+    padding-left: 4.5%;
+    padding-right: 4.5%;
+    li {
+      width: 100%;
+      border-bottom: 0.5px solid #1c8cff; /* no */
+    }
   }
   /* 列表 */
   .listTal {
@@ -427,7 +449,7 @@ export default {
         font-weight: 700;
       }
     }
-    p{
+    p {
       height: 2.5rem;
       line-height: 1rem;
       text-align: center;
@@ -440,7 +462,7 @@ export default {
   width: 4.5rem;
 }
 .search {
-  border: 1px solid #fff;/* no */
+  border: 1px solid #fff; /* no */
   border-radius: 0.1rem;
   background: rgba(0, 0, 0, 0);
   height: 0.6rem;
@@ -467,6 +489,7 @@ export default {
 }
 .van-picker__columns {
   margin-bottom: -1.5rem;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }

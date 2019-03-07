@@ -79,7 +79,7 @@
       </div>
     </div>
     <!-- 列表头部 -->
-    <ul class="listTop">
+    <ul class="listTop_cashBack">
       <li>商户名称</li>
       <li>激活台数</li>
       <li>返现金额</li>
@@ -539,15 +539,30 @@ export default {
     background: #f5f5f5;
   }
 }
-.listTop {
+.listTop_cashBack {
+  width: 91%;
+  height: 1.1rem;
+  position: absolute;
+  top: 5.1rem;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  line-height: 1.1rem;
+  background: #fff;
+  color: #1c8cff;
+  font-size: 0.4rem;
+  padding-left: 4.5%;
+  padding-right: 4.5%;
   li {
-    width: 32.6%;
+    width: 100%;
+    border-bottom: 0.5px solid #1c8cff; /* no */
   }
 }
 </style>
 <style lang="less">
 .van-picker__columns {
   margin-bottom: -1.5rem;
+    height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }

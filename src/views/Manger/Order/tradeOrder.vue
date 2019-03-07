@@ -81,7 +81,7 @@
       </div>
     </div>
     <!-- 列表头部 -->
-    <ul class="listTop">
+    <ul class="listTop_tradeOrder">
       <li>业务类型</li>
       <li>交易时间</li>
       <li>交易额</li>
@@ -109,13 +109,15 @@
     </ul>
     <!-- 列表 -->
     <ul class="listTal" v-if="showQueryList == true">
-      <li v-for="item in querymemberDeals" :key="item.a">
-        <span>{{ item.bizType }}</span>
-        <span class="spa">{{ item.createTime }}</span>
-        <span class="span">{{ item.payMoneyAmount }}</span>
-        <span>{{item.status}}</span>
-      </li>
-      <P>没有更多数据了~</P>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <li v-for="item in querymemberDeals" :key="item.a">
+          <span>{{ item.bizType }}</span>
+          <span class="spa">{{ item.createTime }}</span>
+          <span class="span">{{ item.payMoneyAmount }}</span>
+          <span>{{item.status}}</span>
+        </li>
+        <P>没有更多数据了~</P>
+      </van-pull-refresh>
     </ul>
     <ul class="nothing" v-if="showNothing == true">
       <img src="@/assets/image/Manger/Trade/nothing.png">
@@ -241,6 +243,7 @@ export default {
         currentPage: this.pageNumber + 1,
         number: Math.random()
       };
+      console.log(this.endTime_tradeOrder);
       axios
         .get(`${BASE_URL}/msmng/api/order/queryTradeOrder`, {
           params: queryData
@@ -272,7 +275,7 @@ export default {
           }
         })
         .catch(function(err) {
-          Toast(err.message);
+          Toast(err);
         });
     },
     sureTwo_tradeOrder(data) {
@@ -307,6 +310,7 @@ export default {
         currentPage: this.pageNumber + 1,
         number: Math.random()
       };
+      console.log(this.endTime_tradeOrder);
       axios
         .get(`${BASE_URL}/msmng/api/order/queryTradeOrder`, {
           params: queryData
@@ -402,42 +406,36 @@ export default {
         let data = this.$qs.stringify({
           currentPage: self.pageNumber + 1
         });
-        window.sessionStorage.setItem("page", JSON.stringify(data));
         getQueryTradeOrder(data)
           .then(response => {
-            if (response.code == 200) {
-              console.log(response.data);
-              let data = response.data.data;
-              let res = data.orderQueryList;
-              console.log(res);
-              self.totalPage = data.paginator.pages;
-              console.log(self.totalPage);
-              self.deviceList = self.deviceList.concat(res);
-              self.loading = false;
-              self.pageNumber++;
-              self.totalNum = data.totalNum;
-              self.totalMoney = data.totalMoney;
-              self.valueLength = data.paginator.length;
-              console.log(self.valueLength);
-              if (self.pageNumber >= self.totalPage) {
-                self.finished = true;
+            console.log(response.data);
+            if (response.data.code == 200) {
+              let _this = this;
+              let listDetails = response.data.data.orderQueryList;
+              _this.querymemberDeals = listDetails;
+              _this.valueLength = response.data.data.paginator.length;
+              console.log(_this.querymemberDeals);
+              console.log(_this.valueLength);
+              _this.totalNum = response.data.data.totalNum;
+              _this.totalMoney = response.data.data.totalMoney;
+              if (_this.valueLength == 0) {
+                _this.showList = false;
+                _this.showNothing = true;
               } else {
-                self.finished = false;
-              }
-              if (self.valueLength == 0) {
-                self.showList = false;
-                self.showNothing = true;
+                _this.showList = false;
+                _this.showQueryList = true;
+                _this.showNothing = false;
               }
             } else {
-              console.log(response.data);
-              this.data = response.data;
-              self.showList = false;
-              self.showNothing = true;
+              let _this = this;
+              _this.showList = false;
+              _this.showQueryList = false;
+              _this.showNothing = true;
             }
           })
           .catch({
             function(error) {
-              Toast(response.message);
+              Toast(error);
             }
           });
       }, 500);
@@ -509,7 +507,7 @@ export default {
   .CicTime_tradeOrder {
     float: right;
     width: 73%;
-    .mint-popup{
+    .mint-popup {
       width: 100%;
       border-radius: 0;
       background: #fff;
@@ -554,10 +552,29 @@ export default {
     margin-top: 0.5rem;
   }
 }
-
+.listTop_tradeOrder {
+  width: 91%;
+  height: 1.1rem;
+  position: absolute;
+  top: 5.1rem;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  line-height: 1.1rem;
+  background: #fff;
+  color: #1c8cff;
+  font-size: 0.4rem;
+  padding-left: 4.5%;
+  padding-right: 4.5%;
+  li {
+    width: 100%;
+    border-bottom: 0.5px solid #1c8cff; /* no */
+  }
+}
 /* 列表 */
 
 .listTal {
+ 
   li {
     width: 90%;
     height: 1.1rem;
@@ -609,6 +626,7 @@ export default {
 <style lang="less">
 .van-picker__columns {
   margin-bottom: -1.5rem;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }

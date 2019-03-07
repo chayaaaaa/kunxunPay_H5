@@ -270,9 +270,12 @@ export default {
 </script>
 <style lang="less">
 @blue: #1c8cff;
-.manger{
+.manger {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 /* toast */
 .mint-msgbox {
@@ -299,10 +302,14 @@ export default {
 }
 /* 头部 */
 .mint-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
   height: 1.2rem;
   font-size: 0.5rem;
   font-weight: 100;
   background: @blue;
+  z-index: 999;
 }
 .mintui {
   font-size: 0.4rem;
@@ -311,6 +318,7 @@ export default {
 .userInfo {
   width: 100%;
   height: 3rem;
+    margin-top: 1.2rem;
   .profilePhoto {
     width: 30%;
     height: 3rem;

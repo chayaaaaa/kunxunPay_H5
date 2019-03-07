@@ -170,14 +170,14 @@ export default {
     margin-bottom: 0.3rem;
   }
   li {
-    width: 95%;
+    width: 90%;
     height: 1.2rem;
     line-height: 1.2rem;
     background: #1c8cff;
     border-radius: 5px; /* no */
     color: #fff;
     position: absolute;
-    bottom: -4rem;
+    bottom: -5rem;
     left: 0;
     right: 0;
     margin: 0 auto;

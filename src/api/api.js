@@ -231,6 +231,7 @@ export const getQueryTradeOrder = params => {
     var Y = myDate.getFullYear() + '-';
     var M = (myDate.getMonth() + 1 < 10 ? '0' + (myDate.getMonth() + 1) : myDate.getMonth() + 1) + '-';
     var D = myDate.getDate() + ' ';
+    D = D < 10 ? "0" + D : D;
     let access_token = JSON.parse(window.localStorage.getItem('token')).access_token;
     let qdcrmUserId = JSON.parse(window.localStorage.getItem('userInfo')).qdcrmUserId;
     let gmtStart = Y + M + '01';

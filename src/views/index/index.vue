@@ -257,10 +257,9 @@ export default {
               top: "center", // 描述怎么根据父元素进行定位。top 和 bottom 只有一个可以生效。如果指定 top 或 bottom，则 shape 里的 y、cy 等定位属性不再生效。『父元素』是指：如果是顶层元素，父元素是 echarts 图表容器。如果是 group 的子元素，父元素就是 group 元素。
               left: "center", // 同上
               style: {
-                text: "各服装销量对比", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
                 fill: "#fff", // 填充色。
                 fontSize: 16, // 字体大小
-                fontWeight: "bolder" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
+                fontWeight: "bold" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
               }
             },
 
@@ -317,7 +316,6 @@ export default {
               top: "center", // 描述怎么根据父元素进行定位。top 和 bottom 只有一个可以生效。如果指定 top 或 bottom，则 shape 里的 y、cy 等定位属性不再生效。『父元素』是指：如果是顶层元素，父元素是 echarts 图表容器。如果是 group 的子元素，父元素就是 group 元素。
               left: "center", // 同上
               style: {
-                text: "各服装销量对比", // 文本块文字。可以使用 \n 来换行。[ default: '' ]
                 fill: "#fff", // 填充色。
                 fontSize: 16, // 字体大小
                 fontWeight: "bolder" // 文字字体的粗细，可选'normal'，'bold'，'bolder'，'lighter'
@@ -408,16 +406,26 @@ export default {
 @blue: #1c8cff;
 @paleblue: #d0e7ff;
 /* 头部 */
+.index {
+  font-size: 0.4rem;
+  a {
+    text-decoration: none;
+  }
+}
 .mint-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
   height: 1.2rem;
   font-size: 0.5rem;
-  font-weight: 100;
-  background: @blue;
+  font-weight: 400;
+  background: #1c8cff;
+  z-index: 9999;
 }
 .header_bg {
   width: 100%;
   height: 3rem;
-  background: @blue;
+  background: #1c8cff;
 }
 .nav_bg {
   width: 100%;
@@ -428,7 +436,7 @@ export default {
 .divBopx {
   width: 0.6rem;
   height: 0.6rem;
-  position: absolute;
+  position: fixed;
   top: 0.3rem;
   right: 0.5rem;
   z-index: 9999;
@@ -482,6 +490,7 @@ export default {
     float: left;
     text-align: center;
     color: #fff;
+    font-size: 0.42rem;
   }
   .active {
     span {
@@ -500,14 +509,12 @@ export default {
   background-repeat: no-repeat;
   background-size: contain;
   background-size: 100% 2rem;
-  font-size: 0.35rem;
-
+  font-size: 0.4rem;
   .month {
     width: 50%;
     height: 3.5rem;
     float: left;
-    background: #1677cb;
-    opacity: 0.8;
+    background: rgba(22, 119, 204, 0.8);
     span {
       display: inline-block;
       margin-top: 15px;
@@ -515,8 +522,9 @@ export default {
       line-height: 0.5rem;
     }
     .span {
-      color: #f6f2f1;
-      font-size: 0.45rem;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.6rem;
     }
   }
   .today {
@@ -533,7 +541,8 @@ export default {
     }
     .span {
       color: #3f3f3f;
-      font-size: 0.45rem;
+      font-weight: bold;
+      font-size: 0.6rem;
     }
   }
 }
@@ -621,11 +630,10 @@ export default {
       font-size: 0.35rem;
     }
     .span {
-      font-size: 0.45rem;
+      font-size: 0.6rem;
     }
     .top {
       width: 100%;
-      height: 7rem;
       position: absolute;
       top: 3.8rem;
       z-index: 10;
@@ -669,8 +677,11 @@ export default {
   position: fixed;
   bottom: 0;
   z-index: 20;
+  a {
+    text-decoration: none;
+  }
   .mint-tabbar {
-    height: 1.3rem;
+    height: 1.5rem;
     .mint-tab-item-label {
       font-size: 0.35rem;
     }

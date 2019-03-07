@@ -161,8 +161,9 @@ export default {
   position: absolute;
   width: 100%;
   top: 0;
-  bottom: 1.2rem;
+  bottom: 0;
   background: #d0e7ff;
+  overflow: auto;
   .top {
     width: 100%;
     height: 4rem;
@@ -279,7 +280,7 @@ export default {
   position: fixed;
   bottom: 0;
   .mint-tabbar {
-    height: 1.3rem;
+    height: 1.5rem;
     .mint-tab-item-label {
       font-size: 0.35rem;
     }

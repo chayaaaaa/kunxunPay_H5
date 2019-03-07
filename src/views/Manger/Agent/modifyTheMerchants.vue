@@ -21,7 +21,13 @@
           <span>{{MerchantsType}}</span>
         </li>
         <li class="li">客户类型
-          <el-select v-model="CustomerType" slot="CustomerType" dir="rtl" placeholder="个人">
+          <el-select
+            v-model="CustomerType"
+            class="select_entry"
+            slot="CustomerType"
+            dir="rtl"
+            placeholder="个人"
+          >
             <el-option
               v-for="item in CustomerTypes"
               :key="item.value"
@@ -39,7 +45,7 @@
             placeholder="请选择所属上级"
             style="direction: rtl;"
             @click="showOrgan = true"
-             onfocus="this.blur()"
+            onfocus="this.blur()"
           >
         </li>
         <!-- 弹出层 -->
@@ -343,7 +349,7 @@ export default {
     if (this.MerchantsType == "I") {
       this.MerchantsType = "行业代理";
     }
-/*     this.sms = queryAgentDetailList.merchant.smsSign; */
+    /*     this.sms = queryAgentDetailList.merchant.smsSign; */
     this.LinkPhone = queryAgentDetailList.contact.mobile;
     this.merchantCode = res.merchantId;
     this.name = res.merchantName;
@@ -373,6 +379,7 @@ export default {
 @blue: #1c8cff;
 .van-picker__columns {
   margin-bottom: -1.5rem;
+    height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }
@@ -431,10 +438,7 @@ input:disabled {
   color: white;
   border-radius: 0.2rem;
 }
-.el-select-dropdown {
-  min-width: 2rem !important;
-  left: 7rem !important;
-}
+
 .modifyTheMerchants {
   width: 100%;
   font-size: 0.4rem;
@@ -442,6 +446,7 @@ input:disabled {
   top: 0;
   bottom: 0;
   background: #f5f5f5;
+  overflow: hidden;
 }
 /* ==============       header        ============= */
 .mint-header {
@@ -505,23 +510,12 @@ input:disabled {
   height: auto;
   background: #fff;
   padding-left: 5%;
-  .el-select {
-    width: 4.5rem;
-    height: 1.1rem;
-    position: absolute;
-    right: 1.5rem;
-    color: #222222;
-    border: none;
-
-    .el-option {
-      border: none;
-    }
-    .el-input__inner {
-      line-height: 1.1rem;
-      height: 1.1rem;
-    }
-    .el-select__caret {
-      margin-left: -1.1rem;
+  .select_entry {
+    width: 3rem;
+    height: 1rem;
+    float: right;
+    .el-input .el-select__caret {
+      color: transparent;
     }
   }
   .li {
@@ -558,9 +552,12 @@ input:disabled {
 }
 .btn {
   width: 80%;
-  margin-top: 1rem;
   height: 1.1rem;
-  margin-left: 10%;
+  position: absolute;
+  bottom:0rem;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
   background: #1c8cff;
 }
 </style>

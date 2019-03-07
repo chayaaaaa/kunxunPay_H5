@@ -148,7 +148,19 @@
 .van-checkbox__label{
   font-size:0.3rem;
 }
-
+.van-checkbox__icon .van-icon{
+  font-size: 14px;
+    color: transparent;
+    text-align: center;
+    line-height: inherit;
+    width: 20px;
+    height: 20px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid #e5e5e5;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
 /* 弹出框 */
 .van-picker-column {
   border-radius: 0.2rem;

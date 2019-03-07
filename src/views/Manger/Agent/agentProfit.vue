@@ -7,12 +7,12 @@
     </mt-header>
     <!-- 初始化数据 -->
     <div class="listPages" v-if="showListPages==true">
-        <ul class="listTTop">
-          <li>商户号</li>
-          <li>商户名称</li>
-          <li class="li">利润</li>
-        </ul>
-         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <ul class="listTTop">
+        <li>商户号</li>
+        <li>商户名称</li>
+        <li class="li">利润</li>
+      </ul>
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
         <ul class="listTTal">
           <van-list
             v-model="loading"
@@ -402,7 +402,7 @@ input {
   width: 100%;
   height: auto;
   position: absolute;
-  top: 1.2rem;
+  top: 1.15rem;
   bottom: 1.5rem;
 }
 .listTTal {
@@ -443,28 +443,29 @@ input {
     height: 1rem;
     margin-bottom: 0.5rem;
     margin-top: 0.3rem;
+    border-radius: 5px; /* no */
   }
   .reset {
     background: #d9d9d9;
-    margin-left: 5%;
-    margin-right: 9%;
-    border-radius: 5px; /* no */
+    float: left;
+    margin-left: 1rem;
   }
   input[type="reset"] {
     -webkit-appearance: none;
   }
   .ensure {
-    margin-right: 5%;
+    float: right;
+    margin-right: 1rem;
   }
   .el-input__inner {
     padding-left: 1rem;
     border: 1px solid #1c8cff; /* no */
     border-radius: 0.1rem;
-    width: 75%;
+    width: 70%;
     height: 0.7rem;
     line-height: 0.7rem;
     background: url("~@/assets/image/icon_next.png") no-repeat right;
-    background-position-x: 3.8rem;
+    background-position-x: 3.5rem;
     background-size: 0.3rem;
   }
   .top {

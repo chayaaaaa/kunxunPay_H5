@@ -54,6 +54,7 @@
       </ul>
       <button
         type="submit"
+        class="btn"
         @click.prevent="onSubmit(user,ID,bankName,bankNumber,phone,captcha,selected)"
       >提交</button>
     </div>
@@ -442,6 +443,7 @@ export default {
   top: 0;
   text-align: center;
   color: #fff;
+  z-index: 9999;
   .header_left {
     width: 10%;
     margin-left: 0.3rem;
@@ -457,11 +459,12 @@ export default {
   background: #b0b0b0 !important;
 }
 .tabControl {
-  position: absolute;
+  position: fixed;
   top: 1.2rem;
   width: 100%;
   height: 1.2rem;
   background: #fff;
+  z-index: 999;
   li {
     width: 50%;
     height: 1.2rem;

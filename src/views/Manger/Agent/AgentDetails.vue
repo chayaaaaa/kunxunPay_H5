@@ -469,7 +469,7 @@ export default {
         this.bankBranchCode = queryAgentDetailList.bank.bankBranchCode;
         this.card = queryAgentDetailList.bank.card;
         this.merchantStatus = queryAgentDetailList.merchant.status; // 激活状态 0[正常] 1[注销] 2[待激活]
-        this.biztype = queryAgentDetailList.merchant.bizType;
+        this.biztype = queryAgentDetailList.merchant.areaType;
         this.contactName = queryAgentDetailList.contact.contactName;
         this.mobile = queryAgentDetailList.contact.mobile.replace(
           /^(\d{3})(\d*)(\d{4})$/,
@@ -519,7 +519,9 @@ export default {
 .AgentDetails {
   background: #f5f5f5;
   width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   /* 头部 */
   .mint-header {
     height: 1.2rem;
@@ -585,6 +587,7 @@ export default {
         line-height: 1rem;
         float: left;
         font-size: 0.35rem;
+        white-space: nowrap;
         overflow: hidden;
         i {
           font-style: normal;

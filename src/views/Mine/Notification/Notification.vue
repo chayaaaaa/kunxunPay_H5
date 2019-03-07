@@ -123,7 +123,7 @@ export default {
   methods: {
     // 返回
     prev() {
-      history.go(-1);
+      this.$router.go(-1);
       this.reload();
     },
     // 业务消息
@@ -186,7 +186,7 @@ export default {
           self.isLoading = false;
         })
         .catch(function(err) {
-          Toast('暂无消息');
+           Toast(err);
         });
     },
     //下拉刷新
@@ -247,7 +247,7 @@ export default {
             }
           })
           .catch(function(err) {
-            Toast(err.message);
+             Toast(err);
           });
       }, 500);
     },
@@ -285,7 +285,7 @@ export default {
           self.isLoading = false;
         })
         .catch(function(err) {
-         Toast('暂无消息');
+          Toast(err);
         });
     },
     //下拉刷新
@@ -345,7 +345,7 @@ export default {
             }
           })
           .catch(function(err) {
-            Toast(err.message);
+            Toast(err);
           });
       }, 500);
     },
@@ -418,17 +418,20 @@ export default {
             params: data
           })
           .then(response => {
-           /*  console.log(response); */
-            if (response.data.data != null) {
-              this.showMsgThree = true;
+            console.log(response);
+            if (response.data.data == null) {
+              this.showMsgThree = false;
+              this.nothing = true;
+              }else if(response.data.data != null){
+                 this.showMsgThree = true;
               this.nothing = false;
               let obj = response.data.data.messages;
-            /*   console.log(obj); */
+              console.log(obj);
               self.totalPage = response.data.data.pages;
-            /*   console.log(self.totalPage); */
+              console.log(self.totalPage);
               self.deviceList = self.deviceList.concat(obj);
- /*              console.log(self.deviceList);
-              console.log(this.pageNumber); */
+              console.log(self.deviceList);
+              console.log(this.pageNumber);
               self.loading = false;
               self.pageNumber++;
               if (self.pageNumber >= self.totalPage) {
@@ -436,9 +439,7 @@ export default {
               } else {
                 self.finished = false;
               }
-            } else {
-              this.showMsgThree = false;
-              this.nothing = true;
+              self.onRefreshThree();
             }
           })
           .catch(function(err) {

@@ -1,7 +1,7 @@
 <template>
   <div class="entry">
     <!-- ===============    代 理 录 入 页 面   =============== -->
-    <mt-header title="代 理 商 录 入" fixed>
+    <mt-header title="代 理 商 录 入">
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <!-- =======================     结 算 信 息   ====================== -->
@@ -17,7 +17,7 @@
       </p>
       <ul class="listEntry" tag="listEntry">
         <li class="li">商户类型
-          <el-select v-model="MerchantsType" dir="rtl" placeholder="省代理">
+          <el-select v-model="MerchantsType" dir="rtl" class="select_entry" placeholder="省代理">
             <el-option
               v-for="item in MerchantsTypes"
               :key="item.value"
@@ -27,7 +27,13 @@
           </el-select>
         </li>
         <li class="li">客户类型
-          <el-select v-model="CustomerType" slot="CustomerType" dir="rtl" placeholder="个人">
+          <el-select
+            v-model="CustomerType"
+            class="select_entry"
+            slot="CustomerType"
+            dir="rtl"
+            placeholder="个人"
+          >
             <el-option
               v-for="item in CustomerTypes"
               :key="item.value"
@@ -111,11 +117,11 @@
         </li>
         <li class="li">
           商户状态
-          <span>待激活</span>
+          <span class="span_enter">待激活</span>
         </li>
+        <button type="primary" class="btn" @click="addAgentDetails01()">提交</button>
       </ul>
     </div>
-    <el-button type="primary" class="btn" @click="addAgentDetails01()">提交</el-button>
   </div>
 </template>
 <script>
@@ -391,6 +397,7 @@ input:disabled {
 }
 .van-picker__columns {
   margin-bottom: -1.5rem;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }
@@ -438,24 +445,31 @@ input:disabled {
   color: white;
   border-radius: 0.2rem;
 }
-.el-select-dropdown {
-  min-width: 2rem !important;
-  left: 7rem !important;
+.select_entry {
+  width: 3rem;
+  height: 1rem;
+  float: right;
+  .el-input .el-select__caret {
+    color: transparent;
+  }
 }
 .entry {
   width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   font-size: 0.4rem;
   background: #f5f5f5;
 }
 /* ==============       header        ============= */
 .mint-header {
+  width: 100%;
   height: 1.2rem;
   font-size: 0.4rem;
   font-weight: 100;
   background: #1c8cff;
-  padding-left: 5%;
-  padding-right: 5%;
+  position: fixed;
+  top: 0;
 }
 .mint-header-title {
   line-height: 0.5rem;
@@ -487,7 +501,7 @@ input:disabled {
     color: #1c8cff;
     display: inline-block;
     position: absolute;
-    left: 1rem;
+    /*     left: 1rem; */
     font-size: 0.36rem;
   }
   li {
@@ -504,31 +518,13 @@ input:disabled {
   height: 0.7rem;
   font-size: 0.35rem;
   padding-right: 0rem !important;
+  overflow: hidden;
 }
 .listEntry {
   width: 90%;
   height: auto;
   background: #fff;
   padding-left: 5%;
-  .el-select {
-    width: 4.5rem;
-    height: 1.1rem;
-    position: absolute;
-    right: 1.5rem;
-    color: #222222;
-    border: none;
-
-    .el-option {
-      border: none;
-    }
-    .el-input__inner {
-      line-height: 1.1rem;
-      height: 1.1rem;
-    }
-    .el-select__caret {
-      margin-left: -1.1rem;
-    }
-  }
   .li {
     border-bottom: 1px solid #ececec; /* no */
   }
@@ -551,18 +547,23 @@ input:disabled {
       font-size: 0.35rem;
       line-height: 1rem;
     }
-    span {
+    .span_enter {
       display: inline-block;
-      margin-left: 70%;
       color: rgb(189, 189, 189);
+      margin-left: 5.5rem;
     }
   }
-}
-.btn {
-  width: 80%;
-  margin-top: 1rem;
-  height: 1.1rem;
-  margin-left: 10%;
-  background: #1c8cff;
+  .btn {
+    border: none;
+    color: #fff;
+    width: 80%;
+    height: 1.1rem;
+    background: #1c8cff;
+    border-radius: 0.15rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0.5rem auto;
+  }
 }
 </style>
