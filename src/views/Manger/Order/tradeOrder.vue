@@ -98,7 +98,7 @@
           @load="onLoad"
           :offset="30"
         >
-          <li v-for="item in deviceList" :key="item.a">
+          <li v-for="item in deviceList" :key="item.a" @click="goTradeOrderDetail(item)">
             <span>{{ item.bizType }}</span>
             <span class="spa">{{ item.createTime }}</span>
             <span class="span">{{ item.payMoneyAmount }}</span>
@@ -110,7 +110,7 @@
     <!-- 列表 -->
     <ul class="listTal" v-if="showQueryList == true">
       <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <li v-for="item in querymemberDeals" :key="item.a">
+        <li v-for="item in querymemberDeals" :key="item.a" @click="goTradeOrderDetail(item)">
           <span>{{ item.bizType }}</span>
           <span class="spa">{{ item.createTime }}</span>
           <span class="span">{{ item.payMoneyAmount }}</span>
@@ -151,12 +151,7 @@ import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/Order.css";
 import { Toast } from "mint-ui";
 const axios = require("axios");
-import {
-  getQueryTradeOrder,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { getQueryTradeOrder, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "tradeOrder",
   data() {
@@ -223,6 +218,10 @@ export default {
       d = d < 10 ? "0" + d : d;
 
       return y + "-" + m + "-" + d;
+    },
+    goTradeOrderDetail(item) {
+      window.localStorage.setItem("orderNo", JSON.stringify(item.orderNo));
+      this.$router.push("/dealDetail");
     },
     showStartTime_tradeOrder() {
       console.log(this.formatDate(this.$refs.pic.value));
@@ -301,16 +300,26 @@ export default {
     },
 
     Confirm() {
+      //获取当前时间
+      var myDate = new Date();
+      var Y = myDate.getFullYear() + "-";
+      var M =
+        (myDate.getMonth() + 1 < 10
+          ? "0" + (myDate.getMonth() + 1)
+          : myDate.getMonth() + 1) + "-";
+      var D = myDate.getDate() + " ";
+      D = D < 10 ? "0" + D : D;
+      let gmtStart = Y + M + "01";
+      let gmtEnd = Y + M + D;
       let queryData = {
-        qdcrmUserId: this.value,
         access_token: JSON.parse(window.localStorage.getItem("token"))
           .access_token,
-        gmtStart: this.startTime_tradeOrder,
-        gmtEnd: this.endTime_tradeOrder,
+        qdcrmUserId: this.value,
+        gmtStart: gmtStart,
+        gmtEnd: gmtEnd,
         currentPage: this.pageNumber + 1,
         number: Math.random()
       };
-      console.log(this.endTime_tradeOrder);
       axios
         .get(`${BASE_URL}/msmng/api/order/queryTradeOrder`, {
           params: queryData
@@ -326,13 +335,13 @@ export default {
             console.log(_this.valueLength);
             _this.totalNum = response.data.data.totalNum;
             _this.totalMoney = response.data.data.totalMoney;
-            _this.showList = false;
-            _this.showNothing = true;
+            _this.showQueryList = true;
+            _this.showNothing = false;
           } else if (response.data.code == 400) {
             let _this = this;
             _this.showList = false;
-            _this.showQueryList = true;
-            _this.showNothing = false;
+            _this.showQueryList = false;
+            _this.showNothing = true;
           }
         })
         .catch(function(err) {
@@ -366,7 +375,7 @@ export default {
       let self = this;
       getQueryTradeOrder(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.data.orderQueryList;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -400,7 +409,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -534,6 +543,7 @@ export default {
       height: 0.6rem;
       line-height: 0.6rem;
       text-align: center;
+      background: #fff;
     }
   }
 }
@@ -574,7 +584,6 @@ export default {
 /* 列表 */
 
 .listTal {
- 
   li {
     width: 90%;
     height: 1.1rem;
@@ -596,9 +605,10 @@ export default {
     .span {
       color: #e3383e;
       font-weight: 700;
+      overflow: hidden;
     }
     .spa {
-      width: 23%;
+      width: 22%;
       margin-left: 0.8%;
     }
   }
@@ -631,24 +641,13 @@ export default {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
+    width: 0% !important;
     margin-left: 35%;
   }
-
-  .van-hairline--top-bottom::after {
-    border: 1px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  .van-picker__frame,
-  .van-picker__loading .van-loading {
-    top: 32%;
-  }
 }
-.van-list__finished-text,
-.van-list__loading-text {
-  height: 2.5rem;
-  line-height: 1rem;
+// 加载中模块
+.van-list__loading {
+  margin-bottom: 2rem;
 }
 </style>
 

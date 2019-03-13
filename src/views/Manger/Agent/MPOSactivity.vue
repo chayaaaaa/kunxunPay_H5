@@ -66,7 +66,7 @@
 </template>
 <script>
 import { Toast, MessageBox } from "mint-ui";
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
 export default {
   name: "MPOSactivity",
@@ -170,7 +170,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")
     ).merchantId;

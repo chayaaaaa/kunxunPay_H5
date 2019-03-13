@@ -124,7 +124,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 export default {
   name: "WithdrawalSchedule",
@@ -160,7 +160,7 @@ export default {
   },
   created() {
     this.getParams();
-    getRefreshToken();
+    checkToken();
   },
   watch: {
     // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可

@@ -49,7 +49,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 import md5 from "js-md5";
@@ -175,6 +175,9 @@ export default {
           console.log(error);
         });
     }
+  },
+  created() {
+    checkToken();
   }
 };
 </script>

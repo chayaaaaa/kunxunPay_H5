@@ -1,6 +1,6 @@
 <template>
   <div class="manger">
-    <mt-header title="平台管理" absolute>
+    <mt-header title="平台管理">
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <!-- ======= 用户信息  ======= -->
@@ -172,7 +172,7 @@
 </template>
 <script>
 import { MessageBox, Toast } from "mint-ui";
-import { getData, checkToken, getRefreshToken } from "@/api/api.js";
+import { getData, checkToken } from "@/api/api.js";
 export default {
   name: "manger",
   data() {
@@ -230,9 +230,9 @@ export default {
     }
   },
   created() {
+    checkToken();
     getData()
       .then(response => {
-        getRefreshToken();
         console.log(response);
         console.log(response.data);
         var a = this;
@@ -318,7 +318,7 @@ export default {
 .userInfo {
   width: 100%;
   height: 3rem;
-    margin-top: 1.2rem;
+  margin-top: 1.2rem;
   .profilePhoto {
     width: 30%;
     height: 3rem;

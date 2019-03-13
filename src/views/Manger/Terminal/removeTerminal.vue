@@ -5,20 +5,19 @@
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <div class="listOut" v-if="showDefault==true">
-      <form>
+      <form style="width:100%">
         <div class="removeTerminal_List">
           <mt-field label="前缀" placeholder="请输入终端序列号前缀" v-model="prefix"></mt-field>
           <mt-field label="起始串号" placeholder="请输入终端序列号起始串号" v-model="start"></mt-field>
           <mt-field label="结束串号" placeholder="请输入终端序列号结束串号" v-model="end"></mt-field>
           <mt-field label="后缀" placeholder="请输入终端序列号后缀" v-model="postfix"></mt-field>
+          <li class="Cli change">
+            <span>转移商户</span>
+            <span v-if="defaultvalue == true" @click="showOrgan = true">{{showText}}</span>
+            <span v-if="IndexText == true" @click="showOrgan = true">{{showIndexText}}</span>
+          </li>
         </div>
-        <li class="Cli change">
-          <span>转移商户</span>
-          <span v-if="defaultvalue == true" @click="showOrgan = true">
-            {{showText}}
-          </span>
-          <span v-if="IndexText == true" @click="showOrgan = true">{{showIndexText}}</span>
-        </li>
+
         <div class="bg_btn">
           <button class="btn rst" type="reset">重置</button>
           <button class="btn sure" type="submit" @click="submitMsg()">确定</button>
@@ -63,12 +62,7 @@ import "@/CSSFILE/force.css";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 import qs from "qs";
-import {
-  shiftTerminal,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { shiftTerminal, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "removeTerminal",
   data() {
@@ -163,7 +157,7 @@ export default {
       params.append("posBaseId", this.prefix);
       params.append("posSuffixId", this.postfix);
       params.append("number", Math.random());
-      getRefreshToken();
+      checkToken();
       shiftTerminal(params)
         .then(response => {
           console.log(response);
@@ -183,7 +177,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
         .qdcrmUserId,
@@ -212,14 +206,7 @@ export default {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
-    margin-left: 35%;
-  }
-
-  .van-hairline--top-bottom::after {
-    border: 2px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
+    width: 0 !important;
   }
   .van-picker__frame,
   .van-picker__loading .van-loading {
@@ -268,26 +255,31 @@ export default {
   position: absolute;
   top: 1.2rem;
   width: 100%;
-  height: 6.5rem;
+  height: 7.5rem;
   background: #fff;
   font-size: 0.4rem;
   .removeTerminal_List {
     width: 90%;
     margin: 0 auto;
+    height: 5rem;
     .mint-field {
       height: 1rem;
-      border-bottom:1px solid #d9d9d9;/* no */
+      border-bottom: 1px solid #d9d9d9; /* no */
     }
   }
   .change {
-    width: 88%;
-    height: 0.5rem;
-    line-height: 1.3rem;
+    width: 90%;
+    height: 1.2rem;
+    line-height: 1.2rem;
     color: #9b9b9b;
-    background: #fff;
-    margin-left: 0.75rem;
+    margin: 0 auto;
+    position: absolute;
+    left: 0;
+    right: 0;
     span:nth-child(1) {
       color: #000;
+      font-size: 0.38rem;
+      margin-left: 0.2rem;
     }
     span:nth-child(2) {
       display: block;
@@ -298,22 +290,25 @@ export default {
     margin-top: 1rem;
     width: 100%;
     height: 3rem;
+    background: #f5f5f5;
     .btn {
-      width: 30%;
+      width: 35%;
       height: 1rem;
       border: none;
-      border-radius: 5px; /* no */
+      border-radius: 5px;
       margin-top: 2rem;
     }
     .rst {
-      margin-left: 15%;
-      margin-right: 10%;
       background: @blue;
       color: #fff;
+      float: left;
+      margin-left: 1rem;
     }
     .sure {
       background: #fff;
-      border: 1px solid @blue; /* no */
+      float: right;
+      margin-right: 1rem;
+      border: 1px solid @blue;
       color: @blue;
     }
   }

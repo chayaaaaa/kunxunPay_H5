@@ -143,12 +143,7 @@ import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/Order.css";
 import { Toast } from "mint-ui";
 const axios = require("axios");
-import {
-  queryActiCashback,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { queryActiCashback, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "cashBack",
   data() {
@@ -345,7 +340,7 @@ export default {
       let self = this;
       queryActiCashback(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.data.list;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -379,7 +374,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -503,6 +498,7 @@ export default {
       font-size: 0.3rem;
       border-radius: 5px; /* no */
       color: #d9d9d9;
+      background: #fff;
       height: 0.6rem;
       line-height: 0.6rem;
       text-align: center;
@@ -562,29 +558,17 @@ export default {
 <style lang="less">
 .van-picker__columns {
   margin-bottom: -1.5rem;
-    height: 6rem !important;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
-    margin-left: 35%;
-  }
-
-  .van-hairline--top-bottom::after {
-    border: 1px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  .van-picker__frame,
-  .van-picker__loading .van-loading {
-    top: 32%;
+    width: 0 !important;
   }
 }
-.van-list__finished-text,
-.van-list__loading-text {
-  height: 2.5rem;
-  line-height: 1rem;
+// 加载中模块
+.van-list__loading{
+margin-bottom: 2rem;
 }
 // 时间选择器
 .el-range-editor.el-input__inner {

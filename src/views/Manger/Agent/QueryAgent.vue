@@ -148,16 +148,12 @@
 </template>
 <script>
 import "@/CSSFILE/tabbar.css";
+import "@/CSSFILE/alert.css";
 import agentTab from "@/components/agentTab.vue";
 import { MessageBox, Toast } from "mint-ui";
 import { PullRefresh, Loading, List } from "vant";
 const axios = require("axios");
-import {
-  queryAgent,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { queryAgent, checkToken, BASE_URL } from "@/api/api.js";
 import qs from "qs";
 // 上拉刷新每次显示的数据
 const loadNumUp = 10;
@@ -240,7 +236,7 @@ export default {
       let self = this;
       queryAgent(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = JSON.parse(response.data);
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -274,7 +270,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -284,14 +280,21 @@ export default {
         queryAgent(data)
           .then(response => {
             let res = JSON.parse(response.data);
-            self.totalPage = res.paginator.pages;
-            self.deviceList = self.deviceList.concat(res.list);
-            self.loading = false;
-            self.pageNumber++;
-            if (self.pageNumber >= self.totalPage) {
-              self.finished = true;
+            console.log(res.list.length);
+            if (res.list.length == 0) {
+              this.showListPages = false;
+              this.show = false;
+              this.nothing = true;
             } else {
-              self.finished = false;
+              self.totalPage = res.paginator.pages;
+              self.deviceList = self.deviceList.concat(res.list);
+              self.loading = false;
+              self.pageNumber++;
+              if (self.pageNumber >= self.totalPage) {
+                self.finished = true;
+              } else {
+                self.finished = false;
+              }
             }
           })
           .catch({
@@ -384,12 +387,9 @@ export default {
 <style lang="less">
 @blue: #1c8cff;
 
-/* 加载动画 */
-.van-list__loading-icon {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0.9rem auto;
+// 加载中模块
+.van-list__loading{
+margin-bottom: 2rem;
 }
 .van-list__loading {
   width: 100%;
@@ -664,5 +664,9 @@ export default {
     float: left;
     text-align: center;
   }
+}
+// 加载中模块
+.van-list__loading{
+margin-bottom: 2rem;
 }
 </style>

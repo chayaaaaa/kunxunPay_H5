@@ -67,34 +67,33 @@
       id="popup"
       :overlay="true"
       @touchmove.prevent
+      style="bottom:0rem;"
     >
-      <div class="showBankList">
-        <ul>
-          <li class="li1">
-            <p>选择到账银行卡</p>
-            <p>注意各行到账时间</p>
+      <ul class="showBankList">
+        <li class="li1">
+          <p>选择到账银行卡</p>
+          <p>注意各行到账时间</p>
+        </li>
+        <div class="listBody">
+          <li
+            class="li2"
+            v-for="(item,index) in list"
+            :key="index"
+            @click="getBankCardDetails(index,item)"
+          >
+            <span>
+              <img :src="item.iconPath">
+            </span>
+            <span>{{item.bankName}}</span>
+            <span>( {{item.cardNo}} )</span>
           </li>
-          <div class="listBody">
-            <li
-              class="li2"
-              v-for="(item,index) in list"
-              :key="index"
-              @click="getBankCardDetails(index,item)"
-            >
-              <span>
-                <img :src="item.iconPath">
-              </span>
-              <span>{{item.bankName}}</span>
-              <span>( {{item.cardNo}} )</span>
-            </li>
-          </div>
-          <li class="li3" @click="addCards()">使用新卡提现</li>
-        </ul>
-      </div>
+        </div>
+        <li class="li3" @click="addCards()">使用新卡提现</li>
+      </ul>
     </van-popup>
     <van-popup v-model="show" position="bottom">
-      <li>请输入支付密码</li>
-      <li>押金提现</li>
+      <li class="plsPay">请输入支付密码</li>
+      <li>{{this.message}}</li>
       <!-- 输入提现 -->
       <li id="getMoneyCount" v-if="showHandleMoney==true">￥ {{moneyCount}}</li>
       <!-- 全部提现 -->
@@ -126,7 +125,7 @@ import "@/CSSFILE/alert.css";
 import "@/CSSFILE/Order.css";
 import {
   getConfigFee,
-  getRefreshToken,
+  checkToken,
   BASE_URL,
   showBankCardList,
   getCashDetails,
@@ -422,12 +421,11 @@ export default {
                   console.log(response.data);
                   this.itemNo = response.data.data;
                   console.log(this.itemNo);
-                  this.$router.push({
-                    name: "withDrawSuccessPage",
-                    params: {
-                      item: this.itemNo
-                    }
-                  });
+                  window.localStorage.setItem(
+                    "itemNo",
+                    JSON.stringify(this.itemNo)
+                  );
+                  this.$router.push("withDrawSuccessPage");
                 })
                 .catch(function(error) {
                   console.log(error);
@@ -471,12 +469,12 @@ export default {
                 .then(response => {
                   console.log(response.data);
                   this.itemNo = response.data.data;
-                  this.$router.push({
-                    name: "withDrawSuccessPage",
-                    params: {
-                      item: this.itemNo
-                    }
-                  });
+                  console.log(this.itemNo);
+                  window.localStorage.setItem(
+                    "itemNo",
+                    JSON.stringify(this.itemNo)
+                  );
+                  this.$router.push("withDrawSuccessPage");
                 })
                 .catch(function(error) {
                   console.log(error);
@@ -493,8 +491,8 @@ export default {
         });
     }
   },
-  mounted() {
-    getRefreshToken();
+  created() {
+    checkToken();
     // 获取费率
     getConfigFee()
       .then(response => {
@@ -540,19 +538,15 @@ export default {
     border-radius: 0.2rem;
     background: #fff;
   }
-.van-number-keyboard{
-  height: 5rem;
-}
-.van-number-keyboard__sidebar{
-  height: 5rem;
-}
-.van-key--big{
-height: 1rem !important;
-}
+  .van-number-keyboard {
+    height: 5rem;
+    bottom: 3.75rem;
+  }
   .van-popup--bottom {
-    top: 2.5rem;
+    top: 1.5rem;
     bottom: 0rem;
     width: 100%;
+    height: 100%;
     .van-password-input {
       margin-top: -3.5rem;
     }
@@ -563,6 +557,8 @@ height: 1rem !important;
       line-height: 1.2rem;
       font-size: 0.45rem;
       margin: 0 auto;
+    }
+    .plsPay {
       border-bottom: 1px solid #d9d9d9; /* no */
     }
     li:nth-child(2) {
@@ -672,97 +668,91 @@ height: 1rem !important;
   }
   // 到账银行卡
   #popup {
-    bottom: 0;
-    top: 7rem;
+    position: fixed;
+    bottom: 0rem !important;
     width: 100%;
+    height: 100%;
+    top: 9.5rem;
   }
   .showBankList {
-    height: 4rem;
     width: 100%;
-    background: #fff;
-    overflow: hidden;
-    z-index: 800;
-    ul {
-      width: 100%;
-      height: 5.8rem;
-      border: none;
-      .ZW {
-        width: 100%;
-        height: 1.4rem;
-      }
-      .li1 {
-        width: 100%;
-        height: 1.2rem;
-        border: none;
-        border-bottom: 1px solid #d9d9d9;
-        padding-top: 0.2rem;
-        background: #fff;
-        z-index: 900;
-        position: fixed;
-        top: 0;
+    height: 7rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
 
-        p {
-          line-height: 0.6rem;
-          text-align: left;
-          margin-left: 0.3rem;
-          color: #606060;
-        }
-        p:nth-child(1) {
-          font-size: 0.38rem;
-          font-weight: 800;
-          color: #222222;
-        }
+    .li1 {
+      width: 100%;
+      height: 1.2rem;
+      border: none;
+      border-bottom: 1px solid #d9d9d9;
+      background: #fff;
+      z-index: 900;
+      p {
+        line-height: 0.6rem;
+        text-align: left;
+        margin-left: 0.3rem;
+        color: #606060;
       }
-      .listBody {
-        width: 100%;
-        position: absolute;
-        top: 1.4rem;
-        bottom: 1.4rem;
-        overflow: auto;
-        background: #f5f5f5;
-        .li2 {
-          width: 90%;
-          height: 1.4rem;
-          text-align: left;
-          border: none;
-          border-bottom: 1px solid #d9d9d9; /* no */
-          margin-left: 5%;
-          span {
-            float: left;
-            line-height: 1.4rem;
-            font-size: 0.38rem;
-            font-weight: 800;
-            color: #222222;
-            img {
-              width: 60%;
-              vertical-align: middle;
-            }
-          }
-          span:nth-child(1) {
-            float: left;
-            width: 1.8rem;
-            height: 1.4rem;
-            line-height: 1.4rem;
-            text-align: center;
-          }
-          span:nth-child(3) {
-            margin-left: 0.3rem;
-          }
-        }
-      }
-      .li3 {
-        width: 100%;
+      p:nth-child(1) {
         font-size: 0.38rem;
         font-weight: 800;
         color: #222222;
-        text-align: left;
-        height: 1.4rem;
-        margin-left: 0.5rem;
-        border: none;
-        line-height: 1.4rem;
-        position: fixed;
-        bottom: 0;
       }
+    }
+    .listBody {
+      webkit-box-flex: 1;
+      -webkit-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      width: 100%;
+      overflow: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      background: #f5f5f5;
+      .li2 {
+        width: 90%;
+        height: 1.4rem;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #d9d9d9; /* no */
+        margin-left: 5%;
+        span {
+          float: left;
+          line-height: 1.4rem;
+          font-size: 0.38rem;
+          font-weight: 800;
+          color: #222222;
+          img {
+            width: 60%;
+            vertical-align: middle;
+          }
+        }
+        span:nth-child(1) {
+          float: left;
+          width: 1.8rem;
+          height: 1.4rem;
+          line-height: 1.4rem;
+          text-align: center;
+        }
+        span:nth-child(3) {
+          margin-left: 0.3rem;
+        }
+      }
+    }
+    .li3 {
+      width: 100%;
+      height: 1.2rem !important;
+      line-height: 1.2rem !important;
+      font-size: 0.38rem;
+      color: #222222;
+      text-align: left;
+      margin-left: 0.5rem;
+      border: none;
     }
   }
 }
@@ -802,36 +792,38 @@ height: 1rem !important;
     margin-right: 10%;
   }
 }
-</style>
-<style lang="less">
-.van-picker__toolbar {
-  height: 1rem !important;
-  line-height: 1rem !important;
-}
 .van-password-input__security {
   width: 75%;
   height: 1rem;
   margin: 3.5rem auto;
   border: 1px solid #d9d9d9; /* no */
 }
+</style>
+<style lang="less">
+.van-picker__toolbar {
+  height: 1rem !important;
+  line-height: 1rem !important;
+}
+
 .van-picker__columns .van-picker-column {
- margin-top: 0.2rem;
+  margin-top: 0.2rem;
 }
 .van-picker__columns {
   margin-bottom: -1.5rem;
-  height: 6.5rem !important;
+  height: 6rem !important;
 }
-
+.van-number-keyboard--custom .van-number-keyboard__body{
+    width: 100%;
+  position: absolute;
+  bottom: 0;
+  height: 5rem;
+}
+.van-key--big {
+  height: 2.5rem !important;
+  line-height: 2.5rem !important;
+}
 .van-number-keyboard__sidebar{
   height: 5rem !important;
-}
-.van-key{
-  height: 1.2rem;
-  line-height: 1.2rem !important;
-}
-.van-key--big{
-  height:2.5rem !important;
-  line-height: 2.5rem !important;
 }
 </style>
 

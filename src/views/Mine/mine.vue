@@ -25,11 +25,12 @@
           <span v-if="returnAuthData == 4">认证中</span>
           <span v-if="returnAuthData == 1">认证成功</span>
           <span v-if="returnAuthData == 2">认证失败</span>
+          <span v-if="returnAuthData == null">未认证</span>
         </li>
         <li @click="goToNotificationPage()">消息通知</li>
         <li @click="goToWalletPage()">我的钱包</li>
         <li @click="goTomangerPage()">平台管理</li>
-        <li @click="CAPION()">月排行榜</li>
+        <!-- <li @click="CAPION()">月排行榜</li> -->
         <li @click="goToSettingPage()">设置</li>
       </ul>
     </div>
@@ -67,17 +68,20 @@
         </li>
       </mt-tabbar>
     </div>
+    <!-- 未实名认证 -->
+    <mt-popup v-model="showError" popup-transition="popup-fade">
+      <div class="alertMsg">
+        <div class="alertMsgText">请先进行实名认证~</div>
+        <div class="box alertMsgForgetPassword" @click="toRenZheng()">去实名认证</div>
+        <div class="box retry" @click="cancel()">取消</div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 <script>
 import { MessageBox, Toast } from "mint-ui";
 import "@/CSSFILE/alert.css";
-import {
-  returnAuthStatus,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { returnAuthStatus, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "mine",
   data() {
@@ -86,16 +90,19 @@ export default {
       selected: "main",
       text: JSON.parse(window.localStorage.getItem("userInfo")).name, //名字
       areaType: JSON.parse(window.localStorage.getItem("userInfo")).areaType, //机构
-      returnAuthData: "" // 实名认证返回结果
+      returnAuthData: "", // 实名认证返回结果
+      showError: false, //实名认证弹框
+      AuthStatus: ""
     };
   },
   created() {
     this.selected = this.$route.name;
-    getRefreshToken();
+    checkToken();
     returnAuthStatus()
       .then(response => {
         console.log(response.data);
         this.returnAuthData = response.data.data;
+        this.AuthStatus = response.data.data;
         console.log(this.returnAuthData);
       })
       .catch(function(error) {
@@ -125,17 +132,27 @@ export default {
         });
       }
     },
+    // 跳转到实名认证
+    toRenZheng() {
+      this.$router.push("/Identification");
+    },
+    cancel() {
+      this.showError = false;
+    },
     //  列表跳转
     goToIdentificationPage() {
       // 实名认证
-      this.$router.push("/statusPages");
+      if (this.returnAuthStatus == "null") {
+        this.$router.push("/Identification");
+      } else {
+        this.$router.push("/statusPages");
+      }
     },
     goToNotificationPage() {
       // 消息通知
       this.$router.push("/Notification");
     },
     goToWalletPage() {
-      // 我的钱包
       this.$router.push("/Wallet");
     },
     goTomangerPage() {
@@ -164,6 +181,11 @@ export default {
   bottom: 0;
   background: #d0e7ff;
   overflow: auto;
+  .mint-popup {
+    width: 90%;
+    height: 4rem;
+    border-radius: 5px; /* no */
+  }
   .top {
     width: 100%;
     height: 4rem;
@@ -267,6 +289,33 @@ export default {
         border: none;
       }
     }
+  }
+}
+// 实名认证弹框
+.alertMsg {
+  width: 100%;
+  height: 4.5rem;
+  background: #fff;
+  border-radius: 8px; /* no */
+  text-align: center;
+  .alertMsgText {
+    width: 100%;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 0.45rem;
+  }
+  .box {
+    width: 35%;
+    float: left;
+    line-height: 1rem;
+    font-size: 0.35rem;
+    background: #1c8cff;
+    color: #fff;
+    border-radius: 5px; /* no */
+  }
+  .alertMsgForgetPassword {
+    margin-left: 10%;
+    margin-right: 10%;
   }
 }
 </style>

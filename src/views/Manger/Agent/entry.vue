@@ -4,11 +4,6 @@
     <mt-header title="代 理 商 录 入">
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
-    <!-- =======================     结 算 信 息   ====================== -->
-    <header v-show="cur === 4" :class="{'curr':cur===4}">
-      代 理 商 录 入
-      <img src="@/assets/image/Manger/Agents/icn_back@2x.png" @click="prev()">
-    </header>
     <!-- 基本信息 -->
     <div class="baseMsg">
       <p>
@@ -16,31 +11,29 @@
         <span>基本信息（必填）</span>
       </p>
       <ul class="listEntry" tag="listEntry">
-        <li class="li">商户类型
-          <el-select v-model="MerchantsType" dir="rtl" class="select_entry" placeholder="省代理">
-            <el-option
+        <li class="li">
+          商户类型
+          <select v-model="MerchantsType">
+            <option selected="selected" value disabled>请选择</option>
+            <option
               v-for="item in MerchantsTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
-          </el-select>
+            >{{item.label}}</option>
+          </select>
         </li>
-        <li class="li">客户类型
-          <el-select
-            v-model="CustomerType"
-            class="select_entry"
-            slot="CustomerType"
-            dir="rtl"
-            placeholder="个人"
-          >
-            <el-option
+        <li class="li">
+          客户类型
+          <select v-model="CustomerType">
+            <option selected="selected" value disabled>请选择</option>
+            <option
               v-for="item in CustomerTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
-          </el-select>
+            >{{item.label}}</option>
+          </select>
         </li>
         <li class="li">
           所属上级
@@ -50,17 +43,17 @@
             v-model="qd"
             placeholder="请选择所属上级"
             style="direction: rtl;"
-            @click="showOrgan = true"
+            @click="showOrgan1 = true"
             onfocus="this.blur()"
           >
         </li>
         <!-- 弹出层 -->
-        <mt-popup v-model="showOrgan" popup-transition="popup-fade">
+        <mt-popup v-model="showOrgan1" popup-transition="popup-fade">
           <!-- title -->
           <div class="title">选 择 所 属 上 级</div>
-          <van-picker :columns="queryAgents" @change="onChange"/>
-          <div class="box cancel" @click="cancel()">取消</div>
-          <div class="box Confirm" @click="Confirm()">确认</div>
+          <van-picker :columns="queryAgents" @change="onChange1"/>
+          <div class="box cancel" @click="cancel1()">取消</div>
+          <div class="box Confirm" @click="Confirm1()">确认</div>
         </mt-popup>
         <li class="li">
           短信签名
@@ -129,7 +122,7 @@ import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/Order.css";
 import "@/CSSFILE/force.css";
 import { Toast, MessageBox } from "mint-ui";
-import { checkToken, getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
 export default {
   name: "entry",
@@ -150,7 +143,9 @@ export default {
       showAddDetails: false, // 显示下一步
       qd: "", // 所属上级商户号
       queryAgents: [], // 储存代理商数据
-      showOrgan: false,
+      showOrgan1: false,
+      showOrgan2: false,
+      showOrgan3: false,
       value: "", //qdcrmUserId
       /* ========     代理录入基本信息下拉框    ======== */
       // 商户类型下拉框
@@ -210,21 +205,42 @@ export default {
     prev() {
       this.$router.go(-1);
     },
-    Confirm() {
-      this.showOrgan = false;
+    Confirm1() {
+      this.showOrgan1 = false;
     },
-    cancel() {
-      this.showOrgan = false;
+    cancel1() {
+      this.showOrgan1 = false;
     },
-    onChange(picker, value, index) {
+    onChange1(picker, value, index) {
       this.qd = value.text;
-      this.value = value.id;
-      console.log(this.value);
       console.log(this.qd);
       console.log(index);
     },
+    Confirm2() {
+      this.showOrgan2 = false;
+    },
+    cancel2() {
+      this.showOrgan2 = false;
+    },
+    onChange2(picker, value, index) {
+      this.MerchantsType = value.label;
+      console.log(this.MerchantsType);
+      console.log(index);
+    },
+    Confirm3() {
+      this.showOrgan3 = false;
+    },
+    cancel3() {
+      this.showOrgan3 = false;
+    },
+    onChange3(picker, value, index) {
+      this.CustomerType = value.label;
+      console.log(this.CustomerType);
+      console.log(index);
+    },
+
     addAgentDetails01() {
-      getRefreshToken();
+      checkToken();
       let _this = this;
       let getDetails = window.localStorage.getItem("queryAgentDetails");
       _this.addAgentDetails = JSON.parse(getDetails);
@@ -247,7 +263,7 @@ export default {
         return;
       }
       if (!_this.merchantCode) {
-        MessageBox("请输入商品编号");
+        MessageBox("请输入商户编号");
         return;
       }
       if (_this.merchantCode.length < 8) {
@@ -369,7 +385,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
         .qdcrmUserId,
@@ -381,6 +397,7 @@ export default {
         params: queryData
       })
       .then(response => {
+        console.log(response);
         this.queryAgents = response.data.data;
         console.log(this.queryAgents);
       })
@@ -390,10 +407,24 @@ export default {
   }
 };
 </script>
-<style lang="less">
-textarea:disabled,
-input:disabled {
-  background: #fff;
+<style lang="less" scoped>
+select {
+  /*很关键：将默认的select选择框样式清除*/
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  /*将背景改为红色*/
+  border: none;
+  float: right;
+  width: 1.5rem;
+  text-align: center;
+  height: 1.2rem;
+  direction: rtl;
+  font-size: 0.35rem;
+}
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand {
+  display: none;
 }
 .van-picker__columns {
   margin-bottom: -1.5rem;
@@ -402,155 +433,108 @@ input:disabled {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
-    margin-left: 35%;
-  }
-
-  .van-hairline--top-bottom::after {
-    border: 2px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  .van-picker__frame,
-  .van-picker__loading .van-loading {
-    top: 32%;
+    width: 0 !important;
   }
 }
-.van-list__finished-text,
-.van-list__loading-text {
-  height: 2.5rem;
-  line-height: 1rem;
+textarea:disabled,
+input:disabled {
+  background: #fff;
 }
-@blue: #1c8cff;
-/* toast */
-.mint-msgbox {
-  height: 4.5rem;
-  border-radius: 0.2rem;
-}
-.mint-msgbox-header {
-  height: 2.6rem;
-  line-height: 2.6rem;
-  border: none;
-}
-.mint-msgbox-title {
-  font-size: 0.4rem;
-}
-.mint-msgbox-btns {
-  height: 1rem;
-  width: 80%;
-  margin-left: 10%;
-}
-.mint-msgbox-confirm {
-  background: @blue;
-  color: white;
-  border-radius: 0.2rem;
-}
-.select_entry {
-  width: 3rem;
-  height: 1rem;
-  float: right;
-  .el-input .el-select__caret {
-    color: transparent;
-  }
+/* 头部 */
+.mint-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  height: 1.2rem;
+  font-size: 0.5rem;
+  font-weight: 100;
+  background: #1c8cff;
+  z-index: 999;
 }
 .entry {
   width: 100%;
+  height: 100%;
   position: absolute;
+  background: #f5f5f5;
   top: 0;
   bottom: 0;
-  font-size: 0.4rem;
-  background: #f5f5f5;
-}
-/* ==============       header        ============= */
-.mint-header {
-  width: 100%;
-  height: 1.2rem;
-  font-size: 0.4rem;
-  font-weight: 100;
-  background: #1c8cff;
-  position: fixed;
-  top: 0;
-}
-.mint-header-title {
-  line-height: 0.5rem;
-}
-.mint-botton-text {
-  font-size: 0.3rem !important;
-}
-.mintui {
-  font-size: 0.4rem;
-}
 
-/* 基本信息 */
-.baseMsg {
-  width: 100%;
-  height: auto;
-  line-height: 1rem;
-  margin-top: 1.2rem;
-  background: #fff;
-  p {
-    background: #f5f5f5;
-  }
-  img {
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-  }
-  span {
-    color: #1c8cff;
-    display: inline-block;
-    position: absolute;
-    /*     left: 1rem; */
-    font-size: 0.36rem;
-  }
-  li {
-    width: 90%;
-    height: 1.2rem;
-    margin-left: 5%;
-    line-height: 1.2rem;
-    color: #222222;
-    font-size: 0.38rem;
-    background: #fff;
-  }
-}
-.el-input__inner {
-  height: 0.7rem;
-  font-size: 0.35rem;
-  padding-right: 0rem !important;
-  overflow: hidden;
-}
-.listEntry {
-  width: 90%;
-  height: auto;
-  background: #fff;
-  padding-left: 5%;
-  .li {
-    border-bottom: 1px solid #ececec; /* no */
-  }
-  li {
-    width: 90%;
-    height: 1.2rem;
-    line-height: 1.2rem;
-    color: #222222;
-    font-size: 0.38rem;
-    input {
-      border: none;
-    }
-    .inputStyle {
-      border: none;
-      width: 50%;
+  .baseMsg {
+    width: 100%;
+    height: 100%;
+    margin-top: 1.2rem;
+    p {
+      background: #f5f5f5;
       height: 1rem;
-      position: absolute;
-      float: right;
-      right: 1rem;
-      font-size: 0.35rem;
       line-height: 1rem;
     }
-    .span_enter {
+    img {
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+    span {
+      color: #1c8cff;
       display: inline-block;
-      color: rgb(189, 189, 189);
-      margin-left: 5.5rem;
+      position: absolute;
+      font-size: 0.36rem;
+    }
+    li {
+      width: 90%;
+      height: 1.2rem;
+      margin-left: 5%;
+      line-height: 1.2rem;
+      color: #222222;
+      font-size: 0.38rem;
+      background: #fff;
+    }
+  }
+  .listEntry {
+    width: 95%;
+    height: auto;
+    background: #fff;
+    padding-left: 5%;
+    .li {
+      border-bottom: 1px solid #ececec;
+      select {
+        border: none;
+        appearance: none;
+        -moz-appearance: none; /* Firefox */
+        -webkit-appearance: none; /* Safari 和 Chrome */
+        background: transparent;
+        outline: none;
+        background-size: 0.5rem;
+        margin-right: 0.5rem;
+        option {
+          color: #000 !important;
+        }
+      }
+    }
+    li {
+      width: 90%;
+      height: 1.2rem;
+      line-height: 1.2rem;
+      color: #222222;
+      font-size: 0.38rem;
+      input {
+        border: none;
+      }
+      .inputStyle {
+        border: none;
+        width: 50%;
+        height: 1rem;
+        position: absolute;
+        float: right;
+        right: 1rem;
+        font-size: 0.35rem;
+        line-height: 1rem;
+      }
+      .span_enter {
+        display: inline-block;
+        color: rgb(189, 189, 189);
+        margin-left: 5.5rem;
+      }
     }
   }
   .btn {

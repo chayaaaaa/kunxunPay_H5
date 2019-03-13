@@ -31,7 +31,7 @@
         ></mt-field>
         <mt-field label="银行名称" readonly>
           <select v-model="bankName" @change="getIdValue($event)" class="select" id="optionText">
-            <option selected value disabled>请选择银行</option>
+            <option selected="selected" value disabled>请选择银行</option>
             <option
               v-for="item in list"
               :value="item.bankCode"
@@ -54,7 +54,7 @@
       </ul>
       <button
         type="submit"
-        class="btn"
+        class="sub_btn"
         @click.prevent="onSubmit(user,ID,bankName,bankNumber,phone,captcha,selected)"
       >提交</button>
     </div>
@@ -63,10 +63,10 @@
       <div class="list_Reminder">请绑定法人所属企业账户</div>
       <ul class="inputField">
         <mt-field label="企业账户" placeholder="请输入企业账户" v-model="corporate"></mt-field>
-        <mt-field label="企业账号" placeholder="请输入企业账号" v-model="Identification"  type="tel"></mt-field>
+        <mt-field label="企业账号" placeholder="请输入企业账号" v-model="Identification" type="tel"></mt-field>
         <mt-field label="银行名称" readonly>
           <select v-model="bankName" @change="getIdValue($event)" class="select" id="optionText">
-            <option selected value disabled>请选择银行</option>
+            <option selected="selected" value disabled>请选择银行</option>
             <option
               v-for="item in list"
               :value="item.bankCode"
@@ -129,7 +129,7 @@ import "@/CSSFILE/alert.css";
 import {
   queryTwoElementsResult,
   queryBankSup,
-  getRefreshToken,
+  checkToken,
   BASE_URL
 } from "@/api/api.js";
 export default {
@@ -306,7 +306,7 @@ export default {
         Toast("请输入验证码");
         return;
       }
-      getRefreshToken();
+      checkToken();
       var params = new URLSearchParams();
       params.append("access_token", this.access_token);
       params.append("qdcrmUserId", this.qdcrmUserId);
@@ -374,7 +374,7 @@ export default {
       params.append("authImgOpProof", this.opening); // 开户证明
       params.append("number", Math.random());
       console.log(params);
-      getRefreshToken();
+      checkToken();
       // 添加企业账户请求
       axios
         .post(`${BASE_URL}/msmng/api/bankcard/addBizBankCard`, params, {
@@ -403,7 +403,7 @@ export default {
     VueClip
   },
   created() {
-    getRefreshToken;
+    checkToken();
     queryTwoElementsResult()
       .then(response => {
         console.log(response.data.data);
@@ -431,6 +431,9 @@ export default {
 </script>
 <style lang="less" scoped>
 @blue: #1c8cff;
+.clip .icon {
+  border: none !important;
+}
 /* 头部 */
 .header {
   width: 100%;
@@ -453,6 +456,11 @@ export default {
   .p {
     width: 90%;
   }
+}
+.mint-popup {
+  width: 90%;
+  height: 4rem;
+  border-radius: 5px; /* no */
 }
 // 验证码
 .glay {
@@ -501,6 +509,7 @@ export default {
   position: absolute;
   background: #fff;
   top: 3.45rem;
+  z-index: 9999;
   select {
     width: 3rem;
     height: 0.5rem;
@@ -516,8 +525,7 @@ export default {
     padding-right: 0.7rem;
     color: #000;
     option {
-      color: red !important;
-      
+      color: #000 !important;
     }
   }
   .mint-cell {
@@ -550,21 +558,7 @@ export default {
   bottom: 0;
   background: #f5f5f5;
 }
-button {
-  position: absolute;
-  width: 90%;
-  height: 1rem;
-  bottom: 5rem;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border: none;
-  background: #1c8cff;
-  color: #fff;
-  font-size: 0.4rem;
-  letter-spacing: 0.2rem;
-  border-radius: 5px; /* no */
-}
+
 .CloseBank {
   width: 100%;
   position: absolute;
@@ -621,8 +615,25 @@ button {
 .btn {
   bottom: -1.2rem;
 }
+.sub_btn {
+  bottom: 2rem;
+}
+button {
+  width: 90%;
+  height: 1rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border: none;
+  background: #1c8cff;
+  color: #fff;
+  font-size: 0.4rem;
+  letter-spacing: 0.2rem;
+  border-radius: 5px; /* no */
+}
 .alertMsg {
-  width: 8rem;
+  width: 100%;
   height: 4.5rem;
   background: #fff;
   border-radius: 8px; /* no */
@@ -636,7 +647,7 @@ button {
   .box {
     width: 35%;
     float: left;
-    line-height: 1.2rem;
+    line-height: 1rem;
     font-size: 0.35rem;
     background: #1c8cff;
     color: #fff;
@@ -684,7 +695,7 @@ option:disabled {
     width: 50%;
   }
 }
-.clip .icon[data-v-29874490] {
-  border: none;
+.clip .icon {
+  border: none !important;
 }
 </style>

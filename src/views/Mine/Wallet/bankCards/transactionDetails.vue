@@ -52,23 +52,24 @@
         <div class="box retry" @click="retry()">重试一次</div>
       </div>
     </mt-popup>
-    <van-popup v-model="show" :overlay="false">
-      <div class="pay_password">
-        <!-- 密码输入框 -->
-        <div class="password_input">
+    <!--   <van-popup v-model="show" :overlay="false">
+    <div class="pay_password">-->
+    <!-- 密码输入框 -->
+    <!--         <div class="password_input">
           <p style="text-align: center">请输入支付密码解绑银行卡</p>
           <van-password-input
             :value="value"
             v-model="value"
             @focus="showKeyboard = true"
             close-button-text="取消"
+            style="height:1.2rem;width:70%;margin:0 auto;"
           />
-        </div>
-        <!-- 确定框 -->
-        <button @click="sumbitPwd()">提交</button>
-        <!--键盘-->
-        <!-- 数字键盘 -->
-        <van-number-keyboard
+    </div>-->
+    <!-- 确定框 -->
+    <!-- <button @click="sumbitPwd()">提交</button> -->
+    <!--键盘-->
+    <!-- 数字键盘 -->
+    <!--    <van-number-keyboard
           :show="show"
           theme="custom"
           extra-key="."
@@ -80,6 +81,22 @@
           transition
         />
       </div>
+    </van-popup>-->
+    <van-popup v-model="show" position="bottom">
+      <li class="plsPay">请输入支付密码解绑银行卡</li>
+      <!-- 密码输入框 -->
+      <van-password-input :value="value" @focus="showKeyboard = true"/>
+      <!-- 数字键盘 -->
+      <van-number-keyboard
+        :show="show"
+        theme="custom"
+        close-button-text="完成"
+        @close="sumbitPwd()"
+        @blur="show = false;"
+        @input="onInput"
+        @delete="onDelete"
+        delete-button-text="删除"
+      />
     </van-popup>
     <ul class="nothing" v-if="nothing == true">
       <img src="@/assets/image/Manger/Trade/nothing.png">
@@ -93,7 +110,7 @@ import { PasswordInput, NumberKeyboard } from "vant";
 import "@/CSSFILE/alert.css";
 import "@/CSSFILE/alert.css";
 import {
-  getRefreshToken,
+  checkToken,
   queryPasswordExist,
   BASE_URL,
   checkPayPassword
@@ -120,17 +137,35 @@ export default {
       showDetails: true,
       data: "", // 设置密码的值
       showPrempt: false, // 未设置密码弹框
-      tailNum: "" // 银行卡后四位
+      tailNum: "", // 银行卡后四位
+      payNumber: ""
     };
   },
   created() {
-    this.getParams();
-    getRefreshToken();
+    checkToken();
+    if (this.itemDetails == undefined) {
+      this.showDetails = false;
+    }
+    let list = JSON.parse(window.localStorage.getItem("_bankListDetails"));
+    this.itemDetails = list;
+    console.log(this.itemDetails);
+    this.iconPath = list.iconPath;
+    this.bankName = list.bankName;
+    this.status = list.status;
+    this.cardType = list.cardType;
+    this.cardNo = list.cardNo;
   },
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
+  mounted() {
+    queryPasswordExist()
+      .then(response => {
+        console.log(response.data.data);
+        this.payNumber = response.data.data;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   },
+
   methods: {
     prev() {
       history.go(-1);
@@ -142,18 +177,15 @@ export default {
       this.value = this.value.slice(0, this.value.length - 1);
     },
     Unpinless() {
-      queryPasswordExist()
-        .then(response => {
-          console.log(response.data.data);
-          if (response.data.data == 1) {
-            this.show = true;
-          } else {
-            this.showPrempt = false;
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+      console.log(this.show);
+      console.log(this.payNumber);
+      var _this = this;
+      /*      _this.show = true; */
+      if (_this.payNumber != "1") {
+        _this.showPrempt = true;
+      } else {
+        _this.show = true;
+      }
     },
     cancelPrempt() {
       this.showPrempt = false;
@@ -229,30 +261,12 @@ export default {
 
       this.value = "";
     },
-    getParams() {
-      // 取到路由带过来的参数
-      var routerParams = this.$route.params.id;
-      var list = this.$route.params.item;
-      this.itemDetails = list;
-      console.log(this.itemDetails);
-      this.iconPath = list.iconPath;
-      this.bankName = list.bankName;
-      this.status = list.status;
-      this.cardType = list.cardType;
-      this.cardNo = list.cardNo;
-    },
     ForgetPassword() {
       this.$router.push("/forgetPWD");
     },
     retry() {
       this.showAlert = false;
       this.show = true;
-    }
-  },
-  mounted() {
-    getRefreshToken();
-    if (this.itemDetails == undefined) {
-      this.showDetails = false;
     }
   }
 };
@@ -261,6 +275,7 @@ export default {
 @blue: #1c8cff;
 .van-popup {
   transform: none;
+  left: 0;
   button {
     width: 70%;
     height: 1rem;
@@ -274,6 +289,7 @@ export default {
     border-radius: 5px; /* no */
   }
 }
+
 .mint-popup {
   background: none;
 }
@@ -310,27 +326,30 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-.pay_password {
-  background: #e2e1e1;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  top: 1.2rem;
+
+.van-number-keyboard {
+  height: 5rem;
+  bottom: 3.75rem;
+}
+.van-popup--bottom {
+  top: 0rem;
+  bottom: 0rem;
   width: 100%;
   height: 100%;
-  z-index: 800;
-}
-
-.password_input {
-  position: fixed;
-  left: 0;
-  top: 2rem;
-  width: 100%;
-  height: 2rem;
-  z-index: 900;
-}
-.van-password-input {
-  top: 1rem;
+  .van-password-input {
+    margin-top: 1.5rem;
+  }
+  li {
+    width: 90%;
+    height: 1.2rem;
+    text-align: center;
+    line-height: 1.2rem;
+    font-size: 0.45rem;
+    margin: 0 auto;
+  }
+  .plsPay {
+    border-bottom: 1px solid #d9d9d9; /* no */
+  }
 }
 /* 头部 */
 .mint-header {
@@ -444,22 +463,31 @@ input[type="number"] {
     margin-right: 10%;
   }
 }
+.van-number-keyboard {
+  height: 5rem;
+  bottom: 0;
+}
+.van-password-input__security {
+  height: 1.2rem !important;
+  width: 90%;
+  margin: 0 auto !important;
+}
+[class*="van-hairline"]::after {
+  border: 1px solid #ebedf0;
+}
 </style>
 <style lang="less">
-.van-password-input__security {
-  height: 1.2rem;
-  width: 70%;
-  margin: 0 auto;
+.van-number-keyboard--custom .van-number-keyboard__body {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  height: 5rem;
 }
-.van-number-keyboard {
-  height: 6rem;
+.van-key--big {
+  height: 2.5rem !important;
+  line-height: 2.5rem !important;
 }
-.van-key {
-  height: 1.5rem;
-  line-height: 1.5rem;
-  font-size: 0.4rem;
+.van-number-keyboard__sidebar{
+    height: 5rem !important;
 }
-/* .van-key--gray {
-  background: none;
-} */
 </style>

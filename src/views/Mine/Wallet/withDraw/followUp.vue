@@ -63,7 +63,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 export default {
@@ -146,7 +146,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let datatwo = {
@@ -196,8 +196,8 @@ export default {
       });
     }
   },
-  mounted() {
-    getRefreshToken();
+  created() {
+    checkToken();
     // 获取提现列表
     let data = {
       access_token: JSON.parse(window.localStorage.getItem("token"))

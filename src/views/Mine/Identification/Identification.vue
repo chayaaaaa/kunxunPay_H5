@@ -53,13 +53,12 @@
 import { Toast } from "mint-ui";
 import EXIF from "exif-js";
 import { VueClip } from "vue-pic-clip";
-import { checkToken } from "@/api/api.js";
 import qs from "qs";
 import submitSuccessPage from "@/views/Mine/Identification/submitSuccessPage.vue";
 import {
   returnAuthStatus,
   queryTwoElementsResult,
-  getRefreshToken,
+  checkToken,
   BASE_URL
 } from "@/api/api.js";
 export default {
@@ -150,7 +149,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
   },
   /* 注册组件 */
   components: {
@@ -182,7 +181,7 @@ export default {
 /* 进度栏 */
 .upload {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 1.2rem;
   height: 2.5rem;
   background: @blue;
@@ -427,7 +426,6 @@ export default {
 }
 .mint-field-core {
   font-size: 0.35rem;
-  border-bottom: 1px solid #9b9b9b; /* no */
   text-align: left;
 }
 </style>

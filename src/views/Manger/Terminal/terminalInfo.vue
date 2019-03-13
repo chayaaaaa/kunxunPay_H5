@@ -31,7 +31,19 @@
         </div>
         <!-- 搜索页面 -->
         <!-- 包含下级 -->
-        <van-checkbox class="include" v-model="checked" checked-color="#fff" @change="toggle()">包含下级</van-checkbox>
+        <div class="include">
+          <img
+            src="@/assets/image/Manger/border_yuan.png"
+            @click="oninclude()"
+            v-if="thisonInclude == true"
+          >
+          <img
+            src="@/assets/image/Manger/yuan_white.png"
+            @click="include()"
+            v-if="thisInclude == true"
+          >
+          <span>包含下级</span>
+        </div>
         <!-- 含未认证 -->
         <div class="consume">
           <li class="Cli change" v-if="display==true" @click="showType = true">POS终端</li>
@@ -130,12 +142,7 @@ import "@/CSSFILE/Order.css";
 import "@/CSSFILE/input.css";
 import { Toast } from "mint-ui";
 const axios = require("axios");
-import {
-  queryTerminal,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { queryTerminal, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "terminalInfo",
   data() {
@@ -147,8 +154,8 @@ export default {
       showOrgan: false,
       /* 选择器 */
       columns: ["POS终端", "二维码终端", "激活码终端"],
-      /* 头部含未消费的值 */
-      checked: true,
+      thisonInclude: false,
+      thisInclude: true,
       IndexText: false, // 选择的
       showText: JSON.parse(window.localStorage.getItem("userInfo")).name, // 显示总代理
       /* tabbar */
@@ -222,92 +229,97 @@ export default {
     cel() {
       this.showType = false;
     },
-    toggle() {
-      console.log(this.checked);
-      if (this.checked == true) {
-        let queryData = {
-          qdcrmUserId: this.value,
-          access_token: JSON.parse(window.localStorage.getItem("token"))
-            .access_token,
-          currentPage: "1",
-          contionsLower: "on",
-          termStyle: this.typeValue,
-          contactPhone: "",
-          number: Math.random()
-        };
-        axios
-          .get(`${BASE_URL}/msmng/api/terminal/queryTerminal`, {
-            params: queryData
-          })
-          .then(response => {
-            console.log(response.data);
+    // 不包含下级
+    oninclude() {
+      this.thisInclude = true;
+      this.thisonInclude = false;
+      let queryData = {
+        qdcrmUserId: this.value,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        currentPage: "1",
+        contionsLower: "",
+        termStyle: this.typeValue,
+        contactPhone: "",
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/terminal/queryTerminal`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data);
+          let _this = this;
+          let listDetails = response.data.data.terminals;
+          console.log(listDetails.length);
+          if (listDetails.length == 0) {
             let _this = this;
-            let listDetails = response.data.data.terminals;
-            console.log(listDetails.length);
-            if (listDetails.length == 0) {
-              let _this = this;
-              _this.showList = false;
-              _this.showQueryList = false;
-              _this.showNothing = true;
-              _this.termActiveNum = 0;
-              _this.termTotalNum = 0;
-            } else {
-              let _this = this;
-              _this.querymemberDeals = listDetails;
-              console.log(_this.querymemberDeals);
-              _this.termActiveNum = response.data.data.termActiveNum;
-              _this.termTotalNum = response.data.data.termTotalNum;
-              _this.showList = false;
-              _this.showQueryList = true;
-              _this.showNothing = false;
-            }
-          })
-          .catch(function(err) {
-            Toast(err.message);
-          });
-      } else {
-        let queryData = {
-          qdcrmUserId: this.value,
-          access_token: JSON.parse(window.localStorage.getItem("token"))
-            .access_token,
-          currentPage: "1",
-          contionsLower: "",
-          termStyle: this.typeValue,
-          contactPhone: "",
-          number: Math.random()
-        };
-        axios
-          .get(`${BASE_URL}/msmng/api/terminal/queryTerminal`, {
-            params: queryData
-          })
-          .then(response => {
-            console.log(response.data);
+            _this.showList = false;
+            _this.showQueryList = false;
+            _this.showNothing = true;
+            _this.termActiveNum = 0;
+            _this.termTotalNum = 0;
+          } else {
             let _this = this;
-            let listDetails = response.data.data.terminals;
-            console.log(listDetails.length);
-            if (listDetails.length == 0) {
-              let _this = this;
-              _this.showList = false;
-              _this.showQueryList = false;
-              _this.showNothing = true;
-              _this.termActiveNum = 0;
-              _this.termTotalNum = 0;
-            } else {
-              let _this = this;
-              _this.querymemberDeals = listDetails;
-              console.log(_this.querymemberDeals);
-              _this.termActiveNum = response.data.data.termActiveNum;
-              _this.termTotalNum = response.data.data.termTotalNum;
-              _this.showList = false;
-              _this.showQueryList = true;
-              _this.showNothing = false;
-            }
-          })
-          .catch(function(err) {
-            Toast(err.message);
-          });
-      }
+            _this.querymemberDeals = listDetails;
+            console.log(_this.querymemberDeals);
+            _this.termActiveNum = response.data.data.termActiveNum;
+            _this.termTotalNum = response.data.data.termTotalNum;
+            _this.showList = false;
+            _this.showQueryList = true;
+            _this.showNothing = false;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
     },
+    // 包含下级
+    include() {
+      this.thisInclude = false;
+      this.thisonInclude = true;
+      let queryData = {
+        qdcrmUserId: this.value,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        currentPage: "1",
+        contionsLower: "on",
+        termStyle: this.typeValue,
+        contactPhone: "",
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/terminal/queryTerminal`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data);
+          let _this = this;
+          let listDetails = response.data.data.terminals;
+          console.log(listDetails.length);
+          if (listDetails.length == 0) {
+            let _this = this;
+            _this.showList = false;
+            _this.showQueryList = false;
+            _this.showNothing = true;
+            _this.termActiveNum = 0;
+            _this.termTotalNum = 0;
+          } else {
+            let _this = this;
+            _this.querymemberDeals = listDetails;
+            console.log(_this.querymemberDeals);
+            _this.termActiveNum = response.data.data.termActiveNum;
+            _this.termTotalNum = response.data.data.termTotalNum;
+            _this.showList = false;
+            _this.showQueryList = true;
+            _this.showNothing = false;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
+    },
+
     sure() {
       let queryData = {
         qdcrmUserId: this.value,
@@ -454,7 +466,7 @@ export default {
       let self = this;
       queryTerminal(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.data.terminals;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -488,7 +500,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -529,7 +541,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     let queryData = {
       qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
         .qdcrmUserId,
@@ -670,6 +682,10 @@ export default {
     right: 0.5rem;
     z-index: 100;
     color: #fff;
+    img {
+      width: 0.4rem;
+      vertical-align: middle;
+    }
   }
   .change {
     width: 2rem;
@@ -741,19 +757,12 @@ export default {
 <style lang="less">
 .van-picker__columns {
   margin-bottom: -1.5rem;
-    height: 6rem !important;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
-    margin-left: 35%;
-  }
-
-  .van-hairline--top-bottom::after {
-    border: 1px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
+    width: 0% !important;
   }
   .van-picker__frame,
   .van-picker__loading .van-loading {

@@ -12,7 +12,6 @@
           placeholder="请输入分润管理账户账号"
           id="name"
           v-model="name"
-          @focus="inputFocus()"
         >
         <input
           type="password"
@@ -20,7 +19,6 @@
           placeholder="输入分润管理账户密码"
           id="pwd"
           v-model="pwd"
-          @focus="inputFocus()"
         >
         <button class="btn" @click.prevent="login()">登录</button>
       </form>
@@ -43,7 +41,7 @@ export default {
     };
   },
   methods: {
-    inputFocus() {
+/*     inputFocus() {
       var dom = document.getElementById("name");
       var pwd = document.getElementById("pwd");
       setTimeout(function() {
@@ -51,8 +49,8 @@ export default {
         dom.scrollIntoViewIfNeeded();
         pwd.scrollIntoView(true);
         pwd.scrollIntoViewIfNeeded();
-      }, 500);
-    },
+      }, 100);
+    }, */
     login() {
       //  校验
       if (!this.name) {
@@ -115,10 +113,6 @@ export default {
   overflow: auto;
   background: url("~@/assets/image/login/bj.png") no-repeat;
   background-size: 100% 100%;
-/*   .ioginBG {
-    width: 100%;
-    height: 100%;
-  } */
   .logo {
     width: 60%;
     height: 1rem;

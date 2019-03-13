@@ -1,12 +1,27 @@
   /* ==============       header        ============= */
   .mint-header {
+    height: 1.2rem !important;
+    font-size: 0.4rem;
+    font-weight: 100;
+    background: #1c8cff !important;
+    padding-left: 5%;
+    padding-right: 5%;
+    position: fixed !important;
+    top: 0;
+  }
+  .mint-header.is-fixed {
+    top: 0;
+    right: 0;
+    left: 0;
+    position: fixed;
+    z-index: 1;
     height: 1.2rem;
     font-size: 0.4rem;
     font-weight: 100;
     background: #1c8cff;
     padding-left: 5%;
     padding-right: 5%;
-  }
+}
   .mint-header-title {
     line-height: 1rem;
   }
@@ -124,37 +139,25 @@
 .el-date-range-picker__header div {
   margin: 0 !important;
 }
-/* .el-range-editor .el-range-input {
-  color: #fff;
-} */
-
 .van-checkbox__icon--checked .van-icon {
   color: #1c8cff;
   font-size: 0.25rem;
-  width: 0.35rem;
+  width: 0.35rem !important;
   height: 0.35rem !important;
 }
 .van-checkbox__icon--round .van-icon {
-  width: 0.35rem;
-  height: 0.35rem;
+  width: 0.35rem !important;
+  height: 0.35rem !important;
   margin-top: 0.1rem;
 }
 .van-icon, .van-icon::before{
   display: initial;
 }
-.van-icon-success::before{
-  margin-top: 0.045rem;
-}
-.van-checkbox__label{
-  font-size:0.3rem;
-}
+
 .van-checkbox__icon .van-icon{
-  font-size: 14px;
+/*   font-size: 14px; */
     color: transparent;
     text-align: center;
-    line-height: inherit;
-    width: 20px;
-    height: 20px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border: 1px solid #e5e5e5;
@@ -164,6 +167,10 @@
 /* 弹出框 */
 .van-picker-column {
   border-radius: 0.2rem;
+  margin-top: -1rem !important;
+}
+.van-picker-column ul{
+  line-height: 68px !important;
 }
 .van-picker {
   border-radius: 0.2rem;

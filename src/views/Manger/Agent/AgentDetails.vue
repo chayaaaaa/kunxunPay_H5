@@ -236,7 +236,6 @@
 <script>
 import {
   checkToken,
-  getRefreshToken,
   queryAgentDetails,
   queryAgentBiz,
   BASE_URL
@@ -441,7 +440,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     let queryData = {
       merchantId: JSON.parse(window.localStorage.getItem("agentDetails"))
         .merchantId,

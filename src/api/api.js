@@ -9,7 +9,7 @@ export const BASE_URL = process.env.API_ROOT;
 //  刷新Token
 export const getRefreshToken = params => {
     let token = JSON.parse(window.localStorage.getItem('token')).access_token;
-    if (token) {
+    if (token != '') {
         return axios({
             method: 'POST',
             url: `${BASE_URL}/api/oauth/refreshToken?token=${token}`,
@@ -20,32 +20,23 @@ export const getRefreshToken = params => {
             })
             .catch({
                 function(error) {
-                    console.log("catch:", error);
+                    console.log(error);
                 }
             });
     }
 }
 export const checkToken = params => {
-    var checkToken = new Promise(function (resolve) {
-        let token = JSON.parse(window.localStorage.getItem('token')).access_token;
-        //token是否存在
-        if (token) {
-            axios({
-                method: 'post',
-                url: ` ${BASE_URL}/api/oauth/checkToken?token=${token}`,
-                data: params
-            }).then(function (res) {
-                console.log(res.data)
-                if (res.code == 200) {
-                    window.localStorage.setItem('access_token', JSON.stringify(res.data.data));
-                } else if (res.code == 400) {
-                    getRefreshToken()
-                }
-                resolve();
-            }).catch(function (error) {
-                Toast(error)
-            });
+    let token = JSON.parse(window.localStorage.getItem('token')).access_token;
+    return axios({
+        method: 'post',
+        url: ` ${BASE_URL}/api/oauth/checkToken?token=${token}`,
+        data: params
+    }).then(response => {
+        if (response.data.code == 401 || response.data.code == 400) {
+            getRefreshToken()
         }
+    }).catch(function (error) {
+        Toast(error)
     });
 };
 
@@ -236,8 +227,6 @@ export const getQueryTradeOrder = params => {
     let qdcrmUserId = JSON.parse(window.localStorage.getItem('userInfo')).qdcrmUserId;
     let gmtStart = Y + M + '01';
     let gmtEnd = Y + M + D;
-    /*     let gmtStart = '2019-01-01';
-        let gmtEnd = '2019-02-01'; */
     let currentPage = '1';
     return axios({
         method: 'GET',

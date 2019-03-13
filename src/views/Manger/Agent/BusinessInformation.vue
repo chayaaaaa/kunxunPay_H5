@@ -11,11 +11,7 @@
       <li>联系人</li>
       <li>联系电话</li>
     </ul>
-    <ul
-      class="listTital"
-      v-show="cur === 0"
-      :class="{'curr':cur === 0}"
-    >
+    <ul class="listTital" v-show="cur === 0" :class="{'curr':cur === 0}">
       <li v-for="item in list" :key="item.c">
         <span>{{ item.type }}</span>
         <span>{{ item.name }}</span>
@@ -33,7 +29,7 @@
           <mt-field label="商户名" placeholder="请输入商户名" v-model="form.busname"></mt-field>
         </div>
         <el-form-item label="所属上级">
-          <el-select v-model="form.busregion" placeholder="代理机构">
+          <el-select v-model="form.busregion" placeholder="代理机构" class="BusinessInformation_select">
             <el-option
               v-for="item in busregion"
               :key="item.value"
@@ -157,9 +153,9 @@ export default {
   },
   methods: {
     /* 方法 */
-        prev() {
+    prev() {
       this.$router.go(-1);
-    },
+    }
   },
   components: {
     /* 组件 */
@@ -267,7 +263,7 @@ form {
   font-size: 0.35rem;
   line-height: 0.7rem;
 }
-.el-select {
+.select_entry {
   border: 1px solid #1c8cff; /* no */
   border-radius: 0.2rem;
   height: 0.7rem;

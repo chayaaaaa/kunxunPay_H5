@@ -5,60 +5,60 @@
       <mt-button icon="back" @click="prev()" slot="left"></mt-button>
     </mt-header>
     <div class="content">
-      <p v-for="item in title" :key="item.e">{{item.name}}</p>
+      <p>{{name}}</p>
       <div class="listContent">
-        <div class="dealCount" v-for="item in count" :key="item.f">
+        <div class="dealCount">
           <li>
             交易金额
-            <span class="count">{{item.count}}</span>
+            <span class="count">￥{{count}}</span>
           </li>
         </div>
-        <ul class="list" v-for="item in list" :key="item.e">
+        <ul class="list">
           <li>
             会员号
-            <span>{{item.userNumber}}</span>
+            <span>{{userNumber}}</span>
           </li>
           <li>
             会员名
-            <span>{{item.userName}}</span>
+            <span>{{userName}}</span>
           </li>
           <li>
             终端号
-            <span>{{item.Terminal}}</span>
+            <span>{{Terminal}}</span>
           </li>
           <li>
             序列号
-            <span>{{item.Serial}}</span>
+            <span>{{Serial}}</span>
           </li>
           <li>
             交易订单号
-            <span>{{item.TradeNumber}}</span>
+            <span>{{TradeNumber}}</span>
           </li>
           <li>
             支付方式
-            <span>{{item.payment}}</span>
+            <span>{{payment}}</span>
           </li>
-          <li>
+          <!--     <li>
             交易状态
-            <span class="status">{{item.dealStatus}}</span>
-          </li>
+            <span class="status">{{dealStatus}}</span>
+          </li>-->
           <li>
             下单时间
-            <span>{{item.dealTime}}</span>
+            <span>{{dealTime}}</span>
           </li>
           <li>
             付款时间
-            <span>{{item.PayTime}}</span>
+            <span>{{PayTime}}</span>
           </li>
         </ul>
-        <ul class="lists" v-for="item in list" :key="item.e">
+        <ul class="lists">
           <li>
             <b>摘要</b>
-            <span>{{item.abstract}}</span>
+            <span>{{abstract}}</span>
           </li>
           <li>
             <b>备注</b>
-            <span>{{item.remark}}</span>
+            <span>{{remark}}</span>
           </li>
         </ul>
       </div>
@@ -66,54 +66,96 @@
   </div>
 </template>
 <script>
+import { Toast } from "mint-ui";
+const axios = require("axios");
+import { checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "dealDetail",
   data() {
     return {
-      title: [
-        {
-          // 交易金额
-          name: "实时收款-极速民生（T+0）"
-        }
-      ],
-      count: [
-        {
-          count: "￥5000.00"
-        }
-      ],
-      list: [
-        {
-          // 会员号
-          userNumber: "138****5678",
-          // 会员名
-          userName: "*华腾",
-          // 终端号
-          Terminal: "T0303064",
-          // 序列号
-          Serial: "9988008000002851",
-          // 交易订单号
-          TradeNumber: "18020619441200100327",
-          // 支付方式
-          payment: "银行卡",
-          // 交易状态
-          dealStatus: "交易成功",
-          // 下单时间
-          dealTime: "2017-12-31 16:35:56",
-          // 付款时间
-          PayTime: "2018-02-06 19:44:56",
-          // 摘要
-          abstract:
-            "实时收款-极速民生(T+0)-137****8000-金额-20000.00-收款方-137****8000",
-          // 备注
-          remark: "购物贷款"
-        }
-      ]
+      // 交易金额
+      name: "",
+      count: "",
+      // 会员号
+      userNumber: "",
+      // 会员名
+      userName: "",
+      // 终端号
+      Terminal: "",
+      // 序列号
+      Serial: "",
+      // 交易订单号
+      TradeNumber: "",
+      // 支付方式
+      payment: "",
+      // 交易状态
+      dealStatus: "",
+      // 下单时间
+      dealTime: "",
+      // 付款时间
+      PayTime: "",
+      // 摘要
+      abstract: "",
+      // 备注
+      remark: ""
     };
   },
   methods: {
     prev() {
       this.$router.go(-1);
     }
+  },
+  created() {
+    checkToken();
+    //获取当前时间
+    var myDate = new Date();
+    var Y = myDate.getFullYear() + "-";
+    var M =
+      (myDate.getMonth() + 1 < 10
+        ? "0" + (myDate.getMonth() + 1)
+        : myDate.getMonth() + 1) + "-";
+    var D = myDate.getDate() + " ";
+    D = D < 10 ? "0" + D : D;
+    let access_token = JSON.parse(window.localStorage.getItem("token"))
+      .access_token;
+    let qdcrmUserId = JSON.parse(window.localStorage.getItem("userInfo"))
+      .qdcrmUserId;
+    let gmtStart = Y + M + "01";
+    let gmtEnd = Y + M + D;
+    let orderNo = JSON.parse(window.localStorage.getItem("orderNo"));
+    console.log(orderNo);
+    let queryData = {
+      orderNo: orderNo,
+      access_token: JSON.parse(window.localStorage.getItem("token"))
+        .access_token,
+      gmtStart: gmtStart,
+      gmtEnd: gmtEnd,
+      currentPage: 1,
+      number: Math.random()
+    };
+    axios
+      .get(`${BASE_URL}/msmng/api/order/queryTradeOrderDetails`, {
+        params: queryData
+      })
+      .then(response => {
+        console.log(response.data.data);
+        let res = response.data.data;
+        this.count = res.transAmount;
+        this.name = res.bizType;
+        this.userNumber = res.memberNo;
+        this.userName = res.memberName;
+        this.Terminal = res.termNo;
+        this.Serial = res.snId;
+        this.TradeNumber = res.orderNo;
+        this.payment = res.payMode;
+        this.dealTime = res.createTime;
+        this.PayTime = res.payTime;
+        this.abstract = res.transAbs;
+        this.remark = res.memo;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 };
 </script>
@@ -184,6 +226,7 @@ export default {
           font-size: 0.4rem;
           span {
             float: right;
+            font-size: 0.354rem;
           }
         }
       }
@@ -191,7 +234,6 @@ export default {
         width: 90%;
         height: auto;
         margin-left: 5%;
-        font-size: 0.35rem;
         li {
           height: 1.5rem;
           margin-top: 0.2rem;
@@ -203,7 +245,7 @@ export default {
           width: 80%;
           height: 1.5rem;
           line-height: 0.5rem;
-          font-size: 0.35rem;
+           font-size: 0.35rem;
         }
         li b {
           display: block;
@@ -215,11 +257,12 @@ export default {
       }
     }
   }
-  .status{
-      color: #1C8CFF;
+  .status {
+    color: #1c8cff;
   }
-  .count{
-      color: #E3383E;
+  .count {
+    color: #e3383e;
+    font-size: 0.45rem;
   }
 }
 </style>

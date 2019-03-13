@@ -85,7 +85,9 @@ export default {
   },
 
   props: ["model"],
-  created() {},
+  created() {
+    checkToken();
+  },
   ready() {},
   methods: {
     getImageData(imageData) {
@@ -166,7 +168,7 @@ export default {
 /* 进度栏 */
 .upload {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 1.2rem;
   height: 2.5rem;
   background: @blue;
@@ -333,7 +335,6 @@ export default {
 }
 .mint-field-core {
   font-size: 0.35rem;
-  border-bottom: 1px solid #9b9b9b; /* no */
   text-align: left;
 }
 </style>

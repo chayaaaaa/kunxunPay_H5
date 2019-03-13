@@ -15,7 +15,17 @@
         </div>
         <!-- 含未认证 -->
         <div class="consume">
-          <van-checkbox v-model="checked" checked-color="#fff" @change="toggle()">含未认证</van-checkbox>
+          <img
+            src="@/assets/image/Manger/border_yuan.png"
+            @click="onConsume()"
+            v-if="thisonConsume == true"
+          >
+          <img
+            src="@/assets/image/Manger/yuan_white.png"
+            @click="consume()"
+            v-if="thisconsume == true"
+          >
+          <span>含未认证</span>
         </div>
       </div>
       <div class="showDetail">
@@ -122,12 +132,7 @@ import "@/CSSFILE/Order.css";
 import "@/CSSFILE/force.css";
 import { Toast } from "mint-ui";
 const axios = require("axios");
-import {
-  getqueryMemberInfo,
-  checkToken,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { getqueryMemberInfo, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   name: "memberInfo",
   data() {
@@ -167,8 +172,9 @@ export default {
       value8: "",
       /* 选择弹框 */
       showOrgan: false,
-      /* 头部含未消费的值 */
-      checked: true,
+      /* 认证 */
+      thisonConsume: false,
+      thisconsume: true,
       phoneNumber: "" // input框的值
     };
   },
@@ -205,76 +211,81 @@ export default {
     search() {
       console.log(this.phoneNumber);
     },
-    toggle() {
-      console.log(this.checked);
-      if (this.checked == true) {
-        let queryData = {
-          qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-            .qdcrmUserId,
-          access_token: JSON.parse(window.localStorage.getItem("token"))
-            .access_token,
-          currentPage: this.pageNumber + 1,
-          authStatus: 1,
-          number: Math.random()
-        };
-        axios
-          .get(`${BASE_URL}/msmng/api/order/queryMemberInfo`, {
-            params: queryData
-          })
-          .then(response => {
-            console.log(response.data.data);
-            let _this = this;
-            let listDetails = response.data.data.memberQueryList;
-            _this.MemberInfo = listDetails;
-            _this.valueLength = response.data.data.paginator.length;
-            console.log(_this.MemberInfo);
-            console.log(_this.valueLength);
-            if (_this.valueLength == 0) {
-              _this.showListPages = false;
-              _this.nothing = true;
-            } else {
-              _this.showListPages = false;
-              _this.showQueryPages = true;
-              _this.nothing = false;
-            }
-          })
-          .catch(function(err) {
-            Toast(err.message);
-          });
-      } else {
-        let queryData = {
-          qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-            .qdcrmUserId,
-          access_token: JSON.parse(window.localStorage.getItem("token"))
-            .access_token,
-          currentPage: this.pageNumber + 1,
-          number: Math.random()
-        };
-        axios
-          .get(`${BASE_URL}/msmng/api/order/queryMemberInfo`, {
-            params: queryData
-          })
-          .then(response => {
-            console.log(response.data.data);
-            let _this = this;
-            let listDetails = response.data.data.memberQueryList;
-            _this.MemberInfo = listDetails;
-            _this.valueLength = response.data.data.paginator.length;
-            console.log(_this.MemberInfo);
-            console.log(_this.valueLength);
-            if (_this.valueLength == 0) {
-              _this.showListPages = false;
-              _this.nothing = true;
-            } else {
-              _this.showListPages = false;
-              _this.showQueryPages = true;
-              _this.nothing = false;
-            }
-          })
-          .catch(function(err) {
-            Toast(err.message);
-          });
-      }
+    // 未认证
+    onConsume() {
+      this.thisconsume = true;
+      this.thisonConsume = false;
+
+      let queryData = {
+        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+          .qdcrmUserId,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        currentPage: this.pageNumber + 1,
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/order/queryMemberInfo`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data.data);
+          let _this = this;
+          let listDetails = response.data.data.memberQueryList;
+          _this.MemberInfo = listDetails;
+          _this.valueLength = response.data.data.paginator.length;
+          console.log(_this.MemberInfo);
+          console.log(_this.valueLength);
+          if (_this.valueLength == 0) {
+            _this.showListPages = false;
+            _this.nothing = true;
+          } else {
+            _this.showListPages = false;
+            _this.showQueryPages = true;
+            _this.nothing = false;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
+    },
+    // 已认证
+    consume() {
+      this.thisconsume = false;
+      this.thisonConsume = true;
+      let queryData = {
+        qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
+          .qdcrmUserId,
+        access_token: JSON.parse(window.localStorage.getItem("token"))
+          .access_token,
+        currentPage: this.pageNumber + 1,
+        authStatus: 1,
+        number: Math.random()
+      };
+      axios
+        .get(`${BASE_URL}/msmng/api/order/queryMemberInfo`, {
+          params: queryData
+        })
+        .then(response => {
+          console.log(response.data.data);
+          let _this = this;
+          let listDetails = response.data.data.memberQueryList;
+          _this.MemberInfo = listDetails;
+          _this.valueLength = response.data.data.paginator.length;
+          console.log(_this.MemberInfo);
+          console.log(_this.valueLength);
+          if (_this.valueLength == 0) {
+            _this.showListPages = false;
+            _this.nothing = true;
+          } else {
+            _this.showListPages = false;
+            _this.showQueryPages = true;
+            _this.nothing = false;
+          }
+        })
+        .catch(function(err) {
+          Toast(err.message);
+        });
     },
     // 下拉刷新上拉加载
     init() {
@@ -285,7 +296,7 @@ export default {
       let self = this;
       getqueryMemberInfo(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.data.memberQueryList;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -319,7 +330,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -375,9 +386,14 @@ export default {
     background: rgba(0, 0, 0, 0);
     color: #fff;
   }
+  // 含未认证
   .consume {
     margin-top: -0.9rem;
     line-height: 1rem;
+    img {
+      width: 0.4rem;
+      vertical-align: middle;
+    }
   }
   .queryAgent {
     width: 70%;
@@ -440,9 +456,10 @@ export default {
         }
       }
       .time {
-        width: 23%;
+        width: 22%;
         margin-left: 4%;
         margin-right: 3%;
+        overflow: hidden;
       }
       .span {
         color: #e3383e;
@@ -494,23 +511,12 @@ export default {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
+    width: 0!important;
     margin-left: 35%;
   }
-
-  .van-hairline--top-bottom::after {
-    border: 1px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  .van-picker__frame,
-  .van-picker__loading .van-loading {
-    top: 32%;
-  }
 }
-.van-list__finished-text,
-.van-list__loading-text {
-  height: 2.5rem;
-  line-height: 1rem;
+// 加载中模块
+.van-list__loading {
+  margin-bottom: 2rem;
 }
 </style>

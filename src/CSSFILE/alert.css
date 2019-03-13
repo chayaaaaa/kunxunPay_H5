@@ -1,7 +1,7 @@
 /* toast */
 .mint-msgbox {
     height: 4.5rem;
-    border-radius: 0.2rem;
+    border-radius: 0.2rem !important;
   }
   .mint-msgbox-header {
     height: 2.6rem;
@@ -9,7 +9,8 @@
     border: none;
   }
   .mint-msgbox-title {
-    font-size: 0.4rem;
+    font-size: 0.4rem !important;
+    font-weight: 400 !important;
   }
   .mint-msgbox-btns {
     height: 1rem;
@@ -17,7 +18,7 @@
     margin-left: 10%;
   }
   .mint-msgbox-confirm {
-    background: #1c8cff;
-    color: white;
+    background: #1c8cff !important;
+    color: white !important;
     border-radius: 0.2rem;
   }

@@ -49,6 +49,14 @@
         <p v-if="current==2">{{lowerProfitMoney}}</p>
       </ul>
     </div>
+    <!-- 未实名认证 -->
+    <mt-popup v-model="showError" popup-transition="popup-fade">
+      <div class="alertMsg">
+        <div class="alertMsgText">请先进行实名认证~</div>
+        <div class="box alertMsgForgetPassword" @click="toRenZheng()">去实名认证</div>
+        <div class="box retry" @click="cancel()">取消</div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 <script>
@@ -57,7 +65,7 @@ import "@/CSSFILE/alert.css";
 import {
   queryDrawPermissions,
   getCashDetails,
-  getRefreshToken,
+  checkToken,
   BASE_URL,
   returnAuthStatus
 } from "@/api/api.js";
@@ -70,6 +78,8 @@ export default {
       allowSubDraw: "", // 是否开启下级提现权限（0/否 1/是）
       meetCashNeeds: "", // 是否满足提现金额需求（0/否 1/是）
       totalCashMoney: "", // 账户余额
+      authStatus: "", // 实名认证状态
+      showError: false, // 没有实名认证
       // 自营余额
       ownerBalanceMoney: "", // 总余额
       ownerDpositMoney: "", // 服务费返现
@@ -92,18 +102,29 @@ export default {
     goToBankCardPages() {
       this.$router.push("/BKManagement");
     },
-    // 提现
+    // 跳转到实名认证
+    toRenZheng() {
+      this.$router.push("/Identification");
+    },
+    // 取消
+    cancel() {
+      this.showError = false;
+    },
+    // 提现明细
     showfinancialDetail() {
-      returnAuthStatus().then(response => {
-        console.log(response.data);
-        if (response.data.data == 1) {
-          this.$router.push("/financialDetail");
-        } else {
-          MessageBox("实名认证通过后才能提现");
-        }
-      });
+      this.$router.push("/financialDetail");
     },
     goTowithDrawPages() {
+      if (this.authStatus == "null") {
+        this.showError = true;
+        return;
+      }
+      if (this.authStatus == 1) {
+        this.$router.push("/withDraw");
+      } else {
+        MessageBox("实名认证通过后才能提现");
+        return;
+      }
       if (
         this.allowDraw == 0 ||
         this.meetCashNeeds == 0 ||
@@ -115,14 +136,22 @@ export default {
       }
     }
   },
-  mounted() {
-    getRefreshToken();
+  created() {
+    checkToken();
     queryDrawPermissions()
       .then(response => {
         console.log(response.data);
-        this.allowDraw = response.data.allowDraw;
-        this.allowSubDraw = response.data.allowSubDraw;
-        this.meetCashNeeds = response.data.meetCashNeeds;
+        this.allowDraw = response.data.data.allowDraw;
+        this.allowSubDraw = response.data.data.allowSubDraw;
+        this.meetCashNeeds = response.data.data.meetCashNeeds;
+      })
+      .catch(function(error) {
+        console.log(response.message);
+      });
+    returnAuthStatus()
+      .then(response => {
+        console.log(response.data);
+        this.authStatus = response.data.data;
       })
       .catch(function(error) {
         console.log(response.message);
@@ -166,6 +195,11 @@ export default {
 .detail {
   font-size: 0.3rem;
   margin-right: 0.3rem;
+}
+.mint-popup {
+  width: 90%;
+  height: 4rem;
+  border-radius: 5px; /* no */
 }
 /* 账户余额 */
 .Balance {
@@ -319,6 +353,34 @@ export default {
       font-size: 0.45rem;
       margin-top: 0.3rem;
     }
+  }
+}
+
+// 实名认证弹框
+.alertMsg {
+  width: 100%;
+  height: 4.5rem;
+  background: #fff;
+  border-radius: 8px; /* no */
+  text-align: center;
+  .alertMsgText {
+    width: 100%;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 0.45rem;
+  }
+  .box {
+    width: 35%;
+    float: left;
+    line-height: 1rem;
+    font-size: 0.35rem;
+    background: #1c8cff;
+    color: #fff;
+    border-radius: 5px; /* no */
+  }
+  .alertMsgForgetPassword {
+    margin-left: 10%;
+    margin-right: 10%;
   }
 }
 </style>

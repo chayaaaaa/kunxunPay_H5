@@ -18,23 +18,19 @@
       <ul class="listEntry" tag="listEntry">
         <li class="li">
           商户类型
-          <span>{{MerchantsType}}</span>
+          <span class="spanLI">{{MerchantsType}}</span>
         </li>
-        <li class="li">客户类型
-          <el-select
-            v-model="CustomerType"
-            class="select_entry"
-            slot="CustomerType"
-            dir="rtl"
-            placeholder="个人"
-          >
-            <el-option
+        <li class="li">
+          客户类型
+          <select v-model="CustomerType">
+            <option selected="selected" value disabled>请选择</option>
+            <option
               v-for="item in CustomerTypes"
               :key="item.value"
               :label="item.label"
               :value="item.value"
-            ></el-option>
-          </el-select>
+            >{{item.label}}</option>
+          </select>
         </li>
         <li class="li">
           所属上级
@@ -110,11 +106,11 @@
         </li>
         <li class="li">
           商户状态
-          <span>待激活</span>
+          <span class="spanLI">待激活</span>
         </li>
       </ul>
     </div>
-    <el-button type="primary" class="btn" @click="addAgent()">提交</el-button>
+    <button class="btn" @click="addAgent()">提交</button>
   </div>
 </template>
 <script>
@@ -122,7 +118,7 @@ import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/Order.css";
 import "@/CSSFILE/force.css";
 import { Toast, MessageBox } from "mint-ui";
-import { checkToken, getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
 export default {
   name: "modifyTheMerchants",
@@ -169,7 +165,7 @@ export default {
 
   methods: {
     prev() {
-      this.$router.push("/QueryAgent");
+      this.$router.go(-1);
     },
     Confirm() {
       this.showOrgan = false;
@@ -185,7 +181,7 @@ export default {
       console.log(index);
     },
     addAgent() {
-      getRefreshToken();
+      checkToken();
       let _this = this;
       let getDetails = window.localStorage.getItem("queryAgentDetails");
       _this.addAgentDetails = JSON.parse(getDetails);
@@ -323,7 +319,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     let res = JSON.parse(window.localStorage.getItem("agentDetails"));
     let queryAgentDetailList = JSON.parse(
       window.localStorage.getItem("AgentDetailList")
@@ -374,190 +370,149 @@ export default {
   }
 };
 </script>
-
-<style lang="less">
-@blue: #1c8cff;
+<style lang="less" scoped>
+select {
+  /*很关键：将默认的select选择框样式清除*/
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  /*将背景改为红色*/
+  border: none;
+  float: right;
+  width: 1.5rem;
+  text-align: center;
+  height: 1.2rem;
+  direction: rtl;
+  font-size: 0.35rem;
+}
+/*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+select::-ms-expand {
+  display: none;
+}
 .van-picker__columns {
   margin-bottom: -1.5rem;
-    height: 6rem !important;
+  height: 6rem !important;
   .van-picker-column {
     margin-top: -1rem;
   }
   .van-hairline--top-bottom {
-    width: 30% !important;
-    margin-left: 35%;
-  }
-
-  .van-hairline--top-bottom::after {
-    border: 2px solid #1c8cff !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  .van-picker__frame,
-  .van-picker__loading .van-loading {
-    top: 32%;
+    width: 0 !important;
   }
 }
-.van-list__finished-text,
-.van-list__loading-text {
-  height: 2.5rem;
-  line-height: 1rem;
-}
-/* toast */
-.typeSelect_modifyTheMerchants {
-  display: inline-block;
-  margin-left: 60% !important;
-  color: rgb(189, 189, 189);
-}
+textarea:disabled,
 input:disabled {
-  background-color: rgb(255, 255, 255);
-  color: #000;
+  background: #fff;
 }
-.el-input.is-disabled .el-input__inner {
-  background-color: rgb(255, 255, 255);
-}
-.mint-msgbox {
-  height: 4.5rem;
-  border-radius: 0.2rem;
-}
-.mint-msgbox-header {
-  height: 2.6rem;
-  line-height: 2.6rem;
-  border: none;
-}
-.mint-msgbox-title {
-  font-size: 0.4rem;
-}
-.mint-msgbox-btns {
-  height: 1rem;
-  width: 80%;
-  margin-left: 10%;
-}
-.mint-msgbox-confirm {
-  background: @blue;
-  color: white;
-  border-radius: 0.2rem;
-}
-
-.modifyTheMerchants {
-  width: 100%;
-  font-size: 0.4rem;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: #f5f5f5;
-  overflow: hidden;
-}
-/* ==============       header        ============= */
+/* 头部 */
 .mint-header {
+  width: 100%;
+  position: fixed;
+  top: 0;
   height: 1.2rem;
-  font-size: 0.4rem;
+  font-size: 0.5rem;
   font-weight: 100;
   background: #1c8cff;
-  padding-left: 5%;
-  padding-right: 5%;
+  z-index: 999;
 }
-.mint-header-title {
-  line-height: 0.5rem;
-}
-.mint-botton-text {
-  font-size: 0.3rem !important;
-}
-.mintui {
-  font-size: 0.4rem;
-}
-
-/* 基本信息 */
-.baseMsg {
+.modifyTheMerchants {
   width: 100%;
-  height: auto;
-  line-height: 1rem;
-  margin-top: 1.2rem;
-  background: #fff;
-  p {
-    background: #f5f5f5;
-  }
-  img {
-    width: 0.5rem;
-    height: 0.5rem;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-  }
-  span {
-    color: #1c8cff;
-    display: inline-block;
-    position: absolute;
-    left: 1rem;
-    font-size: 0.36rem;
-  }
-  li {
-    width: 90%;
-    height: 1.2rem;
-    margin-left: 5%;
-    line-height: 1.2rem;
-    color: #222222;
-    font-size: 0.38rem;
-    background: #fff;
-  }
-}
-.el-input__inner {
-  height: 0.7rem;
-  font-size: 0.35rem;
-  padding-right: 0rem !important;
-}
-.listEntry {
-  width: 90%;
-  height: auto;
-  background: #fff;
-  padding-left: 5%;
-  .select_entry {
-    width: 3rem;
-    height: 1rem;
-    float: right;
-    .el-input .el-select__caret {
-      color: transparent;
-    }
-  }
-  .li {
-    border-bottom: 1px solid #ececec;
-  }
-  li {
-    width: 90%;
-    height: 1.2rem;
-    line-height: 1.2rem;
-    color: #222222;
-    font-size: 0.38rem;
-    input {
-      border: none;
-    }
-    .inputStyle {
-      border: none;
-      width: 50%;
+  height: 100%;
+  background: #f5f5f5;
+  .baseMsg {
+    width: 100%;
+    height: 100%;
+    margin-top: 1.2rem;
+    p {
+      background: #f5f5f5;
       height: 1rem;
-      position: absolute;
-      float: right;
-      right: 1rem;
-      font-size: 0.35rem;
       line-height: 1rem;
     }
-    .number {
-      color: rgb(189, 189, 189);
+    img {
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-left: 0.4rem;
+      vertical-align: middle;
     }
     span {
+      color: #1c8cff;
       display: inline-block;
-      margin-left: 70%;
-      color: rgb(189, 189, 189);
+      position: absolute;
+      font-size: 0.36rem;
+    }
+    li {
+      width: 90%;
+      height: 1.2rem;
+      margin-left: 5%;
+      line-height: 1.2rem;
+      color: #222222;
+      font-size: 0.38rem;
+      background: #fff;
     }
   }
-}
-.btn {
-  width: 80%;
-  height: 1.1rem;
-  position: absolute;
-  bottom:0rem;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  background: #1c8cff;
+  .listEntry {
+    width: 95%;
+    height: auto;
+    background: #fff;
+    padding-left: 5%;
+    .spanLI{
+      width: 2rem;
+      display:inline-block;
+      margin-left:55%;
+      color: #bdbdbd;
+    }
+    .li {
+      border-bottom: 1px solid #ececec;
+      select {
+        border: none;
+        appearance: none;
+        -moz-appearance: none; /* Firefox */
+        -webkit-appearance: none; /* Safari 和 Chrome */
+        background: transparent;
+        outline: none;
+        background-size: 0.5rem;
+        margin-right: 0.5rem;
+        option {
+          color: #000 !important;
+        }
+      }
+    }
+    li {
+      width: 90%;
+      height: 1.2rem;
+      line-height: 1.2rem;
+      color: #222222;
+      font-size: 0.38rem;
+      input {
+        border: none;
+      }
+      .inputStyle {
+        border: none;
+        width: 50%;
+        height: 1rem;
+        position: absolute;
+        float: right;
+        right: 1rem;
+        font-size: 0.35rem;
+        line-height: 1rem;
+      }
+      .span_enter {
+        display: inline-block;
+        color: rgb(189, 189, 189);
+        margin-left: 5.5rem;
+      }
+    }
+  }
+  .btn {
+    border: none;
+    color: #fff;
+    width: 80%;
+    height: 1.1rem;
+    background: #1c8cff;
+    border-radius: 0.15rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0.5rem auto;
+  }
 }
 </style>

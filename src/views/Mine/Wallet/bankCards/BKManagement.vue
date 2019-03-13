@@ -63,7 +63,7 @@
           </li>
         </van-list>
       </van-pull-refresh>
-      <li></li>
+      <!--    <li></li> -->
     </div>
     <div class="noNotification" v-if="nothing == true">
       <img src="@/assets/image/Mine/nothing.png">
@@ -75,6 +75,14 @@
         <img src="@/assets/image/Mine/Wallet/visa.png">申请信用卡
       </p>
     </div>
+    <!-- 未实名认证 -->
+    <mt-popup v-model="showError" popup-transition="popup-fade">
+      <div class="alertMsg">
+        <div class="alertMsgText">请先进行实名认证~</div>
+        <div class="box alertMsgForgetPassword" @click="toRenZheng()">去实名认证</div>
+        <div class="box retry" @click="cancel()">取消</div>
+      </div>
+    </mt-popup>
   </div>
 </template>
 <script>
@@ -83,14 +91,16 @@ import "@/CSSFILE/alert.css";
 import {
   returnAuthStatus,
   checkToken,
-  getRefreshToken,
-  BASE_URL
+  BASE_URL,
+  queryTwoElementsResult
 } from "@/api/api.js";
 const axios = require("axios");
 export default {
   name: "BKManagement",
   data() {
     return {
+      showError: false, //  未认证
+      result: "", // 实名认证状态
       pageNumber: 0, // 当前页
       deviceList: [], // 银行卡数据列表
       nothing: false, //没有数据
@@ -106,18 +116,22 @@ export default {
       history.go(-1);
     },
     addBankCards() {
-      this.$router.push("/addBankCards");
+      if (this.result != 1) {
+        this.showError = true;
+      } else {
+        this.$router.push("/addBankCards");
+      }
     },
     goToBankDealDetail(index, item) {
-      console.log(index);
-      console.log(item);
-      this.$router.push({
-        name: "transactionDetails",
-        params: {
-          id: index,
-          item: item
-        }
-      });
+      window.localStorage.setItem("_bankListDetails", JSON.stringify(item));
+      this.$router.push("/transactionDetails");
+    },
+    // 跳转到实名认证
+    toRenZheng() {
+      this.$router.push("/Identification");
+    },
+    cancel() {
+      this.showError = false;
     },
     CAPION() {
       MessageBox("暂未开放");
@@ -167,7 +181,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let datatwo = {
@@ -187,6 +201,7 @@ export default {
             console.log(response.data);
             let res = response.data.data;
             console.log(res);
+
             if (res != null) {
               self.deviceList = self.deviceList.concat(res);
               self.loading = false;
@@ -209,6 +224,15 @@ export default {
     }
   },
   created() {
+    checkToken();
+    queryTwoElementsResult()
+      .then(response => {
+        console.log(response.data.data);
+        this.result = response.data.data.status;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 };
 </script>
@@ -241,6 +265,7 @@ export default {
   width: 100%;
   position: absolute;
   top: 1.2rem;
+  bottom: 0;
   background: #f1f9ff;
   li {
     width: 95%;
@@ -301,10 +326,7 @@ export default {
 }
 .noNotification {
   width: 100%;
-  height: auto;
-  position: absolute;
-  top: 0;
-  bottom: 0;
+  height: 100%;
   margin-top: 0.3rem;
   text-align: center;
   background: #f1f9ff;
@@ -316,6 +338,38 @@ export default {
   }
   p {
     margin-top: 0.3rem;
+  }
+}
+
+.mint-popup {
+  width: 90%;
+  height: 4rem;
+  border-radius: 5px; /* no */
+}
+.alertMsg {
+  width: 100%;
+  height: 4.5rem;
+  background: #fff;
+  border-radius: 8px; /* no */
+  text-align: center;
+  .alertMsgText {
+    width: 100%;
+    height: 3rem;
+    line-height: 3rem;
+    font-size: 0.45rem;
+  }
+  .box {
+    width: 35%;
+    float: left;
+    line-height: 1rem;
+    font-size: 0.35rem;
+    background: #1c8cff;
+    color: #fff;
+    border-radius: 5px; /* no */
+  }
+  .alertMsgForgetPassword {
+    margin-left: 10%;
+    margin-right: 10%;
   }
 }
 </style>

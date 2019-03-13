@@ -46,7 +46,7 @@ const axios = require("axios");
 import qs from "qs";
 import {
   queryBalanceDetailRecord,
-  getRefreshToken,
+  checkToken,
   BASE_URL
 } from "@/api/api.js";
 import { Toast } from "mint-ui";
@@ -102,7 +102,7 @@ export default {
           params: data
         })
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.data;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -131,7 +131,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let datatwo = {

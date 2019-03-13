@@ -95,7 +95,7 @@
 <script>
 import { Toast } from "mint-ui";
 const axios = require("axios");
-import { showAllMessage, getRefreshToken, BASE_URL } from "@/api/api.js";
+import { showAllMessage, checkToken, BASE_URL } from "@/api/api.js";
 export default {
   inject: ["reload"],
   name: "Notification",
@@ -166,7 +166,7 @@ export default {
         type: this.type,
         number: Math.random()
       };
-      getRefreshToken();
+      checkToken();
       axios
         .get(`${BASE_URL}/msmng/api/message/showAllMessage`, {
           params: data
@@ -186,7 +186,7 @@ export default {
           self.isLoading = false;
         })
         .catch(function(err) {
-           Toast(err);
+          Toast(err);
         });
     },
     //下拉刷新
@@ -205,7 +205,7 @@ export default {
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoadOne() {
       this.type = 1;
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = {
@@ -247,7 +247,7 @@ export default {
             }
           })
           .catch(function(err) {
-             Toast(err);
+            Toast(err);
           });
       }, 500);
     },
@@ -265,7 +265,7 @@ export default {
         type: this.type,
         number: Math.random()
       };
-      getRefreshToken();
+      checkToken();
       axios
         .get(`${BASE_URL}/msmng/api/message/showAllMessage`, {
           params: data
@@ -303,7 +303,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoadTwo() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = {
@@ -363,7 +363,7 @@ export default {
         type: this.type,
         number: Math.random()
       };
-      getRefreshToken();
+      checkToken();
       axios
         .get(`${BASE_URL}/msmng/api/message/showAllMessage`, {
           params: data
@@ -383,7 +383,7 @@ export default {
           self.isLoading = false;
         })
         .catch(function(err) {
-         Toast('暂无消息');
+          Toast("暂无消息");
         });
     },
     //下拉刷新
@@ -401,7 +401,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoadThree() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = {
@@ -422,8 +422,8 @@ export default {
             if (response.data.data == null) {
               this.showMsgThree = false;
               this.nothing = true;
-              }else if(response.data.data != null){
-                 this.showMsgThree = true;
+            } else if (response.data.data != null) {
+              this.showMsgThree = true;
               this.nothing = false;
               let obj = response.data.data.messages;
               console.log(obj);

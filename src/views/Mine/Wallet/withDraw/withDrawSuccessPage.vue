@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { Toast, MessageBox } from "mint-ui";
 const axios = require("axios");
 export default {
@@ -74,25 +74,15 @@ export default {
       return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
     }
   },
-  created() {
-    this.getParams();
-  },
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
-  },
   methods: {
     prev() {
       this.$router.push("/index");
-    },
-    getParams() {
-      // 取到路由带过来的参数
-      this.tradeNo = this.$route.params.item;
-      console.log(this.tradeNo);
     }
   },
-  mounted() {
-    getRefreshToken();
+  created() {
+    this.tradeNo = JSON.parse(window.localStorage.getItem("itemNo"));
+    console.log(this.tradeNo)
+    checkToken();
     // 查询提现记录
     let data = {
       access_token: JSON.parse(window.localStorage.getItem("token"))

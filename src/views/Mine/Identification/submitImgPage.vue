@@ -73,7 +73,7 @@
 import { Toast } from "mint-ui";
 import EXIF from "exif-js";
 import { VueClip } from "vue-pic-clip";
-import { getRefreshToken, addRealNameAuth } from "@/api/api.js";
+import { checkToken, addRealNameAuth } from "@/api/api.js";
 import qs from "qs";
 export default {
   inject: ["reload"],
@@ -159,11 +159,11 @@ export default {
         .catch(function(error) {
           Toast(response.message);
         });
-        this.$router.push("/submitSuccessPage");
+      this.$router.push("/submitSuccessPage");
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
   },
   /* 注册组件 */
   components: {
@@ -172,6 +172,12 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.submitImgPage{
+ /*  width: 100%; */
+/*   height: 100%; */
+ /*  overflow: auto; */
+
+}
 @blue: #1c8cff;
 /* 头部 */
 .mint-header {
@@ -194,10 +200,11 @@ export default {
 /* 进度栏 */
 .upload {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 1.2rem;
   height: 2.5rem;
   background: @blue;
+  z-index: 999;
   ul {
     width: 100%;
     height: 1.5rem;
@@ -275,7 +282,7 @@ export default {
 
 .front_body {
   width: 100%;
-  position: fixed;
+  position: absolute;
   top: 3.7rem;
   bottom: 0;
   input {

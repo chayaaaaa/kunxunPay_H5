@@ -15,7 +15,11 @@
     <div class="divBopx" @click="popupVisible=true">
       <img class="imgTop" src="@/assets/image/Home/ic-severs.png">
     </div>
-    <mt-popup v-model="popupVisible" position="bottom">
+    <mt-popup
+      v-model="popupVisible"
+      position="bottom"
+      style="width:100%;background: rgba(0, 0, 0, 0);"
+    >
       <div class="cellPhone">
         <p class="p">
           <a href="tel:400-6969-619">创鑫客服热线：400-6969-619</a>
@@ -135,7 +139,6 @@ require("echarts/lib/component/tooltip");
 require("echarts/lib/component/title");
 import {
   checkToken,
-  getRefreshToken,
   getIndexBanner,
   getProfitDetails,
   getDealDetails,
@@ -192,11 +195,10 @@ export default {
   },
   created() {
     this.selected = this.$route.name;
+    checkToken();
     // banner
     getIndexBanner()
       .then(response => {
-        checkToken();
-        getRefreshToken();
         var _this = this;
         _this.bannerData = response.data;
         console.log(_this.bannerData);

@@ -13,11 +13,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'mint-ui/lib/style.css'
 import 'lib-flexible'
 import JsBridge from '@/JS/JSBridge.js'
+import { getRefreshToken } from "@/api/api.js";
 // 引用公共JS
 import commonJS from '@/JS/commonJS.js'
 Vue.prototype.$commonJS = commonJS;
 import qs from 'qs'
 import md5 from 'js-md5'
+import { locale } from 'core-js';
 Vue.prototype.$md5 = md5;
 Vue.prototype.$axios = axios;// 将axios挂载到prototype上，在组件中可以直接使用this.axios访问
 Vue.prototype.$qs = qs;
@@ -39,14 +41,19 @@ axios.interceptors.response.use(
     if (error.response) {
       console.log(error)
       console.log(error.response)
+      console.log(error.response.status)
       switch (error.response.status) {
-        // 通过状态码判断token是否失效或者token是否错误，若是，直接返回登录页面
         case 401:
-          localStorage.clear(), //清空localStorage
-            router.push({
-              path: '/login',
-            })
+          getRefreshToken()
           break;
+        case 400:
+          getRefreshToken()
+          break;
+          // 通过状态码判断token是否失效或者token是否错误，若是，直接返回登录页面
+        /*   localStorage.clear(), //清空localStorage
+          router.push({
+            path: '/login',
+          }) */
       }
     }
     return Promise.reject(error)
@@ -57,15 +64,16 @@ router.beforeEach((to, from, next) => {
   //需求登录判断
   if (to.meta.required) {
     //未登录
-    var isLogin = window.localStorage.getItem('token');
-    if (isLogin) {
+    var isLogin = JSON.parse(window.localStorage.getItem('token'));
+    console.log(isLogin)
+    if (isLogin != '') {
       next();//跳转到目标页面
-    } else {
+    } else if (isLogin == null || isLogin == undefined || isLogin == '') {
       next({
         path: '/login',
-        query: { redirect: to.fullPath }
+        query: { redirect: to.fullPath },
       });//跳转到登录页面
-      Toast('请登录账号');
+      Toast('请先登录');
 
     }
   } else {

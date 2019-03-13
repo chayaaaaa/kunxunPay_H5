@@ -84,7 +84,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 export default {
@@ -97,29 +97,17 @@ export default {
     };
   },
   created() {
-    this.getParams();
-  },
-
-  watch: {
-    // 监测路由变化,只要变化了就调用获取路由参数方法将数据存储本组件即可
-    $route: "getParams"
+    checkToken();
+      var checkInList = JSON.parse(window.localStorage.getItem("checkInList"));
+          this.itemList = checkInList;
+      this.merchantId = this.itemList.merchantId;
+      this.merchantName = this.itemList.merchantName;
   },
   methods: {
     prev() {
       this.$router.go(-1);
     },
-    getParams() {
-      // 取到路由带过来的参数
-      var routerParams = this.$route.params.id;
-      var list = this.$route.params.item;
-      // 将数据放在当前组件的数据内
-      this.id = routerParams;
-      this.itemList = list;
-      this.merchantId = this.itemList.merchantId;
-      this.merchantName = this.itemList.merchantName;
-    }
-  },
-  created() {}
+  }
 };
 </script>
 <style lang="less" scoped>

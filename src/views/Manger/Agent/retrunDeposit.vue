@@ -30,7 +30,7 @@
   </div>
 </template>
 <script>
-import { getRefreshToken, BASE_URL } from "@/api/api.js";
+import {     checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 export default {
@@ -48,7 +48,7 @@ export default {
   },
   created() {
     this.getParams();
-    getRefreshToken();
+        checkToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")
     ).merchantId;

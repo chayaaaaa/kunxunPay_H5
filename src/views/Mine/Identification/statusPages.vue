@@ -1,8 +1,5 @@
 <template>
   <div class="statusPages">
-    <mt-header title="实 名 认 证" fixed>
-      <mt-button icon="back" class="header_left" @click="prev()" slot="left"></mt-button>
-    </mt-header>
     <!-- =================      实 名 认 证 状 态 页 面        ================= -->
     <!-- 认证中 -->
     <submitSuccessPage v-if="AuthData == 3"></submitSuccessPage>
@@ -11,11 +8,7 @@
     <!-- 认证成功 -->
     <div class="outBox" v-if="AuthData == 1">
       <div class="submitSuccessPage">
-        <mt-header title="实 名 认 证" fixed>
-          <mt-button icon="back" @click="prev()" slot="left"></mt-button>
-        </mt-header>
-        <img class="sucImg" src="@/assets/image/Mine/Identification/ic-font.png">
-
+        <img src="@/assets/image/Mine/Identification/ic-font.png">
         <li class="li2">
           姓名
           <span>{{TwoElementsResultRealName}}</span>
@@ -24,15 +17,13 @@
           证件号码
           <span>{{TwoElementsResultIdCardNum}}</span>
         </li>
+        <!--  -->
         <li @click="back()">返回首页</li>
       </div>
     </div>
     <!-- 认证失败 -->
     <div class="outBox" v-if="AuthData == 2">
       <div class="submitSuccessPage">
-        <mt-header title="实 名 认 证" fixed>
-          <mt-button icon="back" @click="prev()" slot="left"></mt-button>
-        </mt-header>
         <img src="@/assets/image/Mine/Identification/ic-loser.png">
         <p class="p1">很遗憾 · 实名认证失败</p>
         <p>手持身份证不清晰，请重新认证</p>
@@ -45,13 +36,12 @@
 import { Toast } from "mint-ui";
 import EXIF from "exif-js";
 import { VueClip } from "vue-pic-clip";
-import { checkToken } from "@/api/api.js";
 import qs from "qs";
 import submitSuccessPage from "@/views/Mine/Identification/submitSuccessPage.vue";
 import {
   returnAuthStatus,
   queryTwoElementsResult,
-  getRefreshToken,
+  checkToken,
   BASE_URL
 } from "@/api/api.js";
 export default {
@@ -69,8 +59,6 @@ export default {
   },
 
   props: ["model"],
-  created() {},
-  ready() {},
   methods: {
     prev() {
       this.$router.go(-1);
@@ -86,7 +74,7 @@ export default {
     }
   },
   created() {
-    getRefreshToken();
+    checkToken();
     returnAuthStatus()
       .then(response => {
         console.log(response.data);
@@ -124,6 +112,9 @@ export default {
   font-size: 0.5rem;
   font-weight: 100;
   background: @blue;
+  position: absolute;
+  top: 0;
+  z-index: 9999;
 }
 .header_left {
   margin-left: 0.3rem;
@@ -148,12 +139,9 @@ export default {
   text-align: center;
   color: #fff;
   z-index: 500;
-  .sucImg {
-    width: 60%;
-  }
   img {
     display: block;
-    width: 3rem;
+    width: 4rem;
     height: 3rem;
     margin: 2rem auto;
   }

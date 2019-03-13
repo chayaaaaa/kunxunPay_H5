@@ -61,7 +61,7 @@
     <!-- ==============        代 理 利 润 筛 选      ============== -->
     <!-- ==========     弹 出  代 理 信 息 筛 选 模 态 框    ========== -->
     <van-popup v-model="show" position="top" :overlay="true" overlay-class="overlaystyle">
-      <el-form>
+      <el-form style="width:100%">
         <div class="block top">
           <span class="demonstration">交易开始时间</span>
           <el-date-picker
@@ -84,7 +84,7 @@
             :editable="false"
           ></el-date-picker>
         </div>
-        <input type="reset" class="reset leftRight">
+        <input type="reset" class="leftRight reset_agentProfit">
         <el-button class="ensure leftRight" type="primary" @click="requireList()">确 定</el-button>
       </el-form>
     </van-popup>
@@ -115,11 +115,7 @@
 <script>
 import "@/CSSFILE/tabbar.css";
 import "@/CSSFILE/alert.css";
-import {
-  queryAgentProfitDetails,
-  getRefreshToken,
-  BASE_URL
-} from "@/api/api.js";
+import { queryAgentProfitDetails, checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 import { PullRefresh, Loading, List } from "vant";
 const axios = require("axios");
@@ -194,7 +190,7 @@ export default {
       let self = this;
       queryAgentProfitDetails(data)
         .then(response => {
-          getRefreshToken();
+          checkToken();
           let res = response.data.dataResult;
           console.log(res);
           // 用 data 里定义的空数组储存得到的数据
@@ -228,7 +224,7 @@ export default {
     },
     //页面初始化之后会触发一次，在页面往下加载的过程中会多次调用【上拉加载】
     onLoad() {
-      getRefreshToken();
+      checkToken();
       let self = this;
       setTimeout(() => {
         let data = this.$qs.stringify({
@@ -237,17 +233,22 @@ export default {
         window.sessionStorage.setItem("page", JSON.stringify(data));
         queryAgentProfitDetails(data)
           .then(response => {
-            console.log(response);
-            let res = response.data.dataResult;
-            console.log(res);
-            self.totalPage = response.data.paginator.pages;
-            self.deviceList = self.deviceList.concat(res);
-            self.loading = false;
-            self.pageNumber++;
-            if (self.pageNumber >= self.totalPage) {
-              self.finished = true;
+            if (response.data != 0) {
+              let res = response.data.dataResult;
+              console.log(res);
+              self.totalPage = response.data.paginator.pages;
+              self.deviceList = self.deviceList.concat(res);
+              self.loading = false;
+              self.pageNumber++;
+              if (self.pageNumber >= self.totalPage) {
+                self.finished = true;
+              } else {
+                self.finished = false;
+              }
             } else {
-              self.finished = false;
+              this.showListPages = false;
+              this.show = false;
+              this.nothing = true;
             }
           })
           .catch({
@@ -302,31 +303,19 @@ export default {
         });
     },
     toDetail(index, item) {
-      this.$router.push({
-        name: "checkedIn",
-        params: {
-          id: index,
-          item: item
-        }
-      });
+      console.log(item);
+      window.localStorage.setItem("checkInList", JSON.stringify(item));
+      this.$router.push("/checkedIn");
     }
-  },
-  /* 注册组件 */
-  components: {}
+  }
 };
 </script>
 <style lang="less">
+
 @blue: #1c8cff;
-/* 加载动画 */
-.van-list__loading-icon {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0.9rem auto;
-}
-.van-list__loading {
-  width: 100%;
-  height: 2rem;
+// 加载中模块
+.van-list__loading{
+margin-bottom: 2rem;
 }
 /* 头部 */
 /* ==============       header        ============= */
@@ -442,13 +431,13 @@ input {
     width: 38%;
     height: 1rem;
     margin-bottom: 0.5rem;
-    margin-top: 0.3rem;
+    margin-top: 0.5rem;
     border-radius: 5px; /* no */
   }
-  .reset {
+  .reset_agentProfit {
     background: #d9d9d9;
     float: left;
-    margin-left: 1rem;
+    margin-left: 10%;
   }
   input[type="reset"] {
     -webkit-appearance: none;
@@ -461,7 +450,7 @@ input {
     padding-left: 1rem;
     border: 1px solid #1c8cff; /* no */
     border-radius: 0.1rem;
-    width: 70%;
+    width: 75%;
     height: 0.7rem;
     line-height: 0.7rem;
     background: url("~@/assets/image/icon_next.png") no-repeat right;
@@ -484,7 +473,7 @@ input {
     display: inline-block;
     margin-right: 0.5rem;
     margin-left: 1rem;
-    font-size: 0.4rem;
+    font-size: 0.35rem;
   }
   .el-input__icon:after {
     content: "";
