@@ -354,8 +354,11 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
+          console.log(response);
           Toast(response.data.message);
+      /*     switch(response.data.){
+
+          } */
         })
         .catch(function(error) {
           console.log(error);
@@ -688,10 +691,9 @@ export default {
       background: #fff;
       li {
         width: 90%;
-        height: 1.2rem;
+        height: 1.5rem;
         margin: 0rem auto;
         line-height: 1.2rem;
-        border-bottom: 1px solid #d9d9d9; /* no */
         font-size: 0.38rem;
         margin-bottom: 0;
         span {

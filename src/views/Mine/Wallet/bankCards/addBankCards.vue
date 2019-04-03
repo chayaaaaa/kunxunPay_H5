@@ -7,10 +7,12 @@
     </div>
     <!-- ================       选 项 卡      =============== -->
     <div class="tabControl">
-      <li @click="showValueOne()" :class="{'cur':showNoOne==true}">个人账户
+      <li @click="showValueOne()" :class="{'cur':showNoOne==true}">
+        个人账户
         <p v-show="showNoOne==true"></p>
       </li>
-      <li @click="showValueTwo()" :class="{'cur':showNoTwo==true}">企业账户
+      <li @click="showValueTwo()" :class="{'cur':showNoTwo==true}">
+        企业账户
         <p v-show="showNoTwo==true"></p>
       </li>
     </div>
@@ -189,7 +191,7 @@ export default {
       history.go(-1);
     },
     CAPION() {
-      MessageBox("与银行预留手机保持一致");
+      alert("与银行预留手机保持一致");
     },
     showPopup() {
       this.popupVisible = true;
@@ -672,8 +674,8 @@ option:disabled {
   font-size: 0.4rem !important;
 }
 .mint-field-core {
+  text-align: right !important;
   font-size: 0.35rem !important;
-  direction: rtl !important;
 }
 .mint-cell-text {
   font-size: 0.38rem;

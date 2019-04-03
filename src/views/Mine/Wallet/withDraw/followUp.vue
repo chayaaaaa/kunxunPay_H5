@@ -103,7 +103,7 @@ export default {
     // 下拉刷新上拉加载
     init() {
       // 当前页数
-      let data = {
+ /*      let data = {
         access_token: JSON.parse(window.localStorage.getItem("token"))
           .access_token,
         qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
@@ -112,8 +112,8 @@ export default {
         page: this.pageNumber + 1,
         number: Math.random()
       };
-      let self = this;
-      axios
+      let self = this; */
+    /*   axios
         .get(`${BASE_URL}/msmng/api/withdrawdeposit/queryWithdrawRecord`, {
           params: data
         })
@@ -130,7 +130,7 @@ export default {
         })
         .catch(function(err) {
           console.log(err);
-        });
+        }); */
     },
     //下拉刷新
     onRefresh() {
@@ -199,33 +199,6 @@ export default {
   created() {
     checkToken();
     // 获取提现列表
-    let data = {
-      access_token: JSON.parse(window.localStorage.getItem("token"))
-        .access_token,
-      qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
-        .qdcrmUserId,
-      pageSize: 10,
-      page: this.pageNumber + 1,
-      number: Math.random()
-    };
-    axios
-      .get(`${BASE_URL}/msmng/api/withdrawdeposit/queryWithdrawRecord`, {
-        params: data
-      })
-      .then(response => {
-        console.log(response.data);
-        this.list = response.data.data;
-        if (this.list == null) {
-          this.showlist = false;
-          this.nothing = true;
-        } else {
-          this.showlist = true;
-          this.nothing = false;
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
   }
 };
 </script>
@@ -262,6 +235,7 @@ export default {
   position: absolute;
   width: 100%;
   top: 1.2rem;
+  bottom: 0;
   background: #f5f5f5;
   .followUpList {
     width: 100%;

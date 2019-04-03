@@ -254,8 +254,6 @@ export default {
             let listDetails = response.data.data.orderQueryList;
             _this.querymemberDeals = listDetails;
             _this.valueLength = response.data.data.paginator.length;
-            console.log(_this.querymemberDeals);
-            console.log(_this.valueLength);
             _this.totalNum = response.data.data.totalNum;
             _this.totalMoney = response.data.data.totalMoney;
             if (_this.valueLength == 0) {

@@ -129,9 +129,9 @@ export default {
     // 提交配置信息
     commit() {
       // 遍历
-      this.configList.forEach(function(item, i) {
+      this.configList.map((item, index) => {
         if (item.isAdd == 1) {
-          var Msg = [
+          this.Msg = [
             {
               bizCode: item.bizCode,
               bizName: item.bizName,
@@ -167,63 +167,63 @@ export default {
               ]
             }
           ];
-          window.localStorage.setItem("msg", JSON.stringify(Msg));
+          var item_Msg = this.Msg[0].items[0];
+          console.log(item_Msg.bizCode);
           //工作日固定值
           if (
-            parseFloat(item.businessModel[0].fixed) <
-            parseFloat(item.businessModel[0].overallFixedRatio)
+            parseFloat(item_Msg.fixed) < parseFloat(item_Msg.overallFixedRatio)
           ) {
             Toast(
               "数据配置有误:工作日收费固定值必须大于结算价固定值.\n产品名称:" +
-                item.bizName
+                item_Msg.bizName
             );
-            return false;
+            return;
           }
           //工作日收费比例
           if (
-            parseFloat(item.businessModel[0].percent) <
-            parseFloat(item.businessModel[0].overallProfitRatio)
+            parseFloat(item_Msg.percent) <
+            parseFloat(item_Msg.overallProfitRatio)
           ) {
             Toast(
               "数据配置有误:工作日收费固定值必须大于结算价固定值.\n产品名称:" +
-                item.bizName
+                item_Msg.bizName
             );
-            return false;
+            return;
           }
           //节假日固定值
           if (
-            parseFloat(item.businessModel[0].holidayFixed) <
-            parseFloat(item.businessModel[0].overallHolidayFixed)
+            parseFloat(item_Msg.holidayFixed) <
+            parseFloat(item_Msg.overallHolidayFixed)
           ) {
             Toast(
               "数据配置有误:节假日收费固定值必须大于结算价固定值.\n产品名称:" +
-                item.bizName
+                item_Msg.bizName
             );
-            return false;
+            return;
           }
           //节假日收费比例
           if (
-            parseFloat(item.businessModel[0].holidayPercent) <
-            parseFloat(item.businessModel[0].overallHolidayPercent)
+            parseFloat(item_Msg.holidayPercent) <
+            parseFloat(item_Msg.overallHolidayPercent)
           ) {
             Toast(
               "数据配置有误:节假日收费比例必须大于结算价收费比例.\n产品名称:" +
-                item.bizName
+                item_Msg.bizName
             );
-            return false;
-          } else {
-            return true;
+            return;
           }
-          var localqdcrmUserId = JSON.parse(
+          let localqdcrmUserId = JSON.parse(
             window.localStorage.getItem("userInfo")
           ).qdcrmUserId;
-          var agentqdcrmUserId = JSON.parse(window.localStorage.getItem("qd"));
+          let agentqdcrmUserId = JSON.parse(
+            window.localStorage.getItem("agentDetails")
+          ).qdcrmUserId;
           if (agentqdcrmUserId == localqdcrmUserId) {
             Toast("不能配置自身业务");
             return;
           }
         } else {
-          var Msg = [
+          this.Msg = [
             {
               bizCode: item.bizCode,
               bol: "F"
@@ -231,8 +231,8 @@ export default {
           ];
         }
       });
-      var msgData = JSON.parse(window.localStorage.getItem("msg"));
-      console.log(msgData);
+
+      console.log(this.Msg);
       var params = new URLSearchParams();
       params.append(
         "access_token",
@@ -240,11 +240,11 @@ export default {
       );
       params.append(
         "qdcrmUserId",
-        JSON.parse(window.localStorage.getItem("qd"))
+        JSON.parse(window.localStorage.getItem("agentDetails")).qdcrmUserId
       );
       params.append("templateId", "");
       params.append("bizType", this.merchantName);
-      params.append("business", JSON.stringify(msgData));
+      params.append("business", JSON.stringify(this.Msg));
       // 提交修改配置数据
       axios
         .post(`${BASE_URL}/msmng/api/agent/updateAgentBiz`, params, {
@@ -256,16 +256,17 @@ export default {
           console.log(response.data);
           if (response.data.code == 200) {
             console.log(response.data);
-            window.localStorage.removeItem("qd");
+            Toast(response.data.message);
+            setInterval(() => {
+              this.success = true;
+            }, 1000);
           } else {
-            console(response.data.message);
+            Toast(response.data.message);
           }
         })
         .catch(function(error) {
           console.log(error);
         });
-      window.localStorage.removeItem("msg");
-      this.success = true;
     }
   },
   created() {

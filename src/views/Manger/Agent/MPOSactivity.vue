@@ -11,13 +11,12 @@
     </p>
     <div class="MPOSactivity_body">
       <ul>
-        <li>激活奖励
-          <van-switch
-            size="15px"
-            v-model="showOff"
-            inactive-color="#D9D9D9"
-            active-color="#1c8cff"
-          />
+        <li>
+          激活奖励
+          <span @click="act(0)">
+            <img v-show="showOff == 1" src="@/assets/image/Manger/off.png">
+            <img v-show="showOff == 0" src="@/assets/image/Manger/on.png">
+          </span>
         </li>
         <li class="li">
           金额
@@ -26,8 +25,12 @@
         </li>
       </ul>
       <ul class="ul">
-        <li>周期任务奖励
-          <van-switch size="15px" v-model="showOn" inactive-color="#D9D9D9" active-color="#1c8cff"/>
+        <li>
+          周期任务奖励
+          <span @click="act(1)">
+            <img v-show="showOn == 1" src="@/assets/image/Manger/off.png">
+            <img v-show="showOn == 0" src="@/assets/image/Manger/on.png">
+          </span>
         </li>
         <li>
           第一期周期奖励金额
@@ -66,6 +69,7 @@
 </template>
 <script>
 import { Toast, MessageBox } from "mint-ui";
+import { Switch } from "vant";
 import { checkToken, BASE_URL } from "@/api/api.js";
 const axios = require("axios");
 export default {
@@ -83,28 +87,36 @@ export default {
       fourMonth: "", //第四
       fiveMonth: "", //第五
       sixMonth: "", //第六
-      showOff: false,
-      showOn: false
+      data_show: "",
+      showOff: 1,
+      showOn: 1
     };
   },
   methods: {
     prev() {
       this.$router.go(-1);
     },
+    act(item) {
+      if (item == 0) {
+        if (this.showOff == "0") {
+          this.showOff = "1";
+          this.activationStatus = 1;
+        } else {
+          this.showOff = "0";
+          this.activationStatus = 0;
+        }
+      } else {
+        if (this.showOn == "0") {
+          this.showOn = "1";
+          this.cycleStatus = 1;
+        } else {
+          this.showOn = "0";
+          this.cycleStatus = 0;
+        }
+      }
+    },
+
     save() {
-      /*  MessageBox("上级商户未配置业务！"); */
-      if (this.showOff == false) {
-        this.activationStatus = 1;
-      } else {
-        this.activationStatus = 0;
-      }
-      if (this.showOn == false) {
-        this.cycleStatus = 1;
-      } else {
-        this.cycleStatus = 0;
-      }
-      console.log(this.activationStatus);
-      console.log(this.cycleStatus);
       if (!this.firstMonth) {
         Toast("请设置第一期周期奖励金额");
         return;
@@ -169,7 +181,8 @@ export default {
         });
     }
   },
-  created() {
+  created() {},
+  mounted() {
     checkToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")
@@ -195,15 +208,27 @@ export default {
       .then(response => {
         console.log(response.data);
         let res = response.data.data;
-        this.activationMoney = res.activationMoney;
-        this.activationStatus = res.activationStatus;
-        this.cycleStatus = res.cycleStatus;
-        this.firstMonth = res.firstMonth;
-        this.secondMonth = res.secondMonth;
-        this.threeMonth = res.threeMonth;
-        this.fourMonth = res.fourMonth;
-        this.fiveMonth = res.fiveMonth;
-        this.sixMonth = res.sixMonth;
+        if (res != 0) {
+          this.activationMoney = res.activationMoney;
+          this.activationStatus = res.activationStatus;
+          this.cycleStatus = res.cycleStatus;
+          this.firstMonth = res.firstMonth;
+          this.secondMonth = res.secondMonth;
+          this.threeMonth = res.threeMonth;
+          this.fourMonth = res.fourMonth;
+          this.fiveMonth = res.fiveMonth;
+          this.sixMonth = res.sixMonth;
+        }
+        if (this.cycleStatus == 0) {
+          this.showOn = 0;
+        } else {
+          this.showOn = 1;
+        }
+        if (this.activationStatus == 0) {
+          this.showOff = 0;
+        } else {
+          this.showOff = 1;
+        }
       })
       .catch(function(error) {
         console.log(error);
@@ -263,9 +288,15 @@ export default {
         line-height: 1.2rem;
         border-bottom: 1px solid #d9d9d9; /* no */
         font-size: 0.38rem;
+        img {
+          float: right;
+          width: 1rem;
+          margin-top: 0.1rem;
+        }
         .van-switch {
           float: right;
-          margin-top: 0.4rem;
+          margin-top: 0.3rem;
+          /*           font-size: 0.5rem; */
         }
         span {
           display: block;

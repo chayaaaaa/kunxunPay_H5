@@ -64,25 +64,19 @@
       <el-form style="width:100%">
         <div class="block top">
           <span class="demonstration">交易开始时间</span>
-          <el-date-picker
-            v-model="stratTime"
-            value-format="yyyy-MM-dd"
+          <input
             type="date"
-            placeholder="选择日期"
-            :editable="false"
-          ></el-date-picker>
+            v-model="stratTime"
+            style="border:0.01rem solid #1c8cff; color:#333;width:45%;height:0.8rem;"
+          >
         </div>
         <div class="block">
           <span class="demonstration">交易结束时间</span>
-          <el-date-picker
-            value-format="yyyy-MM-dd"
-            v-model="endTime"
-            align="center"
+          <input
             type="date"
-            placeholder="选择日期"
-            :picker-options="pickerOptions1"
-            :editable="false"
-          ></el-date-picker>
+            v-model="endTime"
+            style="border:0.01rem solid #1c8cff; color:#333;width:45%;height:0.8rem;"
+          >
         </div>
         <input type="reset" class="leftRight reset_agentProfit">
         <el-button class="ensure leftRight" type="primary" @click="requireList()">确 定</el-button>
@@ -259,13 +253,17 @@ export default {
       }, 500);
     },
     requireList() {
-      /* *
-       * * @params(startTime, endTime, qdcrmUserId, token)
-       * *
-       * */
       this.show = false;
       console.log(this.stratTime);
       console.log(this.endTime);
+      if (!this.stratTime) {
+        Toast("请选择开始时间");
+        return;
+      }
+      if (!this.stratTime) {
+        Toast("请选择结束时间");
+        return;
+      }
       let queryData = {
         qdcrmUserId: JSON.parse(window.localStorage.getItem("userInfo"))
           .qdcrmUserId,
@@ -282,25 +280,35 @@ export default {
         })
         .then(response => {
           console.log(response.data);
-          let _this = this;
-          _this.queryAgentDetail = response.data.data;
-          _this.valueLength = _this.queryAgentDetail.paginator;
-          console.log(_this.queryAgentDetail);
-          console.log(_this.valueLength);
-          if (_this.valueLength.length == 0) {
-            _this.showListPages = false;
-            _this.show = false;
-            _this.nothing = true;
+          if (response.data.code == 200) {
+            Toast(response.data.message);
+            let _this = this;
+            _this.queryAgentDetail = response.data.data;
+            _this.valueLength = _this.queryAgentDetail.paginator;
+            console.log(_this.queryAgentDetail);
+            console.log(_this.valueLength);
+            if (_this.valueLength.length == 0) {
+              _this.showListPages = false;
+              _this.show = false;
+              _this.nothing = true;
+            } else {
+              _this.showListPages = false;
+              _this.show = false;
+              _this.showQueryList = true;
+              _this.nothing = false;
+            }
           } else {
-            _this.showListPages = false;
-            _this.show = false;
-            _this.showQueryList = true;
-            _this.nothing = false;
+            Toast(response.data.message);
           }
         })
         .catch(function(err) {
           Toast(err.message);
         });
+
+      /* *
+       * * @params(startTime, endTime, qdcrmUserId, token)
+       * *
+       * */
     },
     toDetail(index, item) {
       console.log(item);
@@ -311,11 +319,10 @@ export default {
 };
 </script>
 <style lang="less">
-
 @blue: #1c8cff;
 // 加载中模块
-.van-list__loading{
-margin-bottom: 2rem;
+.van-list__loading {
+  margin-bottom: 2rem;
 }
 /* 头部 */
 /* ==============       header        ============= */

@@ -49,6 +49,9 @@ axios.interceptors.response.use(
         case 400:
           getRefreshToken()
           break;
+          case 404:
+          Toast('无法访问')
+          break;
           // 通过状态码判断token是否失效或者token是否错误，若是，直接返回登录页面
         /*   localStorage.clear(), //清空localStorage
           router.push({

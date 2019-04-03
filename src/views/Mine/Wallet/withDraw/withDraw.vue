@@ -18,7 +18,8 @@
           <span class="sp" @click="showBankTypes=true">{{this.message}}</span>
         </li>
         <li>提现金额</li>
-        <li>￥
+        <li>
+          ￥
           <!-- 可提现金额 -->
           <input type="number" v-model="moneyCount" v-if="showHandleMoney==true">
           <!-- 全部提现 -->
@@ -57,7 +58,7 @@
     <mt-popup v-model="showBankTypes" popup-transition="popup-fade">
       <!-- title -->
       <div class="title">选 择 资 金 类 型</div>
-      <van-picker :columns="columns" @change="onChange"/>
+      <van-picker :columns="columns" @change="onChange" :default-index="0"/>
       <div class="box cancel" @click="cancel()">取消</div>
       <div class="box Confirm" @click="Confirm()">确认</div>
     </mt-popup>
@@ -98,7 +99,7 @@
       <li id="getMoneyCount" v-if="showHandleMoney==true">￥ {{moneyCount}}</li>
       <!-- 全部提现 -->
       <li id="getMoneyCount" v-if="showAllMoney == true">￥ {{canBeWithdrawal}}</li>
-      <li>额外扣除￥0.2%税点</li>
+      <li>额外扣除￥{{taxRate}}</li>
       <!-- 密码输入框 -->
       <van-password-input :value="value" @focus="showKeyboard = true"/>
       <!-- 数字键盘 -->
@@ -192,25 +193,38 @@ export default {
     // 选择提现类型
     onChange(Picker, value, index) {
       this.message = value;
-      if (index == 0) {
+      switch (index) {
         // 分润收益
-        this.withDrawType = 6;
-        this.canBeWithdrawal = parseFloat(this.money.profitCanExtractAmount);
-      } else if (index == 1) {
+        case 0:
+          this.withDrawType = 6;
+          this.canBeWithdrawal = parseFloat(this.money.profitCanExtractAmount);
+          this.taxRate = parseFloat(this.fixedFee.shareFee);
+          break;
         // 服务费返现
-        this.withDrawType = 7;
-        this.canBeWithdrawal = parseFloat(this.money.dpositCanExtractAmount);
-      } else if (index == 2) {
+        case 1:
+          this.withDrawType = 7;
+          this.canBeWithdrawal = parseFloat(this.money.dpositCanExtractAmount);
+          this.taxRate = parseFloat(this.fixedFee.depositFee);
+          break;
         // 激活奖励
-        this.withDrawType = 9;
-        this.canBeWithdrawal = parseFloat(this.money.mposCanExtractAmount);
-      } else if (index == 3) {
+        case 2:
+          this.withDrawType = 9;
+          this.canBeWithdrawal = parseFloat(this.money.mposCanExtractAmount);
+          this.taxRate = parseFloat(this.fixedFee.mposFee);
+          break;
         // 刷卡奖励
-        this.withDrawType = 10;
-        this.canBeWithdrawal = parseFloat(
-          this.money.swipingCardCanExtractAmount
-        );
+        case 3:
+          this.withDrawType = 10;
+          this.canBeWithdrawal = parseFloat(
+            this.money.swipingCardCanExtractAmount
+          );
+          this.taxRate = parseFloat(this.fixedFee.swipeFee);
+          break;
       }
+      const rate = this.taxRate * 100;
+      this.taxRate = parseFloat(
+        (this.canBeWithdrawal * rate) / 100 + this.fixedFee.fixedFee
+      ).toFixed(2);
     },
     // 全部提现
     allMoneyWithdrawal() {
@@ -256,11 +270,11 @@ export default {
         Toast("请选择资金类型");
         return;
       }
-      if (this.moneyCount <= this.fixedFee) {
-        Toast("可提现金额必须大于固定手续费");
+      if (parseFloat(this.moneyCount) < parseFloat(this.fixedFee)) {
+        Toast("提现金额必须大于固定手续费");
         return;
       }
-      if (this.moneyCount >= this.canBeWithdrawal) {
+      if (parseFloat(this.moneyCount) > parseFloat(this.canBeWithdrawal)) {
         Toast("提现金额不可大于可提现金额");
         return;
       }
@@ -308,11 +322,11 @@ export default {
         Toast("请选择资金类型");
         return;
       }
-      if (this.moneyCount <= this.fixedFee) {
-        Toast("可提现金额必须大于固定手续费");
+      if (parseFloat(this.moneyCount) < parseFloat(this.fixedFee)) {
+        Toast("提现金额必须大于固定手续费");
         return;
       }
-      if (this.moneyCount >= this.canBeWithdrawal) {
+      if (parseFloat(this.moneyCount) > parseFloat(this.canBeWithdrawal)) {
         Toast("提现金额不可大于可提现金额");
         return;
       }
@@ -372,6 +386,7 @@ export default {
         JSON.parse(window.localStorage.getItem("userInfo")).qdcrmUserId
       );
       params.append("payPassword", this.$md5(this.value));
+      // 效验支付密码
       axios
         .post(`${BASE_URL}/msmng/api/paypassword/checkPayPassword`, params, {
           header: {
@@ -407,6 +422,7 @@ export default {
               console.log(this.moneyCount);
               params.append("payPassword", this.$md5(this.value)); // 密码
               params.append("number", Math.random());
+              // 发起提现
               axios
                 .post(
                   `${BASE_URL}/msmng/api/withdrawdeposit/doWithdrawDeposit`,
@@ -425,7 +441,7 @@ export default {
                     "itemNo",
                     JSON.stringify(this.itemNo)
                   );
-                  this.$router.push("withDrawSuccessPage");
+                  this.$router.push("/withDrawSuccessPage");
                 })
                 .catch(function(error) {
                   console.log(error);
@@ -456,6 +472,7 @@ export default {
               console.log(this.moneyCount);
               params.append("payPassword", this.$md5(this.value)); // 密码
               params.append("number", Math.random());
+              // 发起提现
               axios
                 .post(
                   `${BASE_URL}/msmng/api/withdrawdeposit/doWithdrawDeposit`,
@@ -474,7 +491,7 @@ export default {
                     "itemNo",
                     JSON.stringify(this.itemNo)
                   );
-                  this.$router.push("withDrawSuccessPage");
+                  this.$router.push("/withDrawSuccessPage");
                 })
                 .catch(function(error) {
                   console.log(error);
@@ -497,8 +514,9 @@ export default {
     getConfigFee()
       .then(response => {
         console.log(response.data);
-        // 平台手续费
-        this.fixedFee = response.data.data.fixedFee;
+        // 平台固定手续费
+        this.fixedFee = response.data.data;
+        console.log(this.fixedFee);
       })
       .catch(function(error) {
         console.log(error);
@@ -534,7 +552,7 @@ export default {
   bottom: 0;
   background: #f5f5f5;
   .mint-popup {
-    width: 90%;
+    width: 80%;
     border-radius: 0.2rem;
     background: #fff;
   }
@@ -706,7 +724,6 @@ export default {
       }
     }
     .listBody {
-      webkit-box-flex: 1;
       -webkit-flex: 1;
       -ms-flex: 1;
       flex: 1;
@@ -812,8 +829,8 @@ export default {
   margin-bottom: -1.5rem;
   height: 6rem !important;
 }
-.van-number-keyboard--custom .van-number-keyboard__body{
-    width: 100%;
+.van-number-keyboard--custom .van-number-keyboard__body {
+  width: 100%;
   position: absolute;
   bottom: 0;
   height: 5rem;
@@ -822,7 +839,7 @@ export default {
   height: 2.5rem !important;
   line-height: 2.5rem !important;
 }
-.van-number-keyboard__sidebar{
+.van-number-keyboard__sidebar {
   height: 5rem !important;
 }
 </style>

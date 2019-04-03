@@ -172,12 +172,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.submitImgPage{
- /*  width: 100%; */
-/*   height: 100%; */
- /*  overflow: auto; */
-
-}
 @blue: #1c8cff;
 /* 头部 */
 .mint-header {

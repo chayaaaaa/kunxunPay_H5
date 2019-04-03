@@ -60,9 +60,6 @@ export default {
     },
     // 设置密码
     sumbit() {
-      console.log(this.oldpassword);
-      console.log(this.newpassword);
-      console.log(this.surepassword);
       if (!this.oldpassword) {
         Toast("请输入原密码");
         return;
@@ -100,7 +97,6 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
           var params = new URLSearchParams();
           params.append(
             "access_token",
@@ -127,7 +123,7 @@ export default {
               if (response.data.data == 1) {
                 Toast(response.data.message);
                 setTimeout(() => {
-                  this.$router.push("/setting");
+                  this.current = 1;
                 }, 200);
               } else {
                 Toast(response.data.message);

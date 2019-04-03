@@ -101,7 +101,7 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
+          console.log(response);
           if (response.data.code == 200) {
           } else {
             Toast(response.data.message);
@@ -117,7 +117,6 @@ export default {
         Toast("请输入验证码");
         return;
       }
-      console.log(this.sms);
       this.autoCode = false;
       this.showSettingNewPWD = true;
     },
@@ -150,12 +149,9 @@ export default {
       params.append("payPassword", this.$md5(this.newpassword)); // 新支付密码
       params.append("phone", this.phone); // 验证码
       params.append("vertifyCode", this.sms); // 验证码
-      console.log(this.sms);
-      console.log(this.phone);
-      console.log(this.newpassword);
       // 重置支付密码
       axios
-        .post(`${BASE_URL}/msmng/api/vertifycode/resetPayPassword`, params, {
+        .post(`${BASE_URL}/msmng/api/paypassword/resetPayPassword`, params, {
           header: {
             "Access-Control-Allow-Origin": "*"
           }
@@ -166,7 +162,7 @@ export default {
             Toast(response.data.message);
             setTimeout(() => {
               this.$router.push("/setting");
-            });
+            }, 500);
           } else {
             Toast(response.data.message);
           }

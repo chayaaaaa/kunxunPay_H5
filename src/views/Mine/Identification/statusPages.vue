@@ -85,7 +85,7 @@ export default {
             .then(response => {
               console.log(response.data);
               let data = response.data.data;
-              this.TwoElementsResultIdCardNum = data.idCardNum;
+              this.TwoElementsResultIdCardNum = data.idCardNum.replace(/(\w{6})\w*(\w{4})/, '$1******$2');;
               this.TwoElementsResultRealName = data.realName;
             })
             .catch(function(error) {

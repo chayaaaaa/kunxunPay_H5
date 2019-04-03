@@ -11,12 +11,13 @@
     </p>
     <div class="retrunDeposit_body">
       <ul>
-        <li>押金返现
+        <li>
+          押金返现
           <van-switch
             size="15px"
             v-model="checked"
-            active-color="#D9D9D9"
-            inactive-color="#1c8cff"
+            active-color="#1c8cff"
+            inactive-color="#D9D9D9"
           />
         </li>
         <li>
@@ -30,7 +31,7 @@
   </div>
 </template>
 <script>
-import {     checkToken, BASE_URL } from "@/api/api.js";
+import { checkToken, BASE_URL } from "@/api/api.js";
 import { MessageBox, Toast } from "mint-ui";
 const axios = require("axios");
 export default {
@@ -48,7 +49,7 @@ export default {
   },
   created() {
     this.getParams();
-        checkToken();
+    checkToken();
     this.merchantId = JSON.parse(
       window.localStorage.getItem("agentDetails")
     ).merchantId;
